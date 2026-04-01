@@ -13,10 +13,11 @@ export function FloatingPrice() {
       case 2: return true; 
       case 3: return true; 
       case 4: return state.packageType === "custom" ? true : !!state.patiroom;
-      case 5: return true;
+      case 5: return true; 
       case 6: return true;
-      case 7: return !!state.date && !!state.time;
-      case 8: return !!state.contactName && !!state.contactPhone;
+      case 7: return true;
+      case 8: return !!state.date && !!state.time;
+      case 9: return !!state.contactName && !!state.contactPhone;
       default: return true;
     }
   })();

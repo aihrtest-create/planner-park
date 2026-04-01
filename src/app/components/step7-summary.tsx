@@ -12,6 +12,7 @@ import {
   MessageSquare,
   PartyPopper,
   Check,
+  Star,
 } from "lucide-react";
 import { format, isWeekend } from "date-fns";
 
@@ -105,6 +106,14 @@ export function Step7Summary() {
             value={`${state.animators.length} аниматор(а)${
               state.premiumCostume ? " + премиум костюм" : ""
             }`}
+          />
+        )}
+
+        {state.shows.length > 0 && (
+          <SummaryRow
+            icon={<Star className="w-4 h-4" />}
+            label="Шоу-программы"
+            value={`${state.shows.length} шоу`}
           />
         )}
 

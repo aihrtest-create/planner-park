@@ -14,9 +14,11 @@ export interface WizardState {
   // Step 4 — Animators
   animators: string[];
   premiumCostume: string | null;
-  // Step 5 — Master classes
+  // Step 5 — Shows
+  shows: string[];
+  // Step 6 — Master classes
   masterClasses: string[];
-  // Step 6 — Food
+  // Step 7 — Food
   includeFood: boolean;
   cakeChoice: string | null;
   cakeCustomText: string;
@@ -54,6 +56,7 @@ const initialState: WizardState = {
   cafeZones: [],
   animators: [],
   premiumCostume: null,
+  shows: [],
   masterClasses: [],
   includeFood: false,
   cakeChoice: null,
@@ -76,7 +79,7 @@ export function useWizard() {
   return ctx;
 }
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 9;
 
 const PACKAGE_PRICES: Record<string, [number, number]> = {
   custom:    [0, 0],
@@ -152,6 +155,16 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
 
     // Premium costume
     if (state.premiumCostume) total += 8000;
+
+    // Shows — priced for custom package, included in other packages
+    if (state.packageType === "custom") {
+      for (const show of state.shows) {
+        if (show === "soap") total += 14000;
+        if (show === "paper") total += 15000;
+        if (show === "tesla") total += 15000;
+        if (show === "professor") total += 14000;
+      }
+    }
 
     // MK — included in premium/exclusive; charged for basic
     if (state.packageType === "basic") {
