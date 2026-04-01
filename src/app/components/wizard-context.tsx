@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
+import { isWeekend } from "date-fns";
 
 export interface WizardState {
   // Step 1
@@ -7,8 +8,9 @@ export interface WizardState {
   // Step 2 — Quests
   questType: "phygital_voxels" | "phygital_space" | "classic_fort" | "classic_minecraft" | "classic_squid" | "classic_barbie" | "classic_safari" | "classic_harry" | "classic_heroes" | "classic_bloggers" | "classic_fortnite" | "classic_agents" | "none" | null;
   // Step 3 — Location
-  location: string | null;
-  locationDetails: string | null;
+  patiroom: string | null;
+  patiroomDetails: string | null;
+  cafeZones: string[];
   // Step 4 — Animators
   animators: string[];
   premiumCostume: string | null;
@@ -47,8 +49,9 @@ const initialState: WizardState = {
   packageType: null,
   isWeekend: false,
   questType: null,
-  location: null,
-  locationDetails: null,
+  patiroom: null,
+  patiroomDetails: null,
+  cafeZones: [],
   animators: [],
   premiumCostume: null,
   masterClasses: [],
@@ -138,10 +141,14 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Location (cafe deposit)
-    if (state.location === "cafe_round") total += state.isWeekend ? 10000 : 5000;
-    if (state.location === "cafe_pink") total += state.isWeekend ? 10000 : 5000;
-    if (state.location === "cafe_pink_full") total += state.isWeekend ? 20000 : 10000;
+    // Cafe zone deposits (multiple can be selected)
+    // Use actual date's weekend status if date is set, otherwise use toggle
+    const effectiveWeekend = state.date ? isWeekend(state.date) : state.isWeekend;
+    for (const zone of state.cafeZones) {
+      if (zone === "cafe_round") total += effectiveWeekend ? 10000 : 5000;
+      if (zone === "cafe_pink") total += effectiveWeekend ? 10000 : 5000;
+      if (zone === "cafe_pink_full") total += effectiveWeekend ? 20000 : 10000;
+    }
 
     // Premium costume
     if (state.premiumCostume) total += 8000;

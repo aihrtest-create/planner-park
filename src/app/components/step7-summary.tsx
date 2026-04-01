@@ -77,11 +77,24 @@ export function Step7Summary() {
           />
         )}
 
-        {state.locationDetails && (
+        {state.patiroomDetails && (
           <SummaryRow
             icon={<MapPin className="w-4 h-4" />}
-            label="Локация"
-            value={state.locationDetails}
+            label="Патирум"
+            value={state.patiroomDetails}
+          />
+        )}
+
+        {state.cafeZones.length > 0 && (
+          <SummaryRow
+            icon={<MapPin className="w-4 h-4" />}
+            label="Стол для родителей"
+            value={state.cafeZones.map(z => {
+              if (z === "cafe_round") return "Круглый стол";
+              if (z === "cafe_pink") return "За шторками";
+              if (z === "cafe_pink_full") return "Вся зона за шторками";
+              return z;
+            }).join(", ")}
           />
         )}
 

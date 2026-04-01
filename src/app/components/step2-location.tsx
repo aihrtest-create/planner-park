@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useWizard } from "./wizard-context";
 import { motion, AnimatePresence } from "motion/react";
-import { Users, Projector, Check, MapPin, Coffee, Info, PlayCircle, X } from "lucide-react";
+import { Users, Projector, Check, MapPin, Coffee, Info, PlayCircle, X, UtensilsCrossed, Armchair } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription, DrawerClose } from "./ui/drawer";
 import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
@@ -12,7 +12,6 @@ const getPublicUrl = (path: string) => {
   if (path.startsWith('http') || path.startsWith('data:')) return path;
   return ((import.meta as any).env?.BASE_URL || '/') + path.replace(/^\//, '');
 };
-
 
 const PATIROOMS = [
   {
@@ -60,46 +59,71 @@ const PATIROOMS = [
 const CAFE_OPTIONS = [
   {
     id: "cafe_round",
-    name: "Зона с круглым столом",
-    description: "До 8 гостей",
-    deposit: "5 000 — 10 000 ₽",
-    depositNote: "будни / выходные",
+    name: "Круглый стол",
+    subtitle: "Уютная зона с круглым столом",
+    seats: 8,
+    weekdayDeposit: 5000,
+    weekendDeposit: 10000,
     thumbnail: "/locations/cafe/round.jpg",
+    description: "Уютная зона с большим круглым столом — идеальна для небольшой компании взрослых. Удобное расположение рядом с патирумами.",
   },
   {
     id: "cafe_pink",
-    name: "За розовыми шторками",
-    description: "До 10 человек (две компании)",
-    deposit: "5 000 — 10 000 ₽",
-    depositNote: "будни / выходные",
+    name: "За шторками",
+    subtitle: "Зона за розовыми шторками",
+    seats: 10,
+    weekdayDeposit: 5000,
+    weekendDeposit: 10000,
     thumbnail: "/locations/cafe/pink.jpg",
+    description: "Уединённая зона за розовыми шторками. Приватное пространство, где взрослые могут спокойно пообщаться, пока дети веселятся.",
+    exclusiveWith: "cafe_pink_full" as const,
   },
   {
     id: "cafe_pink_full",
     name: "Вся зона за шторками",
-    description: "Аренда зоны целиком",
-    deposit: "10 000 — 20 000 ₽",
-    depositNote: "будни / выходные (x2)",
+    subtitle: "Аренда всей зоны целиком",
+    seats: 20,
+    weekdayDeposit: 10000,
+    weekendDeposit: 20000,
     thumbnail: "/locations/cafe/pink.jpg",
+    description: "Вся приватная зона за шторками — для большой компании. Несколько столов, максимум пространства и комфорта для взрослых гостей.",
+    exclusiveWith: "cafe_pink" as const,
+    badge: "Вся зона",
   },
 ];
 
 export function Step2Location() {
   const { state, updateState } = useWizard();
   const [selectedDetails, setSelectedDetails] = useState<typeof PATIROOMS[0] | null>(null);
+  const isPackage = state.packageType !== "custom";
 
   const handleSelectRoom = (room: typeof PATIROOMS[0]) => {
     updateState({
-      location: room.id,
-      locationDetails: room.name,
+      patiroom: room.id,
+      patiroomDetails: room.name,
     });
   };
 
-  const handleSelectCafe = (opt: typeof CAFE_OPTIONS[0]) => {
-    updateState({
-      location: opt.id,
-      locationDetails: opt.name,
-    });
+  const handleToggleCafe = (opt: typeof CAFE_OPTIONS[0]) => {
+    const current = [...state.cafeZones];
+    const idx = current.indexOf(opt.id);
+
+    if (idx >= 0) {
+      current.splice(idx, 1);
+    } else {
+      if ((opt as any).exclusiveWith) {
+        const exIdx = current.indexOf((opt as any).exclusiveWith);
+        if (exIdx >= 0) current.splice(exIdx, 1);
+      }
+      current.push(opt.id);
+    }
+
+    updateState({ cafeZones: current });
+  };
+
+  const formatDeposit = (opt: typeof CAFE_OPTIONS[0]) => {
+    const price = state.isWeekend ? opt.weekendDeposit : opt.weekdayDeposit;
+    return price.toLocaleString("ru-RU") + " ₽";
   };
 
   return (
@@ -115,11 +139,16 @@ export function Step2Location() {
         <p className="text-sm text-[#747474]">Где пройдет ваш праздник?</p>
       </div>
 
-      {/* Patirooms */}
-      <div className="mb-5">
-        <div className="flex items-center gap-2 mb-3">
+      {/* ==================== PATIROOMS ==================== */}
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-1.5">
           <MapPin className="w-5 h-5 text-[#FF6022]" />
           <h3 className="text-[#1A1A1A] font-medium">Патирумы</h3>
+          {isPackage && (
+            <span className="ml-auto text-[10px] font-medium text-white bg-[#FF6022] px-2 py-0.5 rounded-full">
+              Обязательно
+            </span>
+          )}
         </div>
         <p className="text-xs text-[#747474] mb-3">
           Интерактивные столы и проекции на стенах. При отдельном бронировании — 3 000 ₽/час.
@@ -127,54 +156,43 @@ export function Step2Location() {
 
         <div className="grid grid-cols-1 gap-4">
           {PATIROOMS.map((room) => {
-            const isSelected = state.location === room.id;
+            const isSelected = state.patiroom === room.id;
             return (
               <div
                 key={room.id}
-                className={`relative rounded-3xl overflow-hidden bg-white transition-all cursor-pointer group ${
-                  isSelected ? "ring-2 ring-[#FF6022] shadow-lg" : "ring-1 ring-[#E5E5E5] shadow-sm"
+                className={`relative h-[440px] sm:h-[500px] rounded-[32px] overflow-hidden bg-white transition-all cursor-pointer group ${
+                  isSelected ? "ring-2 ring-[#FF6022] shadow-xl scale-[1.01]" : "ring-1 ring-[#E5E5E5] shadow-sm"
                 }`}
                 onClick={() => handleSelectRoom(room)}
               >
-                {/* Background Image */}
-                <div className="relative h-72 sm:h-80 w-full">
-                  <ImageWithFallback
-                    src={getPublicUrl(room.thumbnail)}
-                    alt={room.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-                  
-                  {/* Video/Info Trigger */}
-                  <button 
-                    className="absolute top-4 right-4 bg-gradient-to-tr from-[#FF6022] to-[#FF8A00] text-white text-[11px] font-bold uppercase tracking-wider px-4 py-2.5 rounded-full flex items-center gap-2 z-10 transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-[#FF6022]/40"
-                    onClick={(e) => { e.stopPropagation(); setSelectedDetails(room); }}
-                  >
-                    {room.video ? (
-                      <>
-                        <PlayCircle className="w-4 h-4" />
-                        Видео
-                      </>
-                    ) : (
-                      <>
-                        <Info className="w-4 h-4" />
-                        Фото
-                      </>
-                    )}
-                  </button>
-                </div>
+                <ImageWithFallback
+                  src={getPublicUrl(room.thumbnail)}
+                  alt={room.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
+                
+                <button 
+                  className="absolute top-5 right-5 bg-gradient-to-tr from-[#FF6022] to-[#FF8A00] text-white text-[11px] font-bold uppercase tracking-wider px-5 py-2.5 rounded-full flex items-center gap-2 z-10 transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-[#FF6022]/40"
+                  onClick={(e) => { e.stopPropagation(); setSelectedDetails(room); }}
+                >
+                  {room.video ? (
+                    <><PlayCircle className="w-4 h-4" />Видео</>
+                  ) : (
+                    <><Info className="w-4 h-4" />Фото</>
+                  )}
+                </button>
 
-                {/* Floating Info Plate at Bottom */}
-                <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[24px] p-5 shadow-2xl flex items-center justify-between border border-white/20">
                   <div>
-                    <h4 className="text-base font-bold text-[#1A1A1A]">{room.name}</h4>
-                    <div className="flex items-center gap-3 mt-1.5">
+                    <h4 className="text-lg font-bold text-[#1A1A1A]">{room.name}</h4>
+                    <div className="flex items-center gap-4 mt-1.5">
                       <div className="flex items-center gap-1.5">
-                        <Users className="w-3.5 h-3.5 text-[#ABABAB]" />
+                        <Users className="w-4 h-4 text-[#ABABAB]" />
                         <span className="text-xs text-[#747474]">до {room.seats} мест</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Projector className="w-3.5 h-3.5 text-[#ABABAB]" />
+                        <Projector className="w-4 h-4 text-[#ABABAB]" />
                         <span className="text-xs text-[#747474]">
                           {room.hasProjection ? "С проекцией" : "Без проекции"}
                         </span>
@@ -182,13 +200,12 @@ export function Step2Location() {
                     </div>
                   </div>
 
-                  {/* Select Button/Checkbox */}
                   <div 
-                    className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all ${
-                      isSelected ? "bg-[#FF6022] text-white shadow-md shadow-[#FF6022]/30" : "bg-gray-100 text-[#ABABAB] group-hover:bg-gray-200"
+                    className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                      isSelected ? "bg-[#FF6022] text-white shadow-lg shadow-orange-500/30" : "bg-gray-50 text-[#D1D1D1] group-hover:bg-gray-100"
                     }`}
                   >
-                    <Check className="w-5 h-5" />
+                    <Check className="w-6 h-6" />
                   </div>
                 </div>
               </div>
@@ -197,56 +214,104 @@ export function Step2Location() {
         </div>
       </div>
 
-      {/* Cafe zones */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <Coffee className="w-5 h-5 text-[#FF6022]" />
-          <h3 className="text-[#1A1A1A] font-medium">Столы в зоне кафе</h3>
+      {/* ==================== DIVIDER ==================== */}
+      <div className="relative my-10">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-dashed border-[#E0E0E0]" />
         </div>
-        <p className="text-xs text-[#747474] mb-3">Бронирование на 3 часа</p>
+        <div className="relative flex justify-center">
+          <span className="bg-[#F7F7F7] px-6 py-1 rounded-full border border-[#E0E0E0] text-[10px] font-bold text-[#ABABAB] uppercase tracking-[0.2em]">
+            Дополнительно
+          </span>
+        </div>
+      </div>
 
-        <div className="grid grid-cols-1 gap-3">
+      {/* ==================== CAFE ZONES ==================== */}
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-1.5">
+          <Armchair className="w-5 h-5 text-[#FF6022]" />
+          <h3 className="text-[#1A1A1A] font-medium">Стол для родителей</h3>
+          <span className="ml-auto text-[10px] font-medium text-[#747474] bg-[#F0F0F0] px-2.5 py-1 rounded-full">
+            По желанию
+          </span>
+        </div>
+        <p className="text-xs text-[#747474] mb-1.5">
+          Пока дети веселятся в патируме, взрослые могут расположиться за отдельным столом в зоне кафе.
+        </p>
+        <div className="flex items-center gap-1.5 mb-5">
+          <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center">
+            <UtensilsCrossed className="w-3 h-3 text-[#FF6022]" />
+          </div>
+          <p className="text-xs text-[#FF6022] font-semibold">
+            Депозит можно тратить на блюда из меню
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-5">
           {CAFE_OPTIONS.map((opt) => {
-            const isSelected = state.location === opt.id;
+            const isSelected = state.cafeZones.includes(opt.id);
             return (
-              <motion.button
+              <motion.div
                 key={opt.id}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => handleSelectCafe(opt)}
-                className={`w-full text-left rounded-2xl overflow-hidden bg-white transition-all flex items-center ${
-                  isSelected
-                    ? "ring-2 ring-[#FF6022] shadow-md"
-                    : "ring-1 ring-[#E5E5E5] shadow-sm"
+                className={`relative h-[440px] sm:h-[500px] rounded-[32px] overflow-hidden bg-white transition-all cursor-pointer group ${
+                  isSelected ? "ring-2 ring-[#FF6022] shadow-xl scale-[1.01]" : "ring-1 ring-[#E5E5E5] shadow-sm"
                 }`}
+                onClick={() => handleToggleCafe(opt)}
               >
-                <div className="w-24 h-24 shrink-0">
-                  <ImageWithFallback
-                    src={getPublicUrl(opt.thumbnail)}
-                    alt={opt.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-3 flex-grow relative">
-                  <h4 className="text-sm font-semibold text-[#1A1A1A] pr-6">{opt.name}</h4>
-                  <p className="text-xs text-[#747474] mt-0.5">{opt.description}</p>
-                  <p className="text-xs font-medium text-[#FF6022] mt-1.5">
-                    Депозит: {opt.deposit}
-                  </p>
-                  <p className="text-[10px] text-[#ABABAB] mt-0.5">
-                    {opt.depositNote}
-                  </p>
-                  
-                  <div className={`absolute top-3 right-3 rounded-full p-0.5 ${isSelected ? "bg-[#FF6022]" : "bg-gray-100"}`}>
-                    <Check className={`w-4 h-4 ${isSelected ? "text-white" : "text-gray-300"}`} />
+                <ImageWithFallback
+                  src={getPublicUrl(opt.thumbnail)}
+                  alt={opt.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
+                
+                {(opt as any).badge && (
+                  <div className="absolute top-5 left-5 bg-white/90 backdrop-blur-md text-[#1A1A1A] text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-full z-10 shadow-sm">
+                    {(opt as any).badge}
+                  </div>
+                )}
+
+                <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[24px] p-5 shadow-2xl border border-white/20">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-lg font-bold text-[#1A1A1A] mb-1.5">{opt.name}</h4>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                          <Users className="w-4 h-4 text-[#ABABAB]" />
+                          <span className="text-xs text-[#747474]">до {opt.seats} мест</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Coffee className="w-4 h-4 text-[#ABABAB]" />
+                          <span className="text-xs text-[#747474]">3 часа</span>
+                        </div>
+                      </div>
+                      <div className="inline-flex items-baseline gap-2">
+                        <span className="text-base font-bold text-[#FF6022]">
+                          Депозит {formatDeposit(opt)}
+                        </span>
+                        <span className="text-[10px] text-[#ABABAB] font-semibold uppercase tracking-wider">
+                          {state.isWeekend ? "выходной" : "будни"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div 
+                      className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                        isSelected ? "bg-[#FF6022] text-white shadow-lg shadow-orange-500/30" : "bg-gray-50 text-[#D1D1D1] group-hover:bg-gray-100"
+                      }`}
+                    >
+                      <Check className="w-6 h-6" />
+                    </div>
                   </div>
                 </div>
-              </motion.button>
+              </motion.div>
             );
           })}
         </div>
       </div>
 
-      {/* Details Drawer */}
+      {/* ==================== DETAILS DRAWER ==================== */}
       <Drawer open={!!selectedDetails} onOpenChange={(open) => !open && setSelectedDetails(null)}>
         <DrawerContent className="max-h-[90vh] w-full max-w-lg mx-auto bg-white pt-2 px-2 flex flex-col rounded-t-3xl">
           <div className="mx-auto mt-2 h-1.5 w-12 shrink-0 rounded-full bg-gray-200 mb-4" />
@@ -311,7 +376,7 @@ export function Step2Location() {
               <div className="p-4 bg-white/80 backdrop-blur-md sticky bottom-0 border-t border-gray-100">
                 <Button 
                   onClick={() => {
-                    handleSelectRoom(selectedDetails);
+                    handleSelectRoom(selectedDetails!);
                     setSelectedDetails(null);
                   }}
                   className="w-full h-12 bg-[#FF6022] hover:bg-[#E55015] text-white rounded-xl text-base font-medium shadow-lg shadow-orange-500/20"

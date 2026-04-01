@@ -12,7 +12,7 @@ export function FloatingPrice() {
       case 1: return !!state.packageType;
       case 2: return true; 
       case 3: return true; 
-      case 4: return !!state.location;
+      case 4: return state.packageType === "custom" ? true : !!state.patiroom;
       case 5: return true;
       case 6: return true;
       case 7: return !!state.date && !!state.time;
