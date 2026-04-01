@@ -7,6 +7,13 @@ import { Drawer, DrawerContent, DrawerTitle, DrawerDescription, DrawerClose } fr
 import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
 import { Button } from "./ui/button";
 
+const getPublicUrl = (path: string) => {
+  if (!path) return path;
+  if (path.startsWith('http') || path.startsWith('data:')) return path;
+  return ((import.meta as any).env?.BASE_URL || '/') + path.replace(/^\//, '');
+};
+
+
 const PATIROOMS = [
   {
     id: "patiroom_mechta",
@@ -33,9 +40,9 @@ const PATIROOMS = [
     name: "Аркада",
     seats: 16,
     hasProjection: true,
-    thumbnail: "https://images.unsplash.com/photo-1764813823899-8d76d0c0c850?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGlsZHJlbiUyMGluZG9vciUyMHBsYXlncm91bmQlMjBmdXR1cmlzdGljfGVufDF8fHx8MTc3Mzc1MTc1M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    gallery: ["https://images.unsplash.com/photo-1764813823899-8d76d0c0c850?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGlsZHJlbiUyMGluZG9vciUyMHBsYXlncm91bmQlMjBmdXR1cmlzdGljfGVufDF8fHx8MTc3Mzc1MTc1M3ww&ixlib=rb-4.1.0&q=80&w=1080"],
-    video: "",
+    thumbnail: "/locations/kometa/1.jpg",
+    gallery: ["/locations/kometa/1.jpg", "/locations/kometa/2.jpg"],
+    video: "/locations/kometa/video.mp4",
     description: "Футуристичное пространство для современных детей. Множество интерактивных зон и проекций сделают праздник невероятно увлекательным.",
   },
   {
@@ -43,9 +50,9 @@ const PATIROOMS = [
     name: "Пиксели",
     seats: 12,
     hasProjection: false,
-    thumbnail: "https://images.unsplash.com/photo-1748518557177-fd9ffd0df1f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxraWRzJTIwY3JhZnQlMjB3b3Jrc2hvcCUyMHNsaW1lJTIwbWFraW5nfGVufDF8fHx8MTc3Mzc1MTc1Mnww&ixlib=rb-4.1.0&q=80&w=1080",
-    gallery: ["https://images.unsplash.com/photo-1748518557177-fd9ffd0df1f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxraWRzJTIwY3JhZnQlMjB3b3Jrc2hvcCUyMHNsaW1lJTIwbWFraW5nfGVufDF8fHx8MTc3Mzc1MTc1Mnww&ixlib=rb-4.1.0&q=80&w=1080"],
-    video: "",
+    thumbnail: "/locations/mechta/1.jpg",
+    gallery: ["/locations/mechta/1.jpg", "/locations/mechta/2.jpg"],
+    video: "/locations/mechta/video.mp4",
     description: "Стильная и компактная комната для творческих мастер-классов и камерных дней рождения. Уютная обстановка для небольшой компании.",
   },
 ];
@@ -132,7 +139,7 @@ export function Step2Location() {
                 {/* Background Image */}
                 <div className="relative h-72 sm:h-80 w-full">
                   <ImageWithFallback
-                    src={room.thumbnail}
+                    src={getPublicUrl(room.thumbnail)}
                     alt={room.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
@@ -214,7 +221,7 @@ export function Step2Location() {
               >
                 <div className="w-24 h-24 shrink-0">
                   <ImageWithFallback
-                    src={opt.thumbnail}
+                    src={getPublicUrl(opt.thumbnail)}
                     alt={opt.name}
                     className="w-full h-full object-cover"
                   />
@@ -249,7 +256,7 @@ export function Step2Location() {
               <div className="relative rounded-2xl overflow-hidden mb-4 bg-black w-full flex items-center justify-center">
                 {selectedDetails.video ? (
                   <video
-                    src={selectedDetails.video}
+                    src={getPublicUrl(selectedDetails.video)}
                     controls
                     autoPlay
                     loop
@@ -261,7 +268,7 @@ export function Step2Location() {
                     <CarouselContent className="h-full ml-0">
                       {selectedDetails.gallery.map((img, idx) => (
                         <CarouselItem key={idx} className="h-full pl-0">
-                          <img src={img} alt="" className="w-full h-full object-contain" />
+                          <img src={getPublicUrl(img)} alt="" className="w-full h-full object-contain" />
                         </CarouselItem>
                       ))}
                     </CarouselContent>
