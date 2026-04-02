@@ -21,6 +21,7 @@ export interface WizardState {
   // Step 7 — Food
   includeFood: boolean;
   cakeChoice: string | null;
+  fillingChoice: string | null;
   cakeCustomText: string;
   // Step 7 — Date/time
   date: Date | null;
@@ -60,6 +61,7 @@ const initialState: WizardState = {
   masterClasses: [],
   includeFood: false,
   cakeChoice: null,
+  fillingChoice: null,
   cakeCustomText: "",
   date: null,
   time: "",
@@ -79,7 +81,7 @@ export function useWizard() {
   return ctx;
 }
 
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 10;
 
 const PACKAGE_PRICES: Record<string, [number, number]> = {
   custom:    [0, 0],
@@ -175,7 +177,10 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
     if (state.includeFood && state.packageType === "basic") total += 12070;
 
     // Cake
-    if (state.cakeChoice && state.cakeChoice !== "none") total += 5000;
+    if (state.packageType === "custom" && state.cakeChoice) {
+      if (state.cakeChoice.startsWith("cake")) total += 8400; // All standard catalog cakes are 8400
+      else total += 8400; // Fallback
+    }
 
     return total;
   })();

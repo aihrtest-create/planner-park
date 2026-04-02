@@ -1,0 +1,406 @@
+import { useWizard } from "./wizard-context";
+import { motion, AnimatePresence } from "motion/react";
+import { Check, Cake, Info, X } from "lucide-react";
+import { useState } from "react";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
+
+const getPublicUrl = (path: string) => {
+  if (!path) return path;
+  if (path.startsWith('http') || path.startsWith('data:')) return path;
+  return ((import.meta as any).env?.BASE_URL || '/') + path.replace(/^\//, '');
+};
+
+const CAKES = [
+  
+  {
+    "id": "cake_2",
+    "name": "Торт 2",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p2_4.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_3",
+    "name": "Торт 3",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p2_5.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_4",
+    "name": "Торт 4",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p2_6.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_5",
+    "name": "Торт 5",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p2_7.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_6",
+    "name": "Торт 6",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p2_8.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_7",
+    "name": "Торт 7",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p2_9.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_8",
+    "name": "Торт 8",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p2_10.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_9",
+    "name": "Торт 9",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p2_11.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_10",
+    "name": "Торт 10",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p2_12.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_11",
+    "name": "Торт 11",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p2_13.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_12",
+    "name": "Торт 12",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p2_14.jpeg",
+    "price": "8 400 ₽"
+  },
+  
+  {
+    "id": "cake_14",
+    "name": "Торт 14",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_16.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_15",
+    "name": "Торт 15",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_17.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_16",
+    "name": "Торт 16",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_18.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_17",
+    "name": "Торт 17",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_19.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_18",
+    "name": "Торт 18",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_20.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_19",
+    "name": "Торт 19",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_21.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_20",
+    "name": "Торт 20",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_22.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_21",
+    "name": "Торт 21",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_23.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_22",
+    "name": "Торт 22",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_24.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_23",
+    "name": "Торт 23",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_25.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_24",
+    "name": "Торт 24",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_26.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_25",
+    "name": "Торт 25",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_27.jpeg",
+    "price": "8 400 ₽"
+  },
+  {
+    "id": "cake_26",
+    "name": "Торт 26",
+    "emoji": "🎂",
+    "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
+    "gradient": "from-white to-white",
+    "image": "/cakes/image_p3_28.jpeg",
+    "price": "8 400 ₽"
+  }
+];
+
+const FILLINGS = [
+  { id: "filling_1", name: "Лаванда-Ягодный микс", image: "/fillings/filling_1.jpg", kkal: "256 Ккал", desc: "Белки 5.4г, жиры 12.5г, углеводы 30г" },
+  { id: "filling_2", name: "Кокос-Малина", image: "/fillings/filling_2.jpg", kkal: "284 Ккал", desc: "Белки 5.7г, жиры 15.7г, углеводы 30г" },
+  { id: "filling_3", name: "Красный бархат", image: "/fillings/filling_3.jpg", kkal: "280 Ккал", desc: "Белки 4.2г, жиры 16.7г, углеводы 28г" },
+  { id: "filling_4", name: "Фисташка-Клубника", image: "/fillings/filling_4.jpg", kkal: "273 Ккал", desc: "Белки 6г, жиры 14.8г, углеводы 28.8г" },
+  { id: "filling_5", name: "Ванильный", image: "/fillings/filling_5.jpg", kkal: "350 Ккал", desc: "Белки 5.3г, жиры 22.8г, углеводы 31.6г" },
+  { id: "filling_6", name: "Сникерс", image: "/fillings/filling_6.jpg", kkal: "316 Ккал", desc: "Белки 6.2г, жиры 20.3г, углеводы 27г" },
+  { id: "filling_7", name: "Миндаль-Вишня", image: "/fillings/filling_7.jpg", kkal: "306 Ккал", desc: "Белки 6.81г, жиры 18.03г, углеводы 26.70г" },
+];
+
+
+export function StepCakes() {
+  const { state, updateState } = useWizard();
+  const [bottomSheetCake, setBottomSheetCake] = useState<string | null>(null);
+
+  const openBottomSheet = (id: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    setBottomSheetCake(id);
+  };
+
+  const bottomSheetDetails = CAKES.find(mc => mc.id === bottomSheetCake);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 30 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -30 }}
+      transition={{ duration: 0.3 }}
+      className="px-4 pb-6"
+    >
+      <div className="text-center mb-5">
+        <h2 className="text-xl text-[#1A1A1A] mb-1">Праздничный торт</h2>
+        <p className="text-sm text-[#747474]">
+          Выберите идеальный торт для вашего праздника
+        </p>
+      </div>
+
+
+
+      <div className="flex items-center gap-2 mb-4">
+        <Cake className="w-5 h-5 text-[#FF6022]" />
+        <h3 className="text-[#1A1A1A]">Тематические торты</h3>
+      </div>
+
+      {/* Grid of Cakes */}
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        {CAKES.map((mc) => {
+          const isSelected = state.cakeChoice === mc.id;
+          return (
+            <motion.div
+              key={mc.id}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => openBottomSheet(mc.id)}
+              className={`relative aspect-[4/5] sm:h-[280px] rounded-[24px] overflow-hidden transition-all cursor-pointer group ${
+                isSelected
+                  ? "ring-2 ring-[#FF6022] shadow-xl scale-[1.01]"
+                  : "ring-1 ring-[#E5E5E5] shadow-sm"
+              }`}
+            >
+              {/* Image / Gradient Placeholder */}
+              <div className={`absolute inset-0 flex items-center justify-center bg-white`}>
+                {(mc as any).image ? (
+                  <ImageWithFallback src={getPublicUrl((mc as any).image)} alt={mc.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 mix-blend-multiply" />
+                ) : (
+                  <span className="text-6xl sm:text-7xl filter drop-shadow-md pb-6 group-hover:scale-110 transition-transform duration-500">{mc.emoji}</span>
+                )}
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+
+              {/* Top details: Checkmark */}
+              <div className="absolute top-2 right-2 z-10">
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                    isSelected ? "bg-[#FF6022] border-2 border-white text-white shadow-md shadow-[#FF6022]/40" : "bg-white/40 backdrop-blur-md border border-white/60 text-transparent"
+                }`}>
+                   <Check className="w-4 h-4" />
+                </div>
+              </div>
+
+              {/* Bottom pill-like panel */}
+              <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
+                 <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{mc.name}</h4>
+                 <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">{state.packageType === "custom" ? mc.price : "Включен в пакет"}</p>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {state.cakeChoice && (
+        <div className="bg-[#FF6022]/5 rounded-2xl p-4 mb-6 text-center border border-[#FF6022]/20">
+          <p className="text-sm text-[#FF6022] flex flex-col">
+            <span>Выбран: <span className="font-semibold">{CAKES.find(c => c.id === state.cakeChoice)?.name}</span></span>
+            {state.fillingChoice && <span className="text-xs opacity-80 mt-0.5">Начинка: {FILLINGS.find(f => f.id === state.fillingChoice)?.name}</span>}
+          </p>
+        </div>
+      )}
+
+
+
+      {/* Bottom Sheet Modal (Variant 3) */}
+      <AnimatePresence>
+        {bottomSheetCake && bottomSheetDetails && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 z-[90] backdrop-blur-sm"
+              onClick={() => setBottomSheetCake(null)}
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[100] flex flex-col pb-safe"
+            >
+              <div className="w-12 h-1.5 bg-[#E5E5E5] rounded-full mx-auto mt-4 mb-2" />
+              <div className="px-5 pb-8 pt-2 overflow-y-auto">
+                <div className="mb-5 flex flex-col items-center text-center">
+                   <h3 className="text-2xl font-bold text-[#1A1A1A] leading-tight mb-2">Выберите начинку</h3>
+                   <p className="text-xs font-semibold text-[#747474] bg-[#F5F5F5] px-3 py-1.5 rounded-full">
+                     Опция для: {bottomSheetDetails.name} <span className="mx-1">•</span> <span className="text-[#FF6022]">{state.packageType === 'custom' ? bottomSheetDetails.price : 'Включен в пакет'}</span>
+                   </p>
+                </div>
+                
+                <div className="flex overflow-x-auto gap-3 pb-4 snap-x snap-mandatory -mx-5 px-5 select-none no-scrollbar">
+                   {FILLINGS.map((fill) => (
+                      <div key={fill.id} onClick={() => updateState({ fillingChoice: fill.id })} className={`shrink-0 w-[140px] rounded-2xl overflow-hidden border-2 transition-all cursor-pointer snap-start ${state.fillingChoice === fill.id ? 'border-[#FF6022] bg-[#FF6022]/5 shadow-sm' : 'border-[#E5E5E5] bg-white'}`}>
+                         <div className="aspect-square bg-white flex items-center justify-center relative p-1 object-cover">
+                            <img src={getPublicUrl(fill.image)} className="w-full h-full object-cover mix-blend-multiply rounded-xl" alt={fill.name}/>
+                         </div>
+                         <div className="p-2.5">
+                            <p className="text-xs font-bold text-[#1A1A1A] leading-[1.1] mb-1">{fill.name}</p>
+                            <p className="text-[10px] text-[#FF6022] font-semibold">{fill.kkal}</p>
+                         </div>
+                      </div>
+                   ))}
+                </div>
+
+                <div className="flex gap-3 mt-4">
+                  {state.cakeChoice === bottomSheetDetails.id && (
+                     <button
+                        onClick={() => {
+                           updateState({ cakeChoice: null, fillingChoice: null });
+                           setBottomSheetCake(null);
+                        }}
+                        className="py-3.5 px-6 rounded-xl font-medium text-center bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+                     >
+                       Убрать
+                     </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      updateState({ cakeChoice: bottomSheetCake });
+                      setBottomSheetCake(null);
+                    }}
+                    disabled={!state.fillingChoice}
+                    className="flex-1 bg-[#FF6022] text-white py-3.5 rounded-xl font-medium shadow-md transition-all active:scale-[0.98] disabled:opacity-50 disabled:shadow-none"
+                  >
+                    {state.fillingChoice ? "Сохранить выбор" : "Выберите начинку"}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}

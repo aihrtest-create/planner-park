@@ -3,14 +3,7 @@ import { motion } from "motion/react";
 import { Check, UtensilsCrossed, Cake, Upload } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
-const CAKES = [
-  { id: "minecraft", name: "Майнкрафт", emoji: "⛏️", price: "5 000 ₽" },
-  { id: "princess", name: "Принцесса", emoji: "👸", price: "5 000 ₽" },
-  { id: "superhero", name: "Супергерой", emoji: "🦸", price: "5 000 ₽" },
-  { id: "unicorn", name: "Единорог", emoji: "🦄", price: "5 000 ₽" },
-  { id: "space", name: "Космос", emoji: "🚀", price: "5 000 ₽" },
-  { id: "custom_cake", name: "Свой дизайн", emoji: "✨", price: "от 5 000 ₽" },
-];
+
 
 const FOOD_ITEMS = [
   { name: "Пицца Маргарита", emoji: "🍕" },
@@ -33,7 +26,7 @@ export function Step5Food() {
       className="px-4 pb-6"
     >
       <div className="text-center mb-5">
-        <h2 className="text-xl text-[#1A1A1A] mb-1">Питание и торт</h2>
+        <h2 className="text-xl text-[#1A1A1A] mb-1">Питание</h2>
         <p className="text-sm text-[#747474]">Вкуснейшие угощения для гостей</p>
       </div>
 
@@ -108,61 +101,7 @@ export function Step5Food() {
         )}
       </div>
 
-      {/* Cakes */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <Cake className="w-5 h-5 text-[#6C4AED]" />
-          <h3 className="text-[#1A1A1A]">Тематические торты</h3>
-        </div>
 
-        <div className="grid grid-cols-3 gap-3">
-          {CAKES.map((cake) => {
-            const isSelected = state.cakeChoice === cake.id;
-            return (
-              <motion.button
-                key={cake.id}
-                whileTap={{ scale: 0.95 }}
-                onClick={() =>
-                  updateState({
-                    cakeChoice: state.cakeChoice === cake.id ? null : cake.id,
-                  })
-                }
-                className={`p-3 rounded-xl text-center bg-white transition-all ${
-                  isSelected
-                    ? "ring-2 ring-[#6C4AED] shadow-md"
-                    : "ring-1 ring-[#E5E5E5] shadow-sm"
-                }`}
-              >
-                <div className="text-3xl mb-1">{cake.emoji}</div>
-                <h4 className="text-xs text-[#1A1A1A]">{cake.name}</h4>
-                <p className="text-[10px] text-[#FF6022] mt-0.5">{cake.price}</p>
-                {isSelected && (
-                  <Check className="w-3.5 h-3.5 text-[#6C4AED] mx-auto mt-1" />
-                )}
-              </motion.button>
-            );
-          })}
-        </div>
-
-        {state.cakeChoice === "custom_cake" && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-3"
-          >
-            <textarea
-              value={state.cakeCustomText}
-              onChange={(e) => updateState({ cakeCustomText: e.target.value })}
-              placeholder="Опишите желаемый дизайн торта..."
-              className="w-full bg-white border border-[#E5E5E5] rounded-xl p-3 text-sm resize-none h-20 focus:outline-none focus:ring-2 focus:ring-[#FF6022]"
-            />
-            <button className="mt-2 flex items-center gap-2 text-sm text-[#FF6022] bg-[#FF6022]/5 px-4 py-2 rounded-xl border border-[#FF6022]/20">
-              <Upload className="w-4 h-4" />
-              Загрузить референс
-            </button>
-          </motion.div>
-        )}
-      </div>
 
     </motion.div>
   );

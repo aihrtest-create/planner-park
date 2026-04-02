@@ -10,6 +10,7 @@ import { Step5Food } from "./components/step5-food";
 import { Step6DateTime } from "./components/step6-datetime";
 import { Step7Summary } from "./components/step7-summary";
 import { StepShows } from "./components/step-shows";
+import { StepCakes } from "./components/step-cakes";
 import { FloatingPrice } from "./components/floating-price";
 import { AnimatePresence } from "motion/react";
 import HParkLogo from "../imports/HParkLogo";
@@ -30,8 +31,9 @@ function WizardContent() {
       case 5: return <StepShows key="step-shows" />;
       case 6: return <Step4MasterClasses key="step5" />;
       case 7: return <Step5Food key="step6" />;
-      case 8: return <Step6DateTime key="step7" />;
-      case 9: return <Step7Summary key="step8" />;
+      case 8: return <StepCakes key="step-cakes" />;
+      case 9: return <Step6DateTime key="step7" />;
+      case 10: return <Step7Summary key="step8" />;
       default: return null;
     }
   };

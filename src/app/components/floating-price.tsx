@@ -16,8 +16,9 @@ export function FloatingPrice() {
       case 5: return true; 
       case 6: return true;
       case 7: return true;
-      case 8: return !!state.date && !!state.time;
-      case 9: return !!state.contactName && !!state.contactPhone;
+      case 8: return true;
+      case 9: return !!state.date && !!state.time;
+      case 10: return !!state.contactName && !!state.contactPhone;
       default: return true;
     }
   })();
