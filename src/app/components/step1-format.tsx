@@ -95,13 +95,14 @@ export function Step1Format() {
   const { state, updateState, nextStep } = useWizard();
 
   const handleSelect = (id: typeof PACKAGES[number]["id"]) => {
-    updateState({ packageType: id });
+    const includeFood = id === "premium" || id === "exclusive";
+    updateState({ packageType: id, includeFood });
   };
 
   const handleWeekendToggle = (isWeekend: boolean) => {
     // If switching to weekend and basic is selected, reset
     if (isWeekend && state.packageType === "basic") {
-      updateState({ isWeekend: true, packageType: null });
+      updateState({ isWeekend: true, packageType: null, includeFood: false });
     } else {
       updateState({ isWeekend });
     }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useWizard } from "./wizard-context";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Play, Check, ChevronLeft, ChevronRight, Users, Clock, Zap } from "lucide-react";
+import { X, Play, Check, ChevronLeft, ChevronRight, Users, Clock, Zap, Info } from "lucide-react";
 
 import rockyImg1 from "../../assets/rocky-quest-1.png";
 import rockyImg2 from "../../assets/rocky-quest-2.png";
@@ -355,64 +355,64 @@ export function Step2Quests() {
                   transition={{ delay: i * 0.08 }}
                 >
                   <div
-                    className="relative rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-all duration-200"
-                    style={{
-                      outline: isSelected ? `3px solid ${quest.color}` : "none",
-                      outlineOffset: "2px",
-                    }}
-                    onClick={() => {
-                      setOpenQuest(quest);
-                      updateState({ isQuestPopupOpen: true });
-                    }}
+                    className={`relative h-[300px] sm:h-[350px] rounded-[32px] overflow-hidden bg-white transition-all cursor-pointer group ${
+                      isSelected ? "ring-2 shadow-xl scale-[1.01]" : "ring-1 ring-[#E5E5E5] shadow-sm"
+                    }`}
+                    style={isSelected ? { outline: `2px solid ${quest.color}`, outlineOffset: "2px" } : {}}
+                    onClick={() => selectPhygital(quest.id)}
                   >
-                    {/* Background image */}
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={quest.photos[0]}
-                        alt={quest.title}
-                        className="w-full h-full object-cover scale-105"
-                      />
-                      {/* Gradient overlay */}
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          background: `linear-gradient(160deg, ${quest.gradientFrom}99 0%, ${quest.gradientTo}EE 100%)`,
-                        }}
-                      />
+                    <img
+                      src={quest.photos[0]}
+                      alt={quest.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
 
-                      {/* Content on card */}
-                      <div className="absolute inset-0 p-5 flex flex-col justify-between">
-                        <div className="flex items-start justify-between">
-                          <div className="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full">
-                            🦊 С Лисом Рокки
+                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-[#1A1A1A] text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full z-10 shadow-sm flex items-center gap-1.5">
+                      <span className="text-base">🦊</span> С Лисом Рокки
+                    </div>
+
+                    <button 
+                      className="absolute top-4 right-4 bg-gradient-to-tr from-[#FF6022] to-[#FF8A00] text-white text-[11px] font-bold uppercase tracking-wider px-4 py-2 rounded-full flex items-center gap-2 z-10 transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-[#FF6022]/40"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenQuest(quest);
+                        updateState({ isQuestPopupOpen: true });
+                      }}
+                    >
+                      <Info className="w-4 h-4" />Подробнее
+                    </button>
+
+                    <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[24px] p-4 shadow-2xl flex items-center justify-between border border-white/20">
+                      <div className="flex-1 min-w-0 pr-3">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                          <span className="text-xl leading-none">{quest.emoji}</span>
+                          <h4 className="text-[15px] font-bold text-[#1A1A1A] truncate">{quest.title}</h4>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          <div className="flex items-center gap-1 bg-[#F5F5F5] rounded-md px-2 py-1">
+                            <Clock className="w-3 h-3 text-[#747474]" />
+                            <span className="text-[10px] text-[#1A1A1A] font-medium">{quest.duration} мин</span>
                           </div>
-                          {isSelected && (
-                            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                              <Check className="w-4 h-4" style={{ color: quest.color }} />
+                          <div className="flex items-center gap-1 bg-[#F5F5F5] rounded-md px-2 py-1">
+                            <Users className="w-3 h-3 text-[#747474]" />
+                            <span className="text-[10px] text-[#1A1A1A] font-medium">до {quest.maxKids} детей</span>
+                          </div>
+                          {quest.addonPrice > 0 && (
+                            <div className="flex items-center gap-1 bg-[#F5F5F5] rounded-md px-2 py-1">
+                              <span className="text-[10px] text-[#1A1A1A] font-medium">+{quest.addonPrice.toLocaleString("ru-RU")} ₽</span>
                             </div>
                           )}
                         </div>
+                      </div>
 
-                        <div>
-                          <div className="text-3xl mb-1">{quest.emoji}</div>
-                          <h3 className="text-white text-xl font-bold mb-0.5">{quest.title}</h3>
-                          <p className="text-white/80 text-sm mb-4">{quest.subtitle}</p>
-
-                          <div className="flex items-center justify-between">
-                            <div className="flex gap-2">
-                              <div className="bg-white/20 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full">
-                                ⏱ {quest.duration} мин.
-                              </div>
-                              <div className="bg-white/20 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full">
-                                +{quest.addonPrice.toLocaleString("ru-RU")} ₽
-                              </div>
-                            </div>
-                            <div className="bg-white text-[#1A1A1A] text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1">
-                              <Play className="w-3 h-3 fill-current" />
-                              Подробнее
-                            </div>
-                          </div>
-                        </div>
+                      <div 
+                        className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                          isSelected ? "text-white shadow-lg" : "bg-gray-50 text-[#D1D1D1] group-hover:bg-gray-100"
+                        }`}
+                        style={isSelected ? { backgroundColor: quest.color, boxShadow: `0 10px 15px -3px ${quest.color}4d` } : {}}
+                      >
+                        <Check className="w-5 h-5 flex-shrink-0" />
                       </div>
                     </div>
                   </div>
@@ -443,31 +443,40 @@ export function Step2Quests() {
             <p className="text-xs text-[#ABABAB]">Классический квест в парке с готовым сценарием под ключ</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3 mb-6">
             {CLASSIC_QUESTS.map((quest, i) => {
               const isSelected = state.questType === quest.id;
               return (
-                <motion.button
+                <motion.div
                   key={quest.id}
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.04 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => selectClassic(quest.id as ClassicId)}
-                  className={`relative flex items-center gap-2.5 p-3.5 rounded-2xl text-left transition-all ${
+                  className={`relative aspect-[4/5] sm:h-[220px] rounded-[24px] overflow-hidden transition-all cursor-pointer group ${
                     isSelected
-                      ? "bg-[#1A1A1A] text-white"
-                      : "bg-white ring-1 ring-[#E5E5E5] text-[#1A1A1A]"
+                      ? "ring-2 ring-[#FF6022] shadow-xl scale-[1.01]"
+                      : "ring-1 ring-[#E5E5E5] shadow-sm"
                   }`}
                 >
-                  <span className="text-xl shrink-0">{quest.emoji}</span>
-                  <span className="text-sm font-medium leading-tight">{quest.name}</span>
-                  {isSelected && (
-                    <div className="absolute top-2 right-2">
-                      <Check className="w-3.5 h-3.5 text-white" />
+                  <div className={`absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center`}>
+                    <span className="text-6xl sm:text-7xl filter drop-shadow-md pb-6 group-hover:scale-110 transition-transform duration-500">{quest.emoji}</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+
+                  <div className="absolute top-2 right-2 flex justify-end items-start z-10">
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                        isSelected ? "bg-[#FF6022] border-2 border-white text-white shadow-md shadow-[#FF6022]/40" : "bg-white/40 backdrop-blur-md border border-white/60 text-transparent"
+                    }`}>
+                       <Check className="w-4 h-4" />
                     </div>
-                  )}
-                </motion.button>
+                  </div>
+
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
+                     <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{quest.name}</h4>
+                  </div>
+                </motion.div>
               );
             })}
           </div>

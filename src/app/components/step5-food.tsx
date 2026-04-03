@@ -1,21 +1,52 @@
 import { useWizard } from "./wizard-context";
-import { motion } from "motion/react";
-import { Check, UtensilsCrossed, Cake, Upload } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { Check, UtensilsCrossed, Minus, Plus, ChevronRight, X } from "lucide-react";
+import { useState } from "react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { FOOD_MENU, FoodCategory, FoodItem } from "../data/foodMenu";
 
+const getPublicUrl = (path: string) => {
+  if (!path) return path;
+  if (path.startsWith('http') || path.startsWith('data:')) return path;
+  return ((import.meta as any).env?.BASE_URL || '/') + path.replace(/^\//, '');
+};
 
-
-const FOOD_ITEMS = [
-  { name: "Пицца Маргарита", emoji: "🍕" },
-  { name: "Наггетсы", emoji: "🍗" },
-  { name: "Картофель фри", emoji: "🍟" },
-  { name: "Морс ягодный", emoji: "🧃" },
-  { name: "Фруктовая тарелка", emoji: "🍉" },
+const KIDS_SET_ITEMS = [
+  { name: "Пицца Маргарита", quantity: 2, emoji: "🍕" },
+  { name: "Пицца Пепперони", quantity: 1, emoji: "🍕" },
+  { name: "Пицца 4 сыра", quantity: 1, emoji: "🧀" },
+  { name: "Наггетсы", quantity: 4, emoji: "🍗" },
+  { name: "Картофель фри", quantity: 4, emoji: "🍟" },
+  { name: "Овощной котёнок", quantity: 4, emoji: "🥗" },
+  { name: "Фруктовый медвеж-к", quantity: 2, emoji: "🍉" },
+  { name: "Морс клюквенный (1л)", quantity: 4, emoji: "🧃" },
+  { name: "Вода б/г (1л)", quantity: 4, emoji: "💧" },
 ];
 
 export function Step5Food() {
   const { state, updateState } = useWizard();
-  const isCustom = state.packageType === "custom";
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  // Is Kids Set paid? Basic or Custom = paid. Premium or Exclusive = included (but can be removed)
+  const isPaidSet = state.packageType === "basic" || state.packageType === "custom";
+
+  const handleUpdateItemQty = (id: string, delta: number) => {
+    const current = state.customFood[id] || 0;
+    const next = Math.max(0, current + delta);
+    updateState({ customFood: { ...state.customFood, [id]: next } });
+  };
+
+  const getCategoryCount = (categoryId: string) => {
+    const cat = FOOD_MENU.find(c => c.id === categoryId);
+    if (!cat) return 0;
+    return cat.items.reduce((sum, item) => sum + (state.customFood[item.id] || 0), 0);
+  };
+
+  const getTotalCustomItems = () => {
+    return Object.values(state.customFood).reduce((sum, qty) => sum + qty, 0);
+  };
+
+  const activeCategoryData = FOOD_MENU.find(c => c.id === activeCategory);
 
   return (
     <motion.div
@@ -30,78 +61,233 @@ export function Step5Food() {
         <p className="text-sm text-[#747474]">Вкуснейшие угощения для гостей</p>
       </div>
 
-      {/* Kids meal */}
+      {/* 1. Набор детской еды */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-3">
           <UtensilsCrossed className="w-5 h-5 text-[#FF6022]" />
-          <h3 className="text-[#1A1A1A]">Детский обед</h3>
+          <h3 className="text-[#1A1A1A] font-semibold">Готовое решение</h3>
         </div>
 
-        <motion.button
-          whileTap={{ scale: 0.98 }}
-          onClick={() => updateState({ includeFood: !state.includeFood })}
-          className={`w-full rounded-2xl overflow-hidden bg-white transition-all ${
-            state.includeFood
-              ? "ring-2 ring-[#FF6022] shadow-md"
-              : "ring-1 ring-[#E5E5E5] shadow-sm"
-          }`}
+        <motion.div
+          animate={{
+             backgroundColor: state.includeFood ? "#FFF5F2" : "#FFFFFF",
+             boxShadow: state.includeFood ? "0 10px 30px -10px rgba(255, 96, 34, 0.2)" : "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
+             borderColor: state.includeFood ? "#FF6022" : "#E5E5E5"
+          }}
+          className="w-full rounded-3xl overflow-hidden border-2 transition-all flex flex-col relative"
         >
-          <div className="relative h-40">
-            <ImageWithFallback
-              src="https://images.unsplash.com/photo-1755862922067-8a0135afc1bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGlsZHJlbiUyMHBhcnR5JTIwZm9vZCUyMG51Z2dldHMlMjB0YWJsZSUyMHNwcmVhZHxlbnwxfHx8fDE3NzM3NTE3NTl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-              alt="Детский обед"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            {state.includeFood && (
-              <div className="absolute top-3 right-3 bg-[#FF6022] rounded-full p-1">
-                <Check className="w-5 h-5 text-white" />
-              </div>
-            )}
-            <div className="absolute bottom-3 left-4 right-4">
-              <div className="flex items-end justify-between">
+           {/* Top Image Section */}
+           <div 
+              className="relative h-56 bg-white cursor-pointer group m-1 rounded-[24px] overflow-hidden" 
+              onClick={() => updateState({ includeFood: !state.includeFood })}
+           >
+              <ImageWithFallback
+                src={getPublicUrl("/images/food/kids_set.png")}
+                alt="Набор детской еды"
+                className="w-full h-full object-cover mix-blend-multiply group-hover:scale-[1.02] transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+              
+              {/* Badge for Included Packages */}
+              {!isPaidSet && state.includeFood && (
+                <div className="absolute top-4 left-0 bg-[#FF6022] text-white px-5 py-2 font-black text-sm uppercase tracking-wider shadow-lg rounded-r-xl border-y-2 border-r-2 border-white/20 z-10">
+                  Включено в пакет
+                </div>
+              )}
+
+              {state.includeFood && (
+                <div className="absolute top-4 right-4 bg-[#FF6022] rounded-full p-1.5 shadow-md z-10 transition-transform scale-in">
+                  <Check className="w-5 h-5 text-white" />
+                </div>
+              )}
+              
+              {/* Info overlap */}
+              <div className="absolute bottom-3 left-4 right-4 z-10 flex items-end justify-between pointer-events-none">
                 <div>
-                  <p className="text-white text-sm">Комплексный детский обед</p>
-                  {isCustom && (
-                    <p className="text-white/80 text-xs">12 070 ₽ (при отдельном заказе)</p>
-                  )}
+                  <h4 className="text-white font-bold text-xl leading-tight mb-0.5">Набор детской еды</h4>
+                  <p className="text-[#FFD166] font-bold text-sm">
+                    {isPaidSet ? "12 070 ₽" : "12 070 ₽"} 
+                  </p>
                 </div>
                 <div
-                  className={`px-3 py-1 rounded-full text-sm ${
+                  className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors pointer-events-auto shadow-sm ${
                     state.includeFood
-                      ? "bg-[#FF6022] text-white"
-                      : "bg-white/90 text-[#1A1A1A]"
+                      ? "bg-[#FF6022] text-white shadow-[#FF6022]/40"
+                      : "bg-white text-[#1A1A1A]"
                   }`}
+                  onClick={(e) => {
+                     e.stopPropagation();
+                     updateState({ includeFood: !state.includeFood });
+                  }}
                 >
-                  {state.includeFood ? "Добавлено" : "Добавить"}
+                  {state.includeFood ? "Выбрано" : "Добавить"}
                 </div>
               </div>
-            </div>
-          </div>
-        </motion.button>
+           </div>
 
-        {state.includeFood && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            className="mt-3 bg-[#FF6022]/5 rounded-2xl p-4 border border-[#FF6022]/10"
+           {/* Bottom Composition Section */}
+           <div className="p-4 px-5 bg-transparent border-t border-black/5">
+             <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-semibold text-[#FF6022] uppercase tracking-wider">Состав (на 8-10 детей):</p>
+             </div>
+             <div className="flex flex-wrap gap-2 relative z-0">
+               {KIDS_SET_ITEMS.map((item, idx) => (
+                 <span
+                   key={idx}
+                   className={`text-xs font-medium px-3 py-1.5 rounded-full border flex items-center gap-1 shadow-sm transition-colors ${state.includeFood ? "bg-white border-[#FF6022]/20 text-[#1A1A1A]" : "bg-[#F8F9FA] border-[#E5E5E5] text-[#747474]"}`}
+                 >
+                   <span className={state.includeFood ? "opacity-100" : "opacity-70"}>{item.emoji}</span> 
+                   <span>{item.name}</span>
+                   <span className={state.includeFood ? "text-[#747474] ml-1 font-bold" : "text-[#A3A3A3] ml-1"}>x{item.quantity}</span>
+                 </span>
+               ))}
+             </div>
+           </div>
+        </motion.div>
+        
+        {/* Helper Note for Premium/Exclusive subtraction */}
+        {!isPaidSet && !state.includeFood && (
+          <motion.p 
+             initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+             className="text-xs text-[#FF6022] font-semibold text-center mt-3"
           >
-            <p className="text-xs text-[#747474] mb-2">В комплект входит:</p>
-            <div className="flex flex-wrap gap-2">
-              {FOOD_ITEMS.map((item) => (
-                <span
-                  key={item.name}
-                  className="bg-white text-[#1A1A1A] text-xs px-3 py-1.5 rounded-full border border-[#E5E5E5]"
-                >
-                  {item.emoji} {item.name}
-                </span>
-              ))}
-            </div>
-          </motion.div>
+             Сумма вашего пакета уменьшена на 12 070 ₽
+          </motion.p>
         )}
       </div>
 
+      {/* 2. Собрать по меню */}
+      <div>
+        <div className="flex items-center justify-between mb-3 mt-8">
+          <div className="flex items-center gap-2">
+             <div className="w-5 h-5 rounded-full bg-[#1A1A1A] flex items-center justify-center text-white text-[10px]">✨</div>
+             <h3 className="text-[#1A1A1A] font-semibold">Дополнительное меню</h3>
+          </div>
+          {getTotalCustomItems() > 0 && (
+             <span className="text-xs bg-[#1A1A1A] text-white px-2 py-0.5 rounded-full font-medium shadow-sm">
+               Выбрано: {getTotalCustomItems()}
+             </span>
+          )}
+        </div>
 
+        <div className="grid grid-cols-2 gap-3">
+          {FOOD_MENU.map(cat => {
+             const count = getCategoryCount(cat.id);
+             return (
+               <motion.button
+                 key={cat.id}
+                 whileTap={{ scale: 0.98 }}
+                 onClick={() => setActiveCategory(cat.id)}
+                 className={`relative p-4 rounded-2xl border text-left flex flex-col justify-between aspect-[1.4/1] overflow-hidden transition-all ${count > 0 ? "bg-[#FF6022]/5 border-[#FF6022]/30 shadow-sm" : "bg-white border-[#E5E5E5] shadow-sm hover:shadow-md"}`}
+               >
+                  <span className="text-3xl mb-2 filter drop-shadow-sm">{cat.icon}</span>
+                  <div className="flex items-start justify-between w-full">
+                     <span className="text-sm font-semibold text-[#1A1A1A] leading-tight pr-2">{cat.title}</span>
+                     {count > 0 ? (
+                        <div className="bg-[#FF6022] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shrink-0 shadow-sm">
+                           {count}
+                        </div>
+                     ) : (
+                        <ChevronRight className="w-4 h-4 text-[#C4C4C4] shrink-0" />
+                     )}
+                  </div>
+               </motion.button>
+             );
+          })}
+        </div>
+      </div>
+
+
+      {/* Bottom Sheet Modal for interactive menu */}
+      <AnimatePresence>
+        {activeCategory && activeCategoryData && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 z-[90] backdrop-blur-sm"
+              onClick={() => setActiveCategory(null)}
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed bottom-0 left-0 right-0 h-[85vh] bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[100] flex flex-col pb-safe"
+            >
+              <div className="flex-shrink-0 pt-4 pb-2 px-5 sticky top-0 bg-white/90 backdrop-blur z-10 rounded-t-3xl border-b border-gray-100">
+                 <div className="w-12 h-1.5 bg-[#E5E5E5] rounded-full mx-auto mb-4" />
+                 <div className="flex items-center justify-between pb-2">
+                    <h3 className="text-2xl font-bold text-[#1A1A1A] flex items-center gap-2">
+                       {activeCategoryData.icon} {activeCategoryData.title}
+                    </h3>
+                    <button onClick={() => setActiveCategory(null)} className="p-2 bg-gray-100 rounded-full active:scale-95">
+                       <X className="w-5 h-5 text-gray-500" />
+                    </button>
+                 </div>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto px-5 py-4">
+                 <div className="flex flex-col gap-4">
+                    {activeCategoryData.items.map(item => {
+                       const qty = state.customFood[item.id] || 0;
+                       return (
+                          <div key={item.id} className="flex items-center justify-between p-4 rounded-2xl ring-1 ring-[#E5E5E5] bg-white shadow-sm hover:shadow-md transition-shadow">
+                             <div className="flex-1 pr-3">
+                                <h4 className="text-sm font-semibold text-[#1A1A1A] leading-tight mb-1">{item.name}</h4>
+                                <div className="flex items-center gap-2">
+                                   <p className="text-sm font-bold text-[#FF6022]">{item.price} ₽</p>
+                                   {item.weight && <span className="text-xs text-[#A3A3A3] font-medium">{item.weight}</span>}
+                                </div>
+                             </div>
+                             
+                             {qty === 0 ? (
+                                <button 
+                                   onClick={() => handleUpdateItemQty(item.id, 1)}
+                                   className="bg-[#F5F5F5] hover:bg-[#E5E5E5] text-[#1A1A1A] px-4 py-2 rounded-xl text-sm font-semibold transition-colors active:scale-95"
+                                >
+                                   Добавить
+                                </button>
+                             ) : (
+                                <div className="flex items-center gap-3 bg-[#FF6022]/10 px-2 py-1.5 rounded-xl border border-[#FF6022]/20">
+                                   <button 
+                                      onClick={() => handleUpdateItemQty(item.id, -1)}
+                                      className="w-7 h-7 flex items-center justify-center bg-white rounded-lg shadow-sm text-[#FF6022] active:scale-95"
+                                   >
+                                      <Minus className="w-4 h-4" />
+                                   </button>
+                                   <span className="font-bold text-[#1A1A1A] min-w-[20px] text-center">{qty}</span>
+                                   <button 
+                                      onClick={() => handleUpdateItemQty(item.id, 1)}
+                                      className="w-7 h-7 flex items-center justify-center bg-[#FF6022] rounded-lg shadow-sm text-white active:scale-95"
+                                   >
+                                      <Plus className="w-4 h-4" />
+                                   </button>
+                                </div>
+                             )}
+                          </div>
+                       )
+                    })}
+                 </div>
+                 
+                 {/* Bottom padding for scrolling */}
+                 <div className="h-20"></div>
+              </div>
+
+              {/* Bottom sticky button */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-gray-100 pb-safe">
+                 <button
+                    onClick={() => setActiveCategory(null)}
+                    className="w-full bg-[#1A1A1A] text-white py-3.5 rounded-xl font-bold shadow-md transition-all active:scale-[0.98]"
+                 >
+                    Готово
+                 </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
     </motion.div>
   );

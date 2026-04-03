@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { isWeekend } from "date-fns";
+import { FOOD_MENU } from "../data/foodMenu";
 
 export interface WizardState {
   // Step 1
@@ -20,6 +21,7 @@ export interface WizardState {
   masterClasses: string[];
   // Step 7 — Food
   includeFood: boolean;
+  customFood: Record<string, number>;
   cakeChoice: string | null;
   fillingChoice: string | null;
   cakeCustomText: string;
@@ -60,6 +62,7 @@ const initialState: WizardState = {
   shows: [],
   masterClasses: [],
   includeFood: false,
+  customFood: {},
   cakeChoice: null,
   fillingChoice: null,
   cakeCustomText: "",
@@ -173,8 +176,25 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
       total += state.masterClasses.length * 7500;
     }
 
-    // Food — included in premium/exclusive
-    if (state.includeFood && state.packageType === "basic") total += 12070;
+    // Food — kids set is included in premium/exclusive. If removed, we subtract price.
+    if (state.includeFood && (state.packageType === "basic" || state.packageType === "custom")) {
+      total += 12070;
+    } else if (!state.includeFood && (state.packageType === "premium" || state.packageType === "exclusive")) {
+      total -= 12070;
+    }
+
+    // Custom food calculations
+    Object.entries(state.customFood).forEach(([itemId, qty]) => {
+      if (qty > 0) {
+        for (const cat of FOOD_MENU) {
+          const item = cat.items.find((i) => i.id === itemId);
+          if (item) {
+            total += item.price * qty;
+            break;
+          }
+        }
+      }
+    });
 
     // Cake
     if (state.packageType === "custom" && state.cakeChoice) {
