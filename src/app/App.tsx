@@ -43,16 +43,20 @@ function WizardContent() {
   return (
     <div className="min-h-screen bg-[#F7F7F7]">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/98 backdrop-blur-md border-b border-[#E5E5E5]">
+      <header className="sticky top-0 z-40 bg-white shadow-sm rounded-b-3xl">
         <div className="max-w-lg mx-auto">
           {/* Logo bar */}
-          <div className="flex items-center justify-between py-3 px-4">
-            <div className="w-[90px] h-[52px]">
+          <div className="flex items-center justify-between pt-3 pb-2 px-4 relative">
+            <div className="w-[84px] h-[36px] mt-1 relative -left-1">
               <HParkLogo />
             </div>
-            <span className="text-xs text-[#747474] bg-[#F5F5F5] px-3 py-1 rounded-full">
+            <span className="text-[11px] text-[#747474] bg-[#F5F5F5] px-3 py-1.5 rounded-full font-medium">
               Конструктор праздников
             </span>
+          </div>
+
+          <div className="px-4">
+            <div className="w-full h-[1px] bg-[#F0F0F0]" />
           </div>
 
           {/* Step indicator */}
@@ -61,7 +65,7 @@ function WizardContent() {
       </header>
 
       {/* Content */}
-      <main className="max-w-lg mx-auto pt-4 pb-40">
+      <main className="max-w-lg mx-auto py-4 pb-40">
         <AnimatePresence mode="wait">
           {renderStep()}
         </AnimatePresence>

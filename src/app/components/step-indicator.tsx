@@ -18,15 +18,7 @@ export function StepIndicator() {
   const { step, totalSteps, setStep } = useWizard();
 
   return (
-    <div className="w-full px-4 py-3">
-      {/* Progress bar */}
-      <div className="relative h-1 bg-[#E5E5E5] rounded-full mb-3 overflow-hidden">
-        <div
-          className="absolute top-0 left-0 h-full bg-[#FF6022] rounded-full transition-all duration-500 ease-out"
-          style={{ width: `${((step - 1) / (totalSteps - 1)) * 100}%` }}
-        />
-      </div>
-
+    <div className="w-full px-4 pt-3 pb-4">
       <div className="flex items-center justify-between">
         {STEP_LABELS.map((label, i) => {
           const stepNum = i + 1;
