@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { WizardProvider, useWizard } from "./components/wizard-context";
 import { StepIndicator } from "./components/step-indicator";
 import { Step1Format } from "./components/step1-format";
+import { Step1FormatV2 } from "./components/step1-format-v2";
 import { Step2Quests } from "./components/step2-quests";
 import { Step2Location } from "./components/step2-location";
 import { Step3Animators } from "./components/step3-animators";
@@ -17,6 +18,7 @@ import HParkLogo from "../imports/HParkLogo";
 
 function WizardContent() {
   const { step } = useWizard();
+  const useV2 = useMemo(() => new URLSearchParams(window.location.search).has("v2"), []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -24,7 +26,7 @@ function WizardContent() {
 
   const renderStep = () => {
     switch (step) {
-      case 1: return <Step1Format key="step1" />;
+      case 1: return useV2 ? <Step1FormatV2 key="step1v2" /> : <Step1Format key="step1" />;
       case 2: return <Step2Quests key="step2" />;
       case 3: return <Step3Animators key="step3" />;
       case 4: return <Step2Location key="step4" />;

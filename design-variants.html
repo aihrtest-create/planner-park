@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Варианты дизайна — Пакеты</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: #EEEEF2; color: #1A1A1A; }
+
+  .page-header { text-align: center; padding: 32px 16px 24px; }
+  .page-header h1 { font-size: 28px; font-weight: 800; color: #1A1A1A; margin-bottom: 6px; }
+  .page-header p { font-size: 14px; color: #747474; }
+
+  .variants-row {
+    display: flex;
+    gap: 32px;
+    padding: 0 24px 48px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .variant-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 390px;
+    flex-shrink: 0;
+  }
+
+  .variant-label {
+    background: #1A1A1A;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .variant-desc {
+    font-size: 13px;
+    color: #555;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 340px;
+  }
+
+  /* Phone frame */
+  .phone {
+    width: 390px;
+    max-height: 780px;
+    background: #F7F7F7;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.1);
+    position: relative;
+    border: 8px solid #1A1A1A;
+  }
+
+  .phone-scroll {
+    overflow-y: auto;
+    max-height: 764px;
+    padding-bottom: 80px;
+  }
+
+  .phone-scroll::-webkit-scrollbar { display: none; }
+
+  /* Nav bar */
+  .phone-nav {
+    background: #fff;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid #F0F0F0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .phone-nav .logo { font-size: 18px; font-weight: 900; color: #FF6022; }
+  .phone-nav .badge { background: #F5F5F5; font-size: 11px; color: #747474; padding: 4px 10px; border-radius: 20px; }
+
+  /* Step bar */
+  .step-bar {
+    display: flex;
+    gap: 4px;
+    padding: 10px 16px;
+    background: #fff;
+    border-bottom: 1px solid #F0F0F0;
+    position: sticky;
+    top: 57px;
+    z-index: 9;
+  }
+  .step-dot {
+    height: 4px;
+    flex: 1;
+    border-radius: 2px;
+    background: #E5E5E5;
+  }
+  .step-dot.active { background: #FF6022; }
+
+  /* Toggle */
+  .toggle-wrap {
+    padding: 12px 16px 8px;
+    position: sticky;
+    top: 81px;
+    z-index: 8;
+    background: #F7F7F7;
+  }
+
+  .toggle {
+    display: flex;
+    background: #EBEBEB;
+    border-radius: 14px;
+    padding: 3px;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 8px;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    color: #747474;
+  }
+
+  .toggle-btn.active {
+    background: #fff;
+    color: #1A1A1A;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  /* Page title */
+  .page-title {
+    padding: 16px 16px 4px;
+    text-align: center;
+  }
+  .page-title h2 { font-size: 22px; font-weight: 800; color: #1A1A1A; }
+  .page-title p { font-size: 13px; color: #747474; margin-top: 3px; }
+
+  /* ================================
+     VARIANT 1 — Compact + Badges
+  ================================ */
+
+  .v1-cards { padding: 8px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+
+  .v1-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1.5px solid #EFEFEF;
+    position: relative;
+  }
+
+  .v1-card.selected { border-color: transparent; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
+
+  .v1-card-accent {
+    height: 4px;
+    width: 100%;
+  }
+
+  .v1-card-body { padding: 14px 16px 16px; }
+
+  .v1-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+  }
+
+  .v1-name-row { display: flex; align-items: center; gap: 8px; }
+  .v1-emoji { font-size: 22px; }
+  .v1-name { font-size: 17px; font-weight: 800; color: #1A1A1A; }
+  .v1-meta { font-size: 11px; color: #ABABAB; margin-top: 1px; }
+
+  .v1-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    color: #fff;
+    letter-spacing: 0.3px;
+  }
+
+  .v1-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 10px 0 12px;
+  }
+
+  .v1-price {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .v1-price-sub { font-size: 11px; color: #ABABAB; }
+
+  .v1-divider { height: 1px; background: #F2F2F2; margin-bottom: 10px; }
+
+  .v1-inherit {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #747474;
+    font-weight: 600;
+  }
+
+  .v1-inherit-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .v1-features { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+
+  .v1-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: 13px;
+    color: #3A3A3A;
+    line-height: 1.35;
+  }
+
+  .v1-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .v1-tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 2px; }
+
+  .v1-tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+
+  .v1-rocky-wrap {
+    position: absolute;
+    bottom: -4px;
+    right: 8px;
+    width: 70px;
+    pointer-events: none;
+    opacity: 0.95;
+  }
+
+  .v1-rocky-wrap img { width: 100%; }
+
+  /* Custom card */
+  .v1-custom {
+    background: #fff;
+    border-radius: 20px;
+    border: 2px dashed #D5D5D5;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .v1-custom-left { display: flex; align-items: center; gap: 10px; }
+  .v1-custom-emoji { font-size: 24px; }
+  .v1-custom-name { font-size: 15px; font-weight: 800; color: #1A1A1A; }
+  .v1-custom-desc { font-size: 12px; color: #ABABAB; }
+
+  .v1-custom-arrow {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #1A1A1A;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Floating button */
+  .float-btn {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px 16px;
+    background: linear-gradient(to top, #F7F7F7 70%, transparent);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: #FF6022;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary.disabled { background: #CCCCCC; }
+
+  /* ================================
+     VARIANT 2 — Horizontal Swipe
+  ================================ */
+
+  .v2-carousel-wrap { padding: 8px 0 8px; }
+
+  .v2-card {
+    margin: 0 16px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  }
+
+  .v2-header {
+    padding: 20px 20px 28px;
+    position: relative;
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .v2-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .v2-pkg-name { font-size: 26px; font-weight: 900; color: #fff; }
+  .v2-pkg-badge {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  .v2-rocky {
+    position: absolute;
+    bottom: -10px;
+    right: 16px;
+    width: 90px;
+  }
+
+  .v2-stats {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .v2-stat-pill {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .v2-body {
+    background: #fff;
+    padding: 20px 20px 16px;
+  }
+
+  .v2-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .v2-price { font-size: 32px; font-weight: 900; }
+  .v2-price-sub { font-size: 12px; color: #ABABAB; }
+  .v2-divider { height: 1px; background: #F0F0F0; margin: 12px 0; }
+
+  .v2-inherit {
+    font-size: 12px;
+    color: #ABABAB;
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #F8F8F8;
+  }
+
+  .v2-features { display: flex; flex-direction: column; gap: 7px; }
+
+  .v2-feature {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #3A3A3A;
+  }
+
+  .v2-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .v2-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 10px;
+    margin-left: 4px;
+  }
+
+  /* Dots */
+  .v2-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 0 4px;
+  }
+
+  .v2-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: #D5D5D5;
+    transition: all 0.2s;
+  }
+
+  .v2-dot.active {
+    width: 24px;
+    background: #FF6022;
+  }
+
+  /* ================================
+     VARIANT 3 — Info Blocks
+  ================================ */
+
+  .v3-cards { padding: 8px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+
+  .v3-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .v3-top {
+    padding: 12px 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .v3-name-row { display: flex; align-items: center; gap: 8px; }
+  .v3-emoji { font-size: 20px; }
+  .v3-name { font-size: 17px; font-weight: 800; }
+
+  .v3-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    color: #fff;
+  }
+
+  /* Info row */
+  .v3-info-row {
+    display: flex;
+    gap: 6px;
+    padding: 10px 16px;
+  }
+
+  .v3-info-cell {
+    flex: 1;
+    background: #F7F7F7;
+    border-radius: 12px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .v3-info-val { font-size: 15px; font-weight: 800; color: #1A1A1A; }
+  .v3-info-label { font-size: 10px; color: #ABABAB; margin-top: 1px; }
+
+  /* Unique chips */
+  .v3-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 4px 16px 10px;
+  }
+
+  .v3-chip {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* Features check list */
+  .v3-features {
+    border-top: 1px solid #F2F2F2;
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .v3-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12.5px;
+    line-height: 1.35;
+  }
+
+  .v3-feature.dim { opacity: 0.35; }
+
+  .v3-check {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Price block */
+  .v3-price-block {
+    margin: 4px 16px 16px;
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .v3-price-item { display: flex; flex-direction: column; }
+  .v3-price-day { font-size: 11px; font-weight: 700; opacity: 0.75; margin-bottom: 2px; }
+  .v3-price-val { font-size: 19px; font-weight: 900; }
+
+  .v3-price-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba(255,255,255,0.3);
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Варианты дизайна: Пакеты</h1>
+  <p>3 концепции — выберите направление или скомбинируйте элементы</p>
+</div>
+
+<div class="variants-row">
+
+  <!-- =================== VARIANT 1 =================== -->
+  <div class="variant-col">
+    <div class="variant-label">Вариант 1 — Компактные карточки + плашки</div>
+    <div class="variant-desc">Наследование опций «Всё из базового +», большая цена, теги для уникальных фич. Вертикальный скролл компактный.</div>
+    <div class="phone">
+      <div class="phone-scroll">
+        <!-- Nav -->
+        <div class="phone-nav">
+          <span class="logo">hello park</span>
+          <span class="badge">Конструктор праздников</span>
+        </div>
+        <!-- Steps -->
+        <div class="step-bar">
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+          <div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+          <div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+        </div>
+        <!-- Toggle -->
+        <div class="toggle-wrap">
+          <div class="toggle">
+            <div class="toggle-btn active">☀ Будни</div>
+            <div class="toggle-btn">🌙 Выходные</div>
+          </div>
+        </div>
+        <!-- Title -->
+        <div class="page-title">
+          <h2>Выберите пакет</h2>
+          <p>Все пакеты на 8 детей</p>
+        </div>
+
+        <!-- V1 Cards -->
+        <div class="v1-cards">
+
+          <!-- Базовый -->
+          <div class="v1-card">
+            <div class="v1-card-accent" style="background:#00B5A8;"></div>
+            <div class="v1-card-body">
+              <div class="v1-header">
+                <div>
+                  <div class="v1-name-row">
+                    <span class="v1-emoji">✨</span>
+                    <span class="v1-name">Базовый</span>
+                  </div>
+                  <div class="v1-meta">2,5 часа · 8 билетов · только будни</div>
+                </div>
+              </div>
+              <div class="v1-price-row">
+                <span class="v1-price" style="color:#00B5A8;">24 900 ₽</span>
+              </div>
+              <div class="v1-divider"></div>
+              <div class="v1-features">
+                <div class="v1-feature"><span class="v1-dot" style="background:#00B5A8;"></span>Безлимитные билеты в парк — 8 шт.</div>
+                <div class="v1-feature"><span class="v1-dot" style="background:#00B5A8;"></span>WOW-поздравление от Лиса Рокки</div>
+                <div class="v1-feature"><span class="v1-dot" style="background:#00B5A8;"></span>Анимационная программа — 45 мин.</div>
+                <div class="v1-feature"><span class="v1-dot" style="background:#00B5A8;"></span>Мини-дискотека — 15 мин.</div>
+                <div class="v1-feature"><span class="v1-dot" style="background:#00B5A8;"></span>Шары с гелием, подарок, пригласительные</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Премиум -->
+          <div class="v1-card selected" style="border-color:#FF6022; box-shadow:0 4px 20px rgba(255,96,34,0.2);">
+            <div class="v1-card-accent" style="background:#FF6022;"></div>
+            <div class="v1-card-body" style="position:relative;">
+              <div class="v1-header">
+                <div>
+                  <div class="v1-name-row">
+                    <span class="v1-emoji">🎉</span>
+                    <span class="v1-name">Премиум</span>
+                    <span class="v1-badge" style="background:#FF6022;">ХИТ</span>
+                  </div>
+                  <div class="v1-meta">3 часа · 8 билетов</div>
+                </div>
+              </div>
+              <div class="v1-price-row">
+                <span class="v1-price" style="color:#FF6022;">47 900 ₽</span>
+                <span class="v1-price-sub">/ 57 900 в выходные</span>
+              </div>
+              <div class="v1-divider"></div>
+              <div class="v1-inherit">
+                <span class="v1-inherit-icon" style="background:#00B5A8;">✓</span>
+                Всё из Базового, плюс:
+              </div>
+              <div class="v1-tag-row">
+                <span class="v1-tag" style="background:#FFF0EA;color:#FF6022;">+30 мин</span>
+                <span class="v1-tag" style="background:#FFF0EA;color:#FF6022;">🎨 Мастер-класс</span>
+                <span class="v1-tag" style="background:#FFF0EA;color:#FF6022;">🎈 Фонтан шаров</span>
+                <span class="v1-tag" style="background:#FFF0EA;color:#FF6022;">🍱 Детские обеды</span>
+              </div>
+              <div class="v1-features" style="margin-top:8px;">
+                <div class="v1-feature"><span class="v1-dot" style="background:#FF6022;"></span>Мастер-класс на выбор — 30 мин.</div>
+                <div class="v1-feature"><span class="v1-dot" style="background:#FF6022;"></span>Шар-сюрприз + детские обеды</div>
+                <div class="v1-feature"><span class="v1-dot" style="background:#FF6022;"></span>Фонтан из шаров (доп. украшение)</div>
+              </div>
+              <div class="v1-rocky-wrap">
+                <img src="/images/rocky-illustration.png" alt="Rocky">
+              </div>
+            </div>
+          </div>
+
+          <!-- Эксклюзив -->
+          <div class="v1-card">
+            <div class="v1-card-accent" style="background:#6C4AED;"></div>
+            <div class="v1-card-body">
+              <div class="v1-header">
+                <div>
+                  <div class="v1-name-row">
+                    <span class="v1-emoji">👑</span>
+                    <span class="v1-name">Эксклюзив</span>
+                  </div>
+                  <div class="v1-meta">4 часа · 8 билетов</div>
+                </div>
+              </div>
+              <div class="v1-price-row">
+                <span class="v1-price" style="color:#6C4AED;">79 900 ₽</span>
+                <span class="v1-price-sub">/ 89 900 в выходные</span>
+              </div>
+              <div class="v1-divider"></div>
+              <div class="v1-inherit">
+                <span class="v1-inherit-icon" style="background:#FF6022;">✓</span>
+                Всё из Премиума, плюс:
+              </div>
+              <div class="v1-tag-row">
+                <span class="v1-tag" style="background:#F0ECFF;color:#6C4AED;">📸 Фотограф 2ч</span>
+                <span class="v1-tag" style="background:#F0ECFF;color:#6C4AED;">🎭 Шоу-программа</span>
+                <span class="v1-tag" style="background:#F0ECFF;color:#6C4AED;">🎁 Подарки всем</span>
+              </div>
+              <div class="v1-features" style="margin-top:8px;">
+                <div class="v1-feature"><span class="v1-dot" style="background:#6C4AED;"></span>Шоу-программа на выбор — 30 мин.</div>
+                <div class="v1-feature"><span class="v1-dot" style="background:#6C4AED;"></span>Фотограф — 2 часа</div>
+                <div class="v1-feature"><span class="v1-dot" style="background:#6C4AED;"></span>Пиньята или Шар-цифра</div>
+                <div class="v1-feature"><span class="v1-dot" style="background:#6C4AED;"></span>Подарки всем гостям</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Собери сам -->
+          <div class="v1-custom">
+            <div class="v1-custom-left">
+              <span class="v1-custom-emoji">🧩</span>
+              <div>
+                <div class="v1-custom-name">Собери сам</div>
+                <div class="v1-custom-desc">Выбери только нужные опции</div>
+              </div>
+            </div>
+            <div class="v1-custom-arrow">→</div>
+          </div>
+
+        </div>
+
+        <div class="float-btn">
+          <button class="btn-primary">Продолжить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== VARIANT 2 =================== -->
+  <div class="variant-col">
+    <div class="variant-label">Вариант 2 — Горизонтальный свайп</div>
+    <div class="variant-desc">Каждый пакет — полноэкранная карточка. Свайп влево/вправо. Больше визуального акцента, Рокки в заголовке.</div>
+    <div class="phone">
+      <div class="phone-scroll">
+        <div class="phone-nav">
+          <span class="logo">hello park</span>
+          <span class="badge">Конструктор праздников</span>
+        </div>
+        <div class="step-bar">
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+          <div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+          <div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+        </div>
+        <div class="toggle-wrap">
+          <div class="toggle">
+            <div class="toggle-btn active">☀ Будни</div>
+            <div class="toggle-btn">🌙 Выходные</div>
+          </div>
+        </div>
+
+        <div class="page-title">
+          <h2>Выберите пакет</h2>
+          <p>Все пакеты на 8 детей</p>
+        </div>
+
+        <!-- Dots indicator -->
+        <div class="v2-dots">
+          <div class="v2-dot"></div>
+          <div class="v2-dot active"></div>
+          <div class="v2-dot"></div>
+          <div class="v2-dot"></div>
+        </div>
+
+        <!-- Показан Премиум как текущий -->
+        <div class="v2-carousel-wrap">
+          <div class="v2-card">
+            <!-- Header gradient -->
+            <div class="v2-header" style="background:linear-gradient(135deg,#FF8040,#FF4500);">
+              <div class="v2-header-top">
+                <div>
+                  <div style="font-size:13px;color:rgba(255,255,255,0.75);font-weight:700;margin-bottom:4px;">ПАКЕТ 2 / 4</div>
+                  <div class="v2-pkg-name">🎉 Премиум</div>
+                </div>
+                <div class="v2-pkg-badge">ХИТ ПРОДАЖ</div>
+              </div>
+              <div class="v2-stats">
+                <div class="v2-stat-pill">⏱ 3 часа</div>
+                <div class="v2-stat-pill">🎫 8 билетов</div>
+              </div>
+              <img src="/images/rocky-illustration.png" alt="Rocky" class="v2-rocky">
+            </div>
+            <!-- Body -->
+            <div class="v2-body">
+              <div class="v2-price-row">
+                <span class="v2-price" style="color:#FF6022;">47 900 ₽</span>
+                <span class="v2-price-sub">/ 57 900 в выходные</span>
+              </div>
+              <div class="v2-divider"></div>
+              <div class="v2-inherit">✓ Всё из «Базового», плюс дополнительно:</div>
+              <div class="v2-features">
+                <div class="v2-feature">
+                  <div class="v2-check" style="background:#FF6022;">✓</div>
+                  Билеты + WOW-поздравление от Рокки
+                </div>
+                <div class="v2-feature">
+                  <div class="v2-check" style="background:#FF6022;">✓</div>
+                  Анимация 45 мин + дискотека 25 мин
+                </div>
+                <div class="v2-feature">
+                  <div class="v2-check" style="background:#FF6022;">✓</div>
+                  Мастер-класс на выбор — 30 мин
+                  <span class="v2-tag" style="background:#FFF0EA;color:#FF6022;">НОВОЕ</span>
+                </div>
+                <div class="v2-feature">
+                  <div class="v2-check" style="background:#FF6022;">✓</div>
+                  Шары: гелий + фонтан
+                  <span class="v2-tag" style="background:#FFF0EA;color:#FF6022;">НОВОЕ</span>
+                </div>
+                <div class="v2-feature">
+                  <div class="v2-check" style="background:#FF6022;">✓</div>
+                  Шар-сюрприз + детские обеды
+                  <span class="v2-tag" style="background:#FFF0EA;color:#FF6022;">НОВОЕ</span>
+                </div>
+                <div class="v2-feature">
+                  <div class="v2-check" style="background:#FF6022;">✓</div>
+                  Подарок имениннику
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;padding:12px 16px;align-items:center;">
+          <button style="flex:0 0 48px;height:48px;border-radius:50%;border:1.5px solid #E5E5E5;background:#fff;font-size:20px;cursor:pointer;">←</button>
+          <button class="btn-primary" style="flex:1;">Выбрать этот пакет</button>
+          <button style="flex:0 0 48px;height:48px;border-radius:50%;border:1.5px solid #E5E5E5;background:#fff;font-size:20px;cursor:pointer;">→</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== VARIANT 3 =================== -->
+  <div class="variant-col">
+    <div class="variant-label">Вариант 3 — Инфо-блоки (Нео-порт стиль)</div>
+    <div class="variant-desc">Ключевые параметры вынесены в структурированные блоки. Цена — цветной блок. Фичи — чеклист с контрастом включено/нет.</div>
+    <div class="phone">
+      <div class="phone-scroll">
+        <div class="phone-nav">
+          <span class="logo">hello park</span>
+          <span class="badge">Конструктор праздников</span>
+        </div>
+        <div class="step-bar">
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+          <div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+          <div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+        </div>
+        <div class="toggle-wrap">
+          <div class="toggle">
+            <div class="toggle-btn active">☀ Будни</div>
+            <div class="toggle-btn">🌙 Выходные</div>
+          </div>
+        </div>
+        <div class="page-title">
+          <h2>Выберите пакет</h2>
+          <p>Все пакеты на 8 детей</p>
+        </div>
+
+        <div class="v3-cards">
+
+          <!-- Базовый -->
+          <div class="v3-card">
+            <div class="v3-top">
+              <div class="v3-name-row">
+                <span class="v3-emoji">✨</span>
+                <span class="v3-name" style="color:#00B5A8;">Базовый</span>
+              </div>
+              <span style="font-size:11px;background:#E8FAF9;color:#00B5A8;font-weight:700;padding:3px 10px;border-radius:20px;">только будни</span>
+            </div>
+            <div class="v3-info-row">
+              <div class="v3-info-cell">
+                <span class="v3-info-val">2,5ч</span>
+                <span class="v3-info-label">Длительность</span>
+              </div>
+              <div class="v3-info-cell">
+                <span class="v3-info-val">8</span>
+                <span class="v3-info-label">Билетов</span>
+              </div>
+              <div class="v3-info-cell">
+                <span class="v3-info-val">45мин</span>
+                <span class="v3-info-label">Анимация</span>
+              </div>
+            </div>
+            <div class="v3-features">
+              <div class="v3-feature"><span class="v3-check" style="background:#00B5A8;">✓</span>WOW-поздравление от Рокки</div>
+              <div class="v3-feature"><span class="v3-check" style="background:#00B5A8;">✓</span>Анимация 45 мин + дискотека 15 мин</div>
+              <div class="v3-feature"><span class="v3-check" style="background:#00B5A8;">✓</span>Шары с гелием — 8 шт.</div>
+              <div class="v3-feature"><span class="v3-check" style="background:#00B5A8;">✓</span>Подарок имениннику</div>
+              <div class="v3-feature dim"><span class="v3-check" style="background:#ccc;">—</span>Мастер-класс</div>
+              <div class="v3-feature dim"><span class="v3-check" style="background:#ccc;">—</span>Шоу-программа</div>
+            </div>
+            <div class="v3-price-block" style="background:#00B5A8;">
+              <div class="v3-price-item">
+                <span class="v3-price-day" style="color:rgba(255,255,255,0.8);">Будни</span>
+                <span class="v3-price-val" style="color:#fff;">24 900 ₽</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Премиум -->
+          <div class="v3-card" style="box-shadow:0 4px 20px rgba(255,96,34,0.2);border:1.5px solid #FF6022;">
+            <div class="v3-top">
+              <div class="v3-name-row">
+                <span class="v3-emoji">🎉</span>
+                <span class="v3-name" style="color:#FF6022;">Премиум</span>
+              </div>
+              <span class="v3-badge" style="background:#FF6022;">ХИТ</span>
+            </div>
+            <div class="v3-info-row">
+              <div class="v3-info-cell">
+                <span class="v3-info-val">3ч</span>
+                <span class="v3-info-label">Длительность</span>
+              </div>
+              <div class="v3-info-cell">
+                <span class="v3-info-val">8</span>
+                <span class="v3-info-label">Билетов</span>
+              </div>
+              <div class="v3-info-cell">
+                <span class="v3-info-val">45мин</span>
+                <span class="v3-info-label">Анимация</span>
+              </div>
+            </div>
+            <div class="v3-chips-row">
+              <span class="v3-chip" style="background:#FFF0EA;color:#FF6022;">🎨 Мастер-класс</span>
+              <span class="v3-chip" style="background:#FFF0EA;color:#FF6022;">🎈 Фонтан шаров</span>
+              <span class="v3-chip" style="background:#FFF0EA;color:#FF6022;">🍱 Обеды</span>
+            </div>
+            <div class="v3-features">
+              <div class="v3-feature"><span class="v3-check" style="background:#FF6022;">✓</span>WOW-поздравление от Рокки</div>
+              <div class="v3-feature"><span class="v3-check" style="background:#FF6022;">✓</span>Анимация 45 мин + дискотека 25 мин</div>
+              <div class="v3-feature"><span class="v3-check" style="background:#FF6022;">✓</span>Мастер-класс на выбор — 30 мин</div>
+              <div class="v3-feature"><span class="v3-check" style="background:#FF6022;">✓</span>Шар-сюрприз + детские обеды</div>
+              <div class="v3-feature dim"><span class="v3-check" style="background:#ccc;">—</span>Шоу-программа</div>
+              <div class="v3-feature dim"><span class="v3-check" style="background:#ccc;">—</span>Фотограф</div>
+            </div>
+            <div class="v3-price-block" style="background:#FF6022;">
+              <div class="v3-price-item">
+                <span class="v3-price-day" style="color:rgba(255,255,255,0.8);">Будни</span>
+                <span class="v3-price-val" style="color:#fff;">47 900 ₽</span>
+              </div>
+              <div class="v3-price-divider"></div>
+              <div class="v3-price-item" style="align-items:flex-end;">
+                <span class="v3-price-day" style="color:rgba(255,255,255,0.8);">Выходные</span>
+                <span class="v3-price-val" style="color:#fff;">57 900 ₽</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Эксклюзив -->
+          <div class="v3-card">
+            <div class="v3-top">
+              <div class="v3-name-row">
+                <span class="v3-emoji">👑</span>
+                <span class="v3-name" style="color:#6C4AED;">Эксклюзив</span>
+              </div>
+            </div>
+            <div class="v3-info-row">
+              <div class="v3-info-cell">
+                <span class="v3-info-val">4ч</span>
+                <span class="v3-info-label">Длительность</span>
+              </div>
+              <div class="v3-info-cell">
+                <span class="v3-info-val">8</span>
+                <span class="v3-info-label">Билетов</span>
+              </div>
+              <div class="v3-info-cell">
+                <span class="v3-info-val">60мин</span>
+                <span class="v3-info-label">Программа</span>
+              </div>
+            </div>
+            <div class="v3-chips-row">
+              <span class="v3-chip" style="background:#F0ECFF;color:#6C4AED;">📸 Фотограф 2ч</span>
+              <span class="v3-chip" style="background:#F0ECFF;color:#6C4AED;">🎭 Шоу</span>
+              <span class="v3-chip" style="background:#F0ECFF;color:#6C4AED;">🎁 Всем гостям</span>
+            </div>
+            <div class="v3-features">
+              <div class="v3-feature"><span class="v3-check" style="background:#6C4AED;">✓</span>Всё из Премиума</div>
+              <div class="v3-feature"><span class="v3-check" style="background:#6C4AED;">✓</span>Шоу-программа на выбор — 30 мин</div>
+              <div class="v3-feature"><span class="v3-check" style="background:#6C4AED;">✓</span>Фотограф — 2 часа</div>
+              <div class="v3-feature"><span class="v3-check" style="background:#6C4AED;">✓</span>Пиньята или Шар-цифра</div>
+              <div class="v3-feature"><span class="v3-check" style="background:#6C4AED;">✓</span>Подарки всем гостям</div>
+            </div>
+            <div class="v3-price-block" style="background:#6C4AED;">
+              <div class="v3-price-item">
+                <span class="v3-price-day" style="color:rgba(255,255,255,0.8);">Будни</span>
+                <span class="v3-price-val" style="color:#fff;">79 900 ₽</span>
+              </div>
+              <div class="v3-price-divider"></div>
+              <div class="v3-price-item" style="align-items:flex-end;">
+                <span class="v3-price-day" style="color:rgba(255,255,255,0.8);">Выходные</span>
+                <span class="v3-price-val" style="color:#fff;">89 900 ₽</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Собери сам -->
+          <div class="v1-custom">
+            <div class="v1-custom-left">
+              <span class="v1-custom-emoji">🧩</span>
+              <div>
+                <div class="v1-custom-name">Собери сам</div>
+                <div class="v1-custom-desc">Выбери только нужные опции</div>
+              </div>
+            </div>
+            <div class="v1-custom-arrow">→</div>
+          </div>
+
+        </div>
+
+        <div class="float-btn">
+          <button class="btn-primary">Продолжить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
