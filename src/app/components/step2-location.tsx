@@ -56,42 +56,6 @@ const PATIROOMS = [
   },
 ];
 
-const CAFE_OPTIONS = [
-  {
-    id: "cafe_round",
-    name: "Круглый стол",
-    subtitle: "Уютная зона с круглым столом",
-    seats: 8,
-    weekdayDeposit: 5000,
-    weekendDeposit: 10000,
-    thumbnail: "/locations/cafe/round.jpg",
-    description: "Уютная зона с большим круглым столом — идеальна для небольшой компании взрослых. Удобное расположение рядом с патирумами.",
-  },
-  {
-    id: "cafe_pink",
-    name: "За шторками",
-    subtitle: "Зона за розовыми шторками",
-    seats: 10,
-    weekdayDeposit: 5000,
-    weekendDeposit: 10000,
-    thumbnail: "/locations/cafe/pink.jpg",
-    description: "Уединённая зона за розовыми шторками. Приватное пространство, где взрослые могут спокойно пообщаться, пока дети веселятся.",
-    exclusiveWith: "cafe_pink_full" as const,
-  },
-  {
-    id: "cafe_pink_full",
-    name: "Вся зона за шторками",
-    subtitle: "Аренда всей зоны целиком",
-    seats: 20,
-    weekdayDeposit: 10000,
-    weekendDeposit: 20000,
-    thumbnail: "/locations/cafe/pink.jpg",
-    description: "Вся приватная зона за шторками — для большой компании. Несколько столов, максимум пространства и комфорта для взрослых гостей.",
-    exclusiveWith: "cafe_pink" as const,
-    badge: "Вся зона",
-  },
-];
-
 export function Step2Location() {
   const { state, updateState } = useWizard();
   const [selectedDetails, setSelectedDetails] = useState<typeof PATIROOMS[0] | null>(null);
@@ -102,28 +66,6 @@ export function Step2Location() {
       patiroom: room.id,
       patiroomDetails: room.name,
     });
-  };
-
-  const handleToggleCafe = (opt: typeof CAFE_OPTIONS[0]) => {
-    const current = [...state.cafeZones];
-    const idx = current.indexOf(opt.id);
-
-    if (idx >= 0) {
-      current.splice(idx, 1);
-    } else {
-      if ((opt as any).exclusiveWith) {
-        const exIdx = current.indexOf((opt as any).exclusiveWith);
-        if (exIdx >= 0) current.splice(exIdx, 1);
-      }
-      current.push(opt.id);
-    }
-
-    updateState({ cafeZones: current });
-  };
-
-  const formatDeposit = (opt: typeof CAFE_OPTIONS[0]) => {
-    const price = state.isWeekend ? opt.weekendDeposit : opt.weekdayDeposit;
-    return price.toLocaleString("ru-RU") + " ₽";
   };
 
   return (
@@ -209,103 +151,6 @@ export function Step2Location() {
                   </div>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ==================== DIVIDER ==================== */}
-      <div className="relative my-10">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-dashed border-[#E0E0E0]" />
-        </div>
-        <div className="relative flex justify-center">
-          <span className="bg-[#F7F7F7] px-6 py-1 rounded-full border border-[#E0E0E0] text-[10px] font-bold text-[#ABABAB] uppercase tracking-[0.2em]">
-            Дополнительно
-          </span>
-        </div>
-      </div>
-
-      {/* ==================== CAFE ZONES ==================== */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-1.5">
-          <Armchair className="w-5 h-5 text-[#FF6022]" />
-          <h3 className="text-[#1A1A1A] font-medium">Стол для родителей</h3>
-          <span className="ml-auto text-[10px] font-medium text-[#747474] bg-[#F0F0F0] px-2.5 py-1 rounded-full">
-            По желанию
-          </span>
-        </div>
-        <p className="text-xs text-[#747474] mb-1.5">
-          Пока дети веселятся в патируме, взрослые могут расположиться за отдельным столом в зоне кафе.
-        </p>
-        <div className="flex items-center gap-1.5 mb-5">
-          <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center">
-            <UtensilsCrossed className="w-3 h-3 text-[#FF6022]" />
-          </div>
-          <p className="text-xs text-[#FF6022] font-semibold">
-            Депозит можно тратить на блюда из меню
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-5">
-          {CAFE_OPTIONS.map((opt) => {
-            const isSelected = state.cafeZones.includes(opt.id);
-            return (
-              <motion.div
-                key={opt.id}
-                whileTap={{ scale: 0.98 }}
-                className={`relative h-[440px] sm:h-[500px] rounded-[32px] overflow-hidden bg-white transition-all cursor-pointer group ${
-                  isSelected ? "ring-2 ring-[#FF6022] shadow-xl scale-[1.01]" : "ring-1 ring-[#E5E5E5] shadow-sm"
-                }`}
-                onClick={() => handleToggleCafe(opt)}
-              >
-                <ImageWithFallback
-                  src={getPublicUrl(opt.thumbnail)}
-                  alt={opt.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
-                
-                {(opt as any).badge && (
-                  <div className="absolute top-5 left-5 bg-white/90 backdrop-blur-md text-[#1A1A1A] text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-full z-10 shadow-sm">
-                    {(opt as any).badge}
-                  </div>
-                )}
-
-                <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[24px] p-5 shadow-2xl border border-white/20">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-lg font-bold text-[#1A1A1A] mb-1.5">{opt.name}</h4>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-3">
-                        <div className="flex items-center gap-1.5">
-                          <Users className="w-4 h-4 text-[#ABABAB]" />
-                          <span className="text-xs text-[#747474]">до {opt.seats} мест</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Coffee className="w-4 h-4 text-[#ABABAB]" />
-                          <span className="text-xs text-[#747474]">3 часа</span>
-                        </div>
-                      </div>
-                      <div className="inline-flex items-baseline gap-2">
-                        <span className="text-base font-bold text-[#FF6022]">
-                          Депозит {formatDeposit(opt)}
-                        </span>
-                        <span className="text-[10px] text-[#ABABAB] font-semibold uppercase tracking-wider">
-                          {state.isWeekend ? "выходной" : "будни"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div 
-                      className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-all ${
-                        isSelected ? "bg-[#FF6022] text-white shadow-lg shadow-orange-500/30" : "bg-gray-50 text-[#D1D1D1] group-hover:bg-gray-100"
-                      }`}
-                    >
-                      <Check className="w-6 h-6" />
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
             );
           })}
         </div>

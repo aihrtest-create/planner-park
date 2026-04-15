@@ -13,13 +13,15 @@ const PACKAGES = [
     duration: "2,5 часа",
     weekdayOnly: true,
     features: [
-      "Безлимитные билеты в парк — 8 шт.",
-      "WOW-поздравление от Лиса Рокки",
-      "Анимационная программа — 45 мин.",
+      "Безлимитные билеты — 8 шт.",
+      "Пати-рум — 2,5 часа",
+      "Квест на выбор — 60 мин.",
       "Мини-дискотека — 15 мин.",
-      "Украшение шарами с гелием — 8 шт.",
+      "Оформление шарами — 8 шт.",
+      "WOW-поздравление Лиса Рокки",
       "Подарок имениннику",
       "Электронные пригласительные",
+      "Торжественный вынос торта",
     ],
     weekdayPrice: 24900,
     weekendPrice: null,
@@ -34,15 +36,18 @@ const PACKAGES = [
     duration: "3 часа",
     weekdayOnly: false,
     features: [
-      "Безлимитные билеты в парк — 8 шт.",
-      "WOW-поздравление от Лиса Рокки",
-      "Анимационная программа — 45 мин.",
-      "Мини-дискотека или треш-коробка — 25 мин.",
-      "Украшение шарами (гелий + фонтан из шаров)",
+      "Безлимитные билеты — 8 шт.",
+      "Пати-рум — 3 часа",
+      "Квест на выбор — 60 мин.",
       "Мастер-класс на выбор — 30 мин.",
+      "Дискотека или треш-коробка — 25 мин.",
+      "Оформление: шары + фонтан",
+      "WOW-поздравление Лиса Рокки",
       "Шар-сюрприз",
       "Детские обеды",
       "Подарок имениннику",
+      "Электронные пригласительные",
+      "Торжественный вынос торта",
     ],
     weekdayPrice: 47900,
     weekendPrice: 57900,
@@ -57,18 +62,22 @@ const PACKAGES = [
     duration: "4 часа",
     weekdayOnly: false,
     features: [
-      "Безлимитные билеты в парк — 8 шт.",
-      "WOW-поздравление + интерактивное поздравление",
-      "Анимационная программа — 45 мин.",
-      "Мини-дискотека или треш-коробка — 25 мин.",
-      "Украшение комнаты шарами",
-      "Аренда Party-room на 4 часа",
-      "Кулинарный мастер-класс",
+      "Безлимитные билеты — 8 шт.",
+      "Пати-рум — 4 часа",
+      "Квест на выбор — 60 мин.",
+      "Мастер-класс на выбор — 30 мин.",
+      "Дискотека или треш-коробка — 25 мин.",
       "Шоу-программа на выбор — 30 мин.",
-      "Шар-сюрприз или Пиньята",
-      "Детские обеды",
-      "Подарки всем гостям",
       "Фотограф — 2 часа",
+      "Оформление: шары + 2 фонтана",
+      "WOW-поздравление Лиса Рокки",
+      "Шар-сюрприз или Пиньята",
+      "Шар-цифра",
+      "Подарки всем гостям",
+      "Детские обеды",
+      "Подарок имениннику",
+      "Электронные пригласительные",
+      "Торжественный вынос торта",
     ],
     weekdayPrice: 79900,
     weekendPrice: 89900,
@@ -88,39 +97,32 @@ export function Step1Format() {
     updateState({ packageType: id, includeFood });
   };
 
-  const handleWeekendToggle = (isWeekend: boolean) => {
-    if (isWeekend && state.packageType === "basic") {
-      updateState({ isWeekend: true, packageType: null, includeFood: false });
-    } else {
-      updateState({ isWeekend });
-    }
-  };
 
   const renderFeature = (text: string) => {
-    if (text.startsWith("Безлимитные билеты в парк") && text.includes(" — ")) {
+    // Dynamically look for " — " to extract values into highlighted pills
+    if (text.includes(" — ")) {
       const parts = text.split(" — ");
+      const value = parts.pop()!;
+      const label = parts.join(" — ");
+      
+      // Determine pill color: orange for counts (шт), purple for times (мин/часа)
+      const isOrange = value.includes("шт") || value.includes("шт.");
+      const pillBgColor = isOrange ? "#ff6022" : "#5b21cc";
+      
       return (
         <span className="font-medium text-[#101011] text-[16px] leading-[22.4px] flex items-center flex-wrap">
-          {parts[0]} —{" "}
-          <span className="bg-[#ff6022] text-white font-bold px-[8px] py-[2px] rounded-[9px] ml-[4px] leading-none inline-flex items-center" style={{ height: '24px' }}>
-            {parts[1]}
-          </span>
-        </span>
-      );
-    }
-    
-    if (text.startsWith("Анимационная программа") && text.includes(" — ")) {
-      const parts = text.split(" — ");
-      return (
-        <span className="font-medium text-[#101011] text-[16px] leading-[22.4px] flex items-center flex-wrap">
-          {parts[0]} —{" "}
-          <span className="bg-[#5b21cc] text-white font-bold px-[10px] py-[2px] rounded-[13px] ml-[4px] leading-none inline-flex items-center" style={{ height: '24px' }}>
-            {parts[1]}
+          {label} —{" "}
+          <span 
+            className="text-white font-bold px-[10px] py-[2px] rounded-[13px] ml-[4px] leading-none inline-flex items-center" 
+            style={{ backgroundColor: pillBgColor, height: '24px' }}
+          >
+            {value}
           </span>
         </span>
       );
     }
 
+    // For plain features like "Шар-сюрприз"
     return (
       <span className="font-medium text-[#101011] text-[16px] leading-[22.4px]">
         {text}
@@ -146,33 +148,6 @@ export function Step1Format() {
         </p>
       </div>
 
-      {/* Weekday / Weekend toggle */}
-      <div className="sticky top-[76px] z-30 bg-[#F7F7F7] pt-2 pb-4 -mx-4 px-4 mb-2">
-        <div className="flex items-center gap-1 bg-[#F0F0F0] p-1 rounded-2xl">
-          <button
-            onClick={() => handleWeekendToggle(false)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-              !state.isWeekend
-                ? "bg-white text-[#1A1A1A] shadow-sm"
-                : "text-[#747474]"
-            }`}
-          >
-            <Sun className="w-4 h-4" />
-            Будни
-          </button>
-          <button
-            onClick={() => handleWeekendToggle(true)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-              state.isWeekend
-                ? "bg-white text-[#1A1A1A] shadow-sm"
-                : "text-[#747474]"
-            }`}
-          >
-            <Moon className="w-4 h-4" />
-            Выходные
-          </button>
-        </div>
-      </div>
 
       {/* Weekend note */}
       <AnimatePresence>

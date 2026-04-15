@@ -52,9 +52,9 @@ export function Step4MasterClasses() {
       <div className="text-center mb-5">
         <h2 className="text-xl text-[#1A1A1A] mb-1">Мастер-классы</h2>
         <p className="text-sm text-[#747474]">
-          {isCustom
+          {isCustom || state.packageType === "basic"
             ? "Каждый мастер-класс — 7 500 ₽"
-            : "Выберите мастер-класс, включенный в пакет"}
+            : "1 мастер-класс включен в пакет бесплатно. Остальные — 7 500 ₽"}
         </p>
       </div>
 
@@ -111,7 +111,7 @@ export function Step4MasterClasses() {
               {/* Bottom pill-like panel like location cards */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
                  <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{mc.name}</h4>
-                 {isCustom && (
+                 {(isCustom || state.packageType === "basic" || state.masterClasses.length > 0) && (
                     <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">7 500 ₽</p>
                  )}
               </div>
@@ -120,12 +120,12 @@ export function Step4MasterClasses() {
         })}
       </div>
 
-      {state.masterClasses.length > 0 && isCustom && (
+      {state.masterClasses.length > 0 && (isCustom || state.packageType === "basic" || state.masterClasses.length > 1) && (
         <div className="bg-[#FF6022]/5 rounded-2xl p-4 mb-6 text-center border border-[#FF6022]/20">
           <p className="text-sm text-[#FF6022]">
-            Выбрано: {state.masterClasses.length} МК ={" "}
+            Выбрано платных: {isCustom || state.packageType === "basic" ? state.masterClasses.length : state.masterClasses.length - 1} МК ={" "}
             <span className="text-base font-semibold">
-              {(state.masterClasses.length * 7500).toLocaleString("ru-RU")} ₽
+              {((isCustom || state.packageType === "basic" ? state.masterClasses.length : state.masterClasses.length - 1) * 7500).toLocaleString("ru-RU")} ₽
             </span>
           </p>
         </div>

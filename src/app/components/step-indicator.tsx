@@ -2,15 +2,16 @@ import { useWizard } from "./wizard-context";
 import { Check } from "lucide-react";
 
 const STEP_LABELS = [
+  "Дата",
   "Пакет",
   "Квест",
   "Герои",
-  "Локация",
+  "Патирум",
+  "Взрослым",
   "Шоу",
   "МК",
   "Питание",
   "Торты",
-  "Дата",
   "Заявка",
 ];
 

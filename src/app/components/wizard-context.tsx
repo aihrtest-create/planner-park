@@ -84,7 +84,7 @@ export function useWizard() {
   return ctx;
 }
 
-const TOTAL_STEPS = 10;
+const TOTAL_STEPS = 11;
 
 const PACKAGE_PRICES: Record<string, [number, number]> = {
   custom:    [0, 0],
@@ -104,24 +104,51 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
   const nextStep = useCallback(() => {
     setStep((s) => {
       let next = s + 1;
-      // Skip Heroes (Step 3) if not a phygital quest
-      if (s === 2 && !state.questType?.startsWith("phygital_")) {
-        next = 4;
+      
+      // Skip Animators (Step 4) if not a phygital quest
+      if (s === 3 && !state.questType?.startsWith("phygital_")) {
+        next = 5;
       }
+      
+      // Going from Adult Location (Step 6)
+      if (s === 6) {
+        if (state.packageType === "basic") {
+          next = 9; // Skip Shows(7) and MC(8)
+        } else if (state.packageType === "premium") {
+          next = 8; // Skip Shows(7)
+        }
+      }
+      
       return Math.min(next, TOTAL_STEPS);
     });
-  }, [state.questType]);
+  }, [state.questType, state.packageType]);
 
   const prevStep = useCallback(() => {
     setStep((s) => {
       let prev = s - 1;
-      // If going back from Location (Step 4) and not phygital quest, skip Heroes (Step 3)
-      if (s === 4 && !state.questType?.startsWith("phygital_")) {
-        prev = 2;
+      
+      // Going back from Food (Step 9)
+      if (s === 9) {
+        if (state.packageType === "basic") {
+          prev = 6;
+        } else if (state.packageType === "premium") {
+          prev = 8;
+        }
       }
+      // Going back from MC (Step 8)
+      else if (s === 8) {
+        if (state.packageType === "premium") {
+          prev = 6;
+        }
+      }
+      // If going back from Kids Location (Step 5) and not phygital quest, skip Animators (Step 4)
+      else if (s === 5 && !state.questType?.startsWith("phygital_")) {
+        prev = 3;
+      }
+      
       return Math.max(prev, 1);
     });
-  }, [state.questType]);
+  }, [state.questType, state.packageType]);
   const updateState = useCallback(
     (partial: Partial<WizardState>) => setState((s) => ({ ...s, ...partial })),
     []
@@ -161,19 +188,31 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
     // Premium costume
     if (state.premiumCostume) total += 8000;
 
-    // Shows — priced for custom package, included in other packages
-    if (state.packageType === "custom") {
+    // Shows
+    const showPrices: Record<string, number> = { soap: 14000, paper: 15000, tesla: 15000, professor: 14000 };
+    if (state.packageType === "custom" || state.packageType === "basic" || state.packageType === "premium") {
       for (const show of state.shows) {
-        if (show === "soap") total += 14000;
-        if (show === "paper") total += 15000;
-        if (show === "tesla") total += 15000;
-        if (show === "professor") total += 14000;
+        if (showPrices[show]) total += showPrices[show];
+      }
+    } else if (state.packageType === "exclusive") {
+      // 1 is free, rest are paid. Let's just subtract the cheapest? Or just assume the first selected is free.
+      // Usually it's simplest to just subtract the cost of one show if length > 0.
+      if (state.shows.length > 0) {
+        let showsCost = 0;
+        for (const show of state.shows) {
+          if (showPrices[show]) showsCost += showPrices[show];
+        }
+        // Subtract up to the minimum price of selected to be fair, or just a fixed ~15000? Let's just subtract the first item's price.
+        showsCost -= showPrices[state.shows[0]];
+        total += showsCost;
       }
     }
 
-    // MK — included in premium/exclusive; charged for basic
-    if (state.packageType === "basic") {
+    // MK — included in premium/exclusive (1 free); charged for basic
+    if (state.packageType === "basic" || state.packageType === "custom") {
       total += state.masterClasses.length * 7500;
+    } else if (state.packageType === "premium" || state.packageType === "exclusive") {
+      total += Math.max(0, state.masterClasses.length - 1) * 7500;
     }
 
     // Food — kids set is included in premium/exclusive. If removed, we subtract price.
@@ -197,7 +236,7 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
     });
 
     // Cake
-    if (state.packageType === "custom" && state.cakeChoice) {
+    if (state.cakeChoice) {
       if (state.cakeChoice.startsWith("cake")) total += 8400; // All standard catalog cakes are 8400
       else total += 8400; // Fallback
     }

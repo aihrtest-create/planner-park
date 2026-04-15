@@ -6,6 +6,7 @@ import { Step1FormatV2 } from "./components/step1-format-v2";
 import { Step2Quests } from "./components/step2-quests";
 import { Step2Location } from "./components/step2-location";
 import { Step3Animators } from "./components/step3-animators";
+import { Step3AdultLocation } from "./components/step3-adult-location";
 import { Step4MasterClasses } from "./components/step4-masterclasses";
 import { Step5Food } from "./components/step5-food";
 import { Step6DateTime } from "./components/step6-datetime";
@@ -26,16 +27,17 @@ function WizardContent() {
 
   const renderStep = () => {
     switch (step) {
-      case 1: return useV2 ? <Step1FormatV2 key="step1v2" /> : <Step1Format key="step1" />;
-      case 2: return <Step2Quests key="step2" />;
-      case 3: return <Step3Animators key="step3" />;
-      case 4: return <Step2Location key="step4" />;
-      case 5: return <StepShows key="step-shows" />;
-      case 6: return <Step4MasterClasses key="step5" />;
-      case 7: return <Step5Food key="step6" />;
-      case 8: return <StepCakes key="step-cakes" />;
-      case 9: return <Step6DateTime key="step7" />;
-      case 10: return <Step7Summary key="step8" />;
+      case 1: return <Step6DateTime key="step1" />;
+      case 2: return useV2 ? <Step1FormatV2 key="step2v2" /> : <Step1Format key="step2" />;
+      case 3: return <Step2Quests key="step3" />;
+      case 4: return <Step3Animators key="step4" />;
+      case 5: return <Step2Location key="step5" />;
+      case 6: return <Step3AdultLocation key="step6" />;
+      case 7: return <StepShows key="step7" />;
+      case 8: return <Step4MasterClasses key="step8" />;
+      case 9: return <Step5Food key="step9" />;
+      case 10: return <StepCakes key="step10" />;
+      case 11: return <Step7Summary key="step11" />;
       default: return null;
     }
   };
@@ -47,7 +49,7 @@ function WizardContent() {
         <div className="max-w-lg mx-auto">
           {/* Logo bar */}
           <div className="flex items-center justify-between pt-3 pb-2 px-4 relative">
-            <div className="w-[84px] h-[36px] mt-1 relative -left-1">
+            <div className="w-[64px] h-[37px] flex-shrink-0">
               <HParkLogo />
             </div>
             <span className="text-[11px] text-[#747474] bg-[#F5F5F5] px-3 py-1.5 rounded-full font-medium">

@@ -103,7 +103,7 @@ export function Step6DateTime() {
               <button
                 key={day.toISOString()}
                 disabled={isPast}
-                onClick={() => updateState({ date: day })}
+                onClick={() => updateState({ date: day, isWeekend: isWeekendDay })}
                 className={`aspect-square rounded-xl flex items-center justify-center text-sm transition-all ${
                   isSelected
                     ? "bg-[#FF6022] text-white shadow-md"

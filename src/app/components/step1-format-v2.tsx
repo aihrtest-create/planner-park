@@ -148,13 +148,6 @@ export function Step1FormatV2() {
     updateState({ packageType: id, includeFood });
   };
 
-  const handleWeekendToggle = (isWeekend: boolean) => {
-    if (isWeekend && state.packageType === "basic") {
-      updateState({ isWeekend: true, packageType: null, includeFood: false });
-    } else {
-      updateState({ isWeekend });
-    }
-  };
 
   /* Scroll tracking */
   useEffect(() => {
@@ -200,33 +193,6 @@ export function Step1FormatV2() {
         </p>
       </div>
 
-      {/* Weekday / Weekend toggle */}
-      <div className="sticky top-[76px] z-30 bg-[#F7F7F7] pt-2 pb-4 px-4 mb-2">
-        <div className="flex items-center gap-1 bg-[#F0F0F0] p-1 rounded-2xl">
-          <button
-            onClick={() => handleWeekendToggle(false)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-              !state.isWeekend
-                ? "bg-white text-[#1A1A1A] shadow-sm"
-                : "text-[#747474]"
-            }`}
-          >
-            <Sun className="w-4 h-4" />
-            Будни
-          </button>
-          <button
-            onClick={() => handleWeekendToggle(true)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-              state.isWeekend
-                ? "bg-white text-[#1A1A1A] shadow-sm"
-                : "text-[#747474]"
-            }`}
-          >
-            <Moon className="w-4 h-4" />
-            Выходные
-          </button>
-        </div>
-      </div>
 
       {/* Weekend note */}
       <AnimatePresence>

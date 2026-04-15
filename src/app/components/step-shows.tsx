@@ -37,10 +37,15 @@ export function StepShows() {
   const selectedShowDetails = SHOWS.find(s => s.id === selectedInfo);
   
   const getTotalShowsPrice = () => {
-    return state.shows.reduce((acc, showId) => {
+    let cost = state.shows.reduce((acc, showId) => {
       const show = SHOWS.find(s => s.id === showId);
       return acc + (show?.price || 0);
     }, 0);
+    if (state.packageType === "exclusive" && state.shows.length > 0) {
+      const firstShow = SHOWS.find(s => s.id === state.shows[0]);
+      if (firstShow) cost -= firstShow.price;
+    }
+    return cost;
   };
 
   return (
@@ -54,9 +59,9 @@ export function StepShows() {
       <div className="text-center mb-5">
         <h2 className="text-xl text-[#1A1A1A] mb-1">Шоу-программы</h2>
         <p className="text-sm text-[#747474]">
-          {isCustom
-            ? "Выберите шоу-программы для вашего праздника"
-            : "Включено в ваш пакет без доплат"}
+          {state.packageType === "exclusive"
+            ? "1 шоу-программа включена в пакет бесплатно. Остальные за доп. плату"
+            : "Выберите шоу-программы для вашего праздника"}
         </p>
       </div>
 
@@ -113,7 +118,7 @@ export function StepShows() {
               {/* Bottom pill-like panel like location cards */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
                  <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{show.name}</h4>
-                 {isCustom && (
+                 {(isCustom || state.packageType === "exclusive" && state.shows.length > 0) && (
                     <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">{show.price.toLocaleString("ru-RU")} ₽</p>
                  )}
               </div>
@@ -122,10 +127,10 @@ export function StepShows() {
         })}
       </div>
 
-      {state.shows.length > 0 && isCustom && (
+      {state.shows.length > 0 && (isCustom || state.packageType === "exclusive" && state.shows.length > 1) && (
         <div className="bg-[#FF6022]/5 rounded-2xl p-4 mb-6 text-center border border-[#FF6022]/20">
           <p className="text-sm text-[#FF6022]">
-            Выбрано: {state.shows.length} шоу ={" "}
+            Выбрано платных: {isCustom ? state.shows.length : state.shows.length - 1} шоу ={" "}
             <span className="text-base font-semibold">
               {getTotalShowsPrice().toLocaleString("ru-RU")} ₽
             </span>

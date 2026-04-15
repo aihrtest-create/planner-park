@@ -9,16 +9,10 @@ export function FloatingPrice() {
 
   const canProceed = (() => {
     switch (step) {
-      case 1: return !!state.packageType;
-      case 2: return true; 
-      case 3: return true; 
-      case 4: return state.packageType === "custom" ? true : !!state.patiroom;
-      case 5: return true; 
-      case 6: return true;
-      case 7: return true;
-      case 8: return true;
-      case 9: return !!state.date && !!state.time;
-      case 10: return !!state.contactName && !!state.contactPhone;
+      case 1: return !!state.date && !!state.time;
+      case 2: return !!state.packageType;
+      case 5: return state.packageType === "custom" ? true : !!state.patiroom;
+      case 11: return !!state.contactName && !!state.contactPhone;
       default: return true;
     }
   })();
