@@ -85,7 +85,7 @@ export function useWizard() {
   return ctx;
 }
 
-const TOTAL_STEPS = 11;
+const TOTAL_STEPS = 12;
 
 const PACKAGE_PRICES: Record<string, [number, number]> = {
   custom:    [0, 0],
@@ -119,6 +119,11 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
           next = 8; // Skip Shows(7)
         }
       }
+
+      // Skip Included bonuses (Step 11) if custom
+      if (s === 10 && state.packageType === "custom") {
+        next = 12;
+      }
       
       return Math.min(next, TOTAL_STEPS);
     });
@@ -145,6 +150,10 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
       // If going back from Kids Location (Step 5) and not phygital quest, skip Animators (Step 4)
       else if (s === 5 && !state.questType?.startsWith("phygital_")) {
         prev = 3;
+      }
+      // If going back from Summary (Step 12) and custom, skip Included Bonuses (Step 11)
+      else if (s === 12 && state.packageType === "custom") {
+        prev = 10;
       }
       
       return Math.max(prev, 1);
@@ -246,7 +255,7 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
   })();
 
   const visibleSteps = React.useMemo(() => {
-    const list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    const list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     return list.filter((s) => {
       // Skip Animators (Step 4) if not a phygital quest
       if (s === 4 && state.questType && !state.questType.startsWith("phygital_")) return false;
@@ -254,6 +263,8 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
       if (s === 7 && (state.packageType === "basic" || state.packageType === "premium")) return false;
       // Skip MC(8) if basic
       if (s === 8 && state.packageType === "basic") return false;
+      // Skip Included Bonuses (11) if custom
+      if (s === 11 && state.packageType === "custom") return false;
       return true;
     });
   }, [state.questType, state.packageType]);

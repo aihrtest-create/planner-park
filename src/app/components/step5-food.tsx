@@ -56,9 +56,12 @@ export function Step5Food() {
       transition={{ duration: 0.3 }}
       className="px-4 pb-6"
     >
-      <div className="text-center mb-5">
-        <h2 className="text-xl text-[#1A1A1A] mb-1">Питание</h2>
-        <p className="text-sm text-[#747474]">Вкуснейшие угощения для гостей</p>
+      <div className="text-center mb-8 px-4 pt-2">
+        <h2 className="text-3xl font-black text-[#1A1A1A] mb-2 leading-tight flex items-center justify-center gap-3">
+          <span className="text-4xl drop-shadow-md hover:scale-110 transition-transform cursor-pointer">🍕</span>
+          Питание
+        </h2>
+        <p className="text-base font-bold text-[#747474] leading-relaxed">Вкуснейшие угощения для гостей</p>
       </div>
 
       {/* 1. Набор детской еды */}

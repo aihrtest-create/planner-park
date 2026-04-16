@@ -9,6 +9,7 @@ import rockyImg3 from "../../assets/rocky-quest-3.png";
 import rockyImg4 from "../../assets/rocky-quest-4.png";
 import rockyImg5 from "../../assets/rocky-quest-5.png";
 import rockyImg6 from "../../assets/rocky-quest-6.png";
+import spaceImg from "../../assets/space-quest.png";
 
 const ROCKY_PHOTOS = [rockyImg1, rockyImg2, rockyImg3, rockyImg4, rockyImg5, rockyImg6];
 
@@ -45,7 +46,7 @@ const PHYGITAL_QUESTS = [
     description:
       "Лис Рокки — капитан космического корабля! Дети отправляются в межгалактическую миссию: проходят испытания на невесомость, расшифровывают сигналы с других планет и спасают Вселенную. Цифровые технологии делают каждое задание магически реальным.",
     highlights: ["Космические миссии", "Цифровые спецэффекты", "Командная игра", "Финальное награждение"],
-    photos: ROCKY_PHOTOS.slice().reverse(),
+    photos: [spaceImg, ...ROCKY_PHOTOS.slice().reverse()],
   },
 ];
 
@@ -302,7 +303,6 @@ export function Step2Quests() {
   const selectPhygital = (id: PhygitalId) => {
     updateState({ questType: id, isQuestPopupOpen: false });
     setOpenQuest(null);
-    nextStep();
   };
 
   const selectClassic = (id: ClassicId) => {
@@ -323,27 +323,27 @@ export function Step2Quests() {
         className="px-4 pb-6"
       >
         {/* Header */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-[#1A1A1A] mb-1">Выберите квест</h2>
-          <p className="text-sm text-[#747474]">
+        <div className="text-center mb-6 px-4 pt-2">
+          <h2 className="text-3xl font-black text-[#1A1A1A] mb-2 leading-tight flex items-center justify-center gap-3">
+            <span className="text-4xl drop-shadow-md hover:scale-110 transition-transform cursor-pointer">🎉</span>
+            Выберите квест
+          </h2>
+          <p className="text-base font-bold text-[#747474] leading-relaxed">
             Главное приключение дня рождения
           </p>
         </div>
 
         {/* Phygital section — FLAGSHIP */}
-        <div className="mb-6">
+        <div className="mb-6 mt-4">
           {/* Section label */}
-          <div className="flex items-center gap-2 mb-3">
-            <div className="h-px flex-1 bg-[#E5E5E5]" />
-            <div className="flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-full">
-              <span>🦊</span>
-              <span>ФИДЖИТАЛ ДР — флагман парка</span>
+          <div className="flex justify-center mb-[32px]">
+            <div className="bg-[#5b21cc] text-white text-[19px] sm:text-[22px] font-black tracking-[-0.3px] px-[28px] py-[10px] rounded-[16px] transform rotate-[-2deg] shadow-lg shadow-[#5b21cc]/30">
+              Фиджитал квесты
             </div>
-            <div className="h-px flex-1 bg-[#E5E5E5]" />
           </div>
 
           {/* Phygital quest cards */}
-          <div className="space-y-3">
+          <div className="flex flex-col gap-[28px]">
             {PHYGITAL_QUESTS.map((quest, i) => {
               const isSelected = state.questType === quest.id;
 
@@ -369,7 +369,7 @@ export function Step2Quests() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
 
                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-[#1A1A1A] text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full z-10 shadow-sm flex items-center gap-1.5">
-                      <span className="text-base">🦊</span> С Лисом Рокки
+                      <span className="text-base">🚀</span> С полным погружением
                     </div>
 
                     <button 
@@ -398,11 +398,6 @@ export function Step2Quests() {
                             <Users className="w-3 h-3 text-[#747474]" />
                             <span className="text-[10px] text-[#1A1A1A] font-medium">до {quest.maxKids} детей</span>
                           </div>
-                          {quest.addonPrice > 0 && (
-                            <div className="flex items-center gap-1 bg-[#F5F5F5] rounded-md px-2 py-1">
-                              <span className="text-[10px] text-[#1A1A1A] font-medium">+{quest.addonPrice.toLocaleString("ru-RU")} ₽</span>
-                            </div>
-                          )}
                         </div>
                       </div>
 
@@ -424,23 +419,16 @@ export function Step2Quests() {
 
         {/* Classic quests section */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="h-px flex-1 bg-[#E5E5E5]" />
-            <span className="text-xs font-bold text-[#747474] px-2 tracking-wide uppercase">ИЛИ КЛАССИЧЕСКИЕ КВЕСТЫ</span>
-            <div className="h-px flex-1 bg-[#E5E5E5]" />
-          </div>
-
-          {/* Classic info */}
-          <div className="bg-[#F8F8F8] rounded-2xl p-4 mb-4">
-            <div className="flex items-center justify-between text-sm mb-1">
-              <span className="text-[#747474]">2 аниматора · до 20 детей · 60 мин.</span>
-              {isCustom ? (
-                <span className="font-semibold text-[#1A1A1A]">+10 000 ₽</span>
-              ) : (
-                <span className="font-semibold text-[#22C55E]">Включено</span>
+          <div className="mb-[20px] mt-[16px]">
+            <h2 className="text-[24px] tracking-[-0.5px] font-black text-[#1A1A1A] leading-tight mb-1.5">
+              Или классические квесты
+            </h2>
+            <div className="flex items-center justify-between text-[14px]">
+              <span className="text-[#747474] font-medium">2 аниматора · до 20 детей · 60 мин.</span>
+              {isCustom && (
+                <span className="font-semibold text-[#FF6022] bg-[#FF6022]/10 px-2.5 py-0.5 rounded-md">+10 000 ₽</span>
               )}
             </div>
-            <p className="text-xs text-[#ABABAB]">Классический квест в парке с готовым сценарием под ключ</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-6">

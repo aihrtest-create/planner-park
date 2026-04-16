@@ -11,6 +11,7 @@ import { Step4MasterClasses } from "./components/step4-masterclasses";
 import { Step5Food } from "./components/step5-food";
 import { Step6DateTime } from "./components/step6-datetime";
 import { Step7Summary } from "./components/step7-summary";
+import { Step11Included } from "./components/step11-included";
 import { StepShows } from "./components/step-shows";
 import { StepCakes } from "./components/step-cakes";
 import { FloatingPrice } from "./components/floating-price";
@@ -37,7 +38,8 @@ function WizardContent() {
       case 8: return <Step4MasterClasses key="step8" />;
       case 9: return <Step5Food key="step9" />;
       case 10: return <StepCakes key="step10" />;
-      case 11: return <Step7Summary key="step11" />;
+      case 11: return <Step11Included key="step11" />;
+      case 12: return <Step7Summary key="step12" />;
       default: return null;
     }
   };

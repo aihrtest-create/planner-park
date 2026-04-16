@@ -184,12 +184,13 @@ export function Step1FormatV2() {
       className="pb-6"
     >
       {/* Header */}
-      <div className="text-center mb-5 px-4">
-        <h1 className="text-2xl font-bold text-[#1A1A1A] mb-1">
+      <div className="text-center mb-8 px-4 pt-2">
+        <h2 className="text-3xl font-black text-[#1A1A1A] mb-2 leading-tight flex items-center justify-center gap-3">
+          <span className="text-4xl drop-shadow-md hover:scale-110 transition-transform cursor-pointer">🎉</span>
           Выберите пакет
-        </h1>
-        <p className="text-[#747474] text-sm">
-          Всё для незабываемого праздника вашего ребёнка
+        </h2>
+        <p className="text-base font-bold text-[#747474] leading-relaxed">
+          День рождения в Hello Park
         </p>
       </div>
 

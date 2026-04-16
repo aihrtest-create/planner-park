@@ -1,6 +1,6 @@
 import { useWizard } from "./wizard-context";
 import { motion, AnimatePresence } from "motion/react";
-import { ShoppingBag, Send } from "lucide-react";
+import { ShoppingBag, Send, Gift } from "lucide-react";
 
 export function FloatingPrice() {
   const { totalPrice, step, totalSteps, visibleSteps, state, nextStep, prevStep, submitted, setSubmitted } = useWizard();
@@ -12,7 +12,7 @@ export function FloatingPrice() {
       case 1: return !!state.date && !!state.time;
       case 2: return !!state.packageType;
       case 5: return state.packageType === "custom" ? true : !!state.patiroom;
-      case 11: return !!state.contactName && !!state.contactPhone;
+      case 12: return !!state.contactName && !!state.contactPhone;
       default: return true;
     }
   })();
@@ -73,12 +73,19 @@ export function FloatingPrice() {
           <button
             onClick={handleNext}
             disabled={!canProceed}
-            className={`${step > 1 ? "flex-[2]" : "w-full"} bg-[#FF6022] text-white py-3.5 rounded-full shadow-lg transition-all active:scale-[0.98] disabled:opacity-40 flex items-center justify-center gap-2`}
+            className={`${step > 1 ? "flex-[2]" : "w-full"} ${
+              step === 11 ? "bg-gradient-to-r from-[#FF6022] to-[#FF8000] scale-[1.02] shadow-xl shadow-[#FF6022]/30" : "bg-[#FF6022]"
+            } text-white py-3.5 rounded-full shadow-lg transition-all active:scale-[0.98] disabled:opacity-40 flex items-center justify-center gap-2`}
           >
             {step === totalSteps ? (
               <>
                 <Send className="w-4 h-4" />
                 Оставить заявку
+              </>
+            ) : step === 11 ? (
+              <>
+                <span className="text-base animate-bounce">🎁</span>
+                <span className="font-bold tracking-wide">Забрать подарки</span>
               </>
             ) : (
               "Продолжить"
