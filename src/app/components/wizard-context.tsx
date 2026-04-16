@@ -40,6 +40,7 @@ export interface WizardState {
 interface WizardContextType {
   step: number;
   totalSteps: number;
+  visibleSteps: number[];
   state: WizardState;
   setStep: (step: number) => void;
   nextStep: () => void;
@@ -244,10 +245,23 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
     return total;
   })();
 
+  const visibleSteps = React.useMemo(() => {
+    const list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    return list.filter((s) => {
+      // Skip Animators (Step 4) if not a phygital quest
+      if (s === 4 && state.questType && !state.questType.startsWith("phygital_")) return false;
+      // Skip Shows(7) if basic or premium
+      if (s === 7 && (state.packageType === "basic" || state.packageType === "premium")) return false;
+      // Skip MC(8) if basic
+      if (s === 8 && state.packageType === "basic") return false;
+      return true;
+    });
+  }, [state.questType, state.packageType]);
+
   return (
     <WizardContext.Provider
       value={{
-        step, totalSteps: TOTAL_STEPS, state, setStep,
+        step, totalSteps: TOTAL_STEPS, visibleSteps, state, setStep,
         nextStep, prevStep, updateState, totalPrice, submitted, setSubmitted
       }}
     >

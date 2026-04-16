@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ShoppingBag, Send } from "lucide-react";
 
 export function FloatingPrice() {
-  const { totalPrice, step, totalSteps, state, nextStep, prevStep, submitted, setSubmitted } = useWizard();
+  const { totalPrice, step, totalSteps, visibleSteps, state, nextStep, prevStep, submitted, setSubmitted } = useWizard();
 
   if (submitted || state.isQuestPopupOpen) return null;
 
@@ -26,6 +26,9 @@ export function FloatingPrice() {
     }
     nextStep();
   };
+
+  const currentDisplayStep = (visibleSteps || []).indexOf(step) + 1 || 1;
+  const currentTotalSteps = (visibleSteps || []).length || totalSteps;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
@@ -51,7 +54,7 @@ export function FloatingPrice() {
                 </div>
               </div>
               <div className="text-xs text-[#ABABAB] bg-[#F5F5F5] px-3 py-1 rounded-full">
-                Шаг {step}/{totalSteps}
+                Шаг {currentDisplayStep}/{currentTotalSteps}
               </div>
             </motion.div>
           )}
