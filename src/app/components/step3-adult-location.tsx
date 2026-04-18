@@ -1,11 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { useWizard } from "./wizard-context";
-import { motion, AnimatePresence } from "motion/react";
-import { Users, Projector, Check, MapPin, Coffee, Info, PlayCircle, X, UtensilsCrossed, Armchair } from "lucide-react";
+import { motion } from "motion/react";
+import { Users, Check, Coffee, UtensilsCrossed, Armchair } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { Drawer, DrawerContent, DrawerTitle, DrawerDescription, DrawerClose } from "./ui/drawer";
-import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
-import { Button } from "./ui/button";
 
 const getPublicUrl = (path: string) => {
   if (!path) return path;
@@ -51,7 +48,6 @@ const CAFE_OPTIONS = [
 
 export function Step3AdultLocation() {
   const { state, updateState } = useWizard();
-  const [selectedDetails, setSelectedDetails] = useState<typeof CAFE_OPTIONS[0] | null>(null);
   const handleToggleCafe = (opt: typeof CAFE_OPTIONS[0]) => {
     const current = [...state.cafeZones];
     const idx = current.indexOf(opt.id);
@@ -173,83 +169,6 @@ export function Step3AdultLocation() {
         </div>
       </div>
 
-      {/* ==================== DETAILS DRAWER ==================== */}
-      <Drawer open={!!selectedDetails} onOpenChange={(open) => !open && setSelectedDetails(null)}>
-        <DrawerContent className="max-h-[90vh] w-full max-w-lg mx-auto bg-white pt-2 px-2 flex flex-col rounded-t-3xl">
-          <div className="mx-auto mt-2 h-1.5 w-12 shrink-0 rounded-full bg-gray-200 mb-4" />
-          
-          {selectedDetails && (
-            <div className="flex-1 overflow-y-auto pb-safe">
-              <div className="relative rounded-2xl overflow-hidden mb-4 bg-black w-full flex items-center justify-center">
-                {selectedDetails.video ? (
-                  <video
-                    src={getPublicUrl(selectedDetails.video)}
-                    controls
-                    autoPlay
-                    loop
-                    playsInline
-                    className="w-full max-h-[60vh] object-contain"
-                  />
-                ) : (
-                  <Carousel className="w-full aspect-[4/3] sm:aspect-video">
-                    <CarouselContent className="h-full ml-0">
-                      {selectedDetails.gallery.map((img, idx) => (
-                        <CarouselItem key={idx} className="h-full pl-0">
-                          <img src={getPublicUrl(img)} alt="" className="w-full h-full object-contain" />
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                  </Carousel>
-                )}
-                
-                <DrawerClose asChild>
-                  <button className="absolute top-3 right-3 bg-black/50 backdrop-blur-md rounded-full p-2 text-white z-20 transition-transform active:scale-95 border border-white/10 hover:bg-black/70">
-                    <X className="w-5 h-5" />
-                  </button>
-                </DrawerClose>
-              </div>
-
-              <div className="px-3 pb-6 border-b border-gray-100">
-                <DrawerTitle className="text-2xl font-bold text-[#1A1A1A] mb-2">{selectedDetails.name}</DrawerTitle>
-                <DrawerDescription className="text-sm text-[#747474] leading-relaxed mb-4">
-                  {selectedDetails.description}
-                </DrawerDescription>
-
-                <div className="grid grid-cols-2 gap-3 mt-4">
-                  <div className="flex items-center gap-2 bg-orange-50/50 p-2.5 rounded-xl">
-                    <Users className="w-4 h-4 text-[#FF6022]" />
-                    <div>
-                      <div className="text-[10px] text-[#747474]">Вместимость</div>
-                      <div className="text-xs font-semibold text-[#1A1A1A]">до {selectedDetails.seats} мест</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 bg-orange-50/50 p-2.5 rounded-xl">
-                    <Projector className="w-4 h-4 text-[#FF6022]" />
-                    <div>
-                      <div className="text-[10px] text-[#747474]">Оснащение</div>
-                      <div className="text-xs font-semibold text-[#1A1A1A]">
-                        {selectedDetails.hasProjection ? "Интерактивная проекция" : "Стандартное"}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 bg-white/80 backdrop-blur-md sticky bottom-0 border-t border-gray-100">
-                <Button 
-                  onClick={() => {
-                    handleSelectRoom(selectedDetails!);
-                    setSelectedDetails(null);
-                  }}
-                  className="w-full h-12 bg-[#FF6022] hover:bg-[#E55015] text-white rounded-xl text-base font-medium shadow-lg shadow-orange-500/20"
-                >
-                  Выбрать патирум "{selectedDetails.name}"
-                </Button>
-              </div>
-            </div>
-          )}
-        </DrawerContent>
-      </Drawer>
     </motion.div>
   );
 }
