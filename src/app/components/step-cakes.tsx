@@ -375,7 +375,7 @@ export function StepCakes() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-md"
+              className="fixed top-[-50vh] bottom-[-50vh] left-0 right-0 z-[90] bg-black/50 backdrop-blur-md"
               onClick={() => setBottomSheetCake(null)}
             />
             <motion.div

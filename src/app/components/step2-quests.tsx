@@ -249,7 +249,7 @@ function QuestPopup({
     >
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-md" 
+        className="absolute top-[-50vh] bottom-[-50vh] left-0 right-0 bg-black/60 backdrop-blur-md" 
         onClick={onClose}
       />
 
@@ -617,16 +617,20 @@ export function Step2Quests() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md"
-            onClick={() => setClassicQuestInfo(null)}
+            className="fixed top-[-50vh] bottom-[-50vh] left-0 right-0 z-[100] flex items-center justify-center p-4 pointer-events-none"
           >
+            {/* Extended bounce cover backdrop */}
+            <div 
+              className="absolute inset-0 bg-black/50 backdrop-blur-md pointer-events-auto"
+              onClick={() => setClassicQuestInfo(null)}
+            />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               onClick={(e) => e.stopPropagation()}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh]"
+              className="w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] pointer-events-auto relative z-10"
             >
               <div className="relative shrink-0 bg-black">
                 <div className={`aspect-[4/3] w-full bg-gradient-to-br ${selectedClassicQuest.gradient} flex items-center justify-center`}>
