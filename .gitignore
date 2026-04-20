@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 AntigravityMobile
+tmp_img_processor/
