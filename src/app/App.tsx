@@ -24,7 +24,8 @@ function WizardContent() {
   const useV2 = useMemo(() => new URLSearchParams(window.location.search).has("v2"), []);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Scroll intentionally removed from here to prevent abrupt layout jumping
+    // while animations are playing. Will happen during Transition onExitComplete.
   }, [step]);
 
   const renderStep = () => {
@@ -76,7 +77,7 @@ function WizardContent() {
 
       {/* Content */}
       <main className="max-w-lg mx-auto py-4 pb-40">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" onExitComplete={() => window.scrollTo({ top: 0 })}>
           {renderStep()}
         </AnimatePresence>
       </main>
