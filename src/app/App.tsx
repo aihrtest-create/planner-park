@@ -48,6 +48,8 @@ function WizardContent() {
     <div className="min-h-screen bg-[#F7F7F7]">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white shadow-sm rounded-b-3xl">
+        {/* Safari Top Bounce Cover */}
+        <div className="absolute left-0 right-0 h-[50vh] bg-white bottom-full" />
         <div className="max-w-lg mx-auto">
           {/* Logo bar */}
           <div className="flex items-center justify-between pt-3 pb-2 px-4 relative">

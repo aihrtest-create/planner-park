@@ -209,7 +209,7 @@ export function Step5Food() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 z-[90] backdrop-blur-sm"
+              className="fixed top-[-50vh] bottom-[-50vh] left-0 right-0 bg-black/50 z-[90] backdrop-blur-md"
               onClick={() => setActiveCategory(null)}
             />
             <motion.div

@@ -246,10 +246,12 @@ function QuestPopup({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-end justify-center"
-      onClick={onClose}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div 
+        className="absolute top-[-50vh] bottom-[-50vh] left-0 right-0 bg-black/60 backdrop-blur-md" 
+        onClick={onClose}
+      />
 
       {/* Sheet */}
       <motion.div
@@ -615,9 +617,12 @@ export function Step2Quests() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-            onClick={() => setClassicQuestInfo(null)}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
           >
+            <div 
+              className="absolute top-[-50vh] bottom-[-50vh] left-0 right-0 bg-black/50 backdrop-blur-md" 
+              onClick={() => setClassicQuestInfo(null)} 
+            />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -629,7 +634,7 @@ export function Step2Quests() {
               <div className="relative shrink-0 bg-black">
                 <div className={`aspect-[4/3] w-full bg-gradient-to-br ${selectedClassicQuest.gradient} flex items-center justify-center`}>
                   {selectedClassicQuest.image ? (
-                    <ImageWithFallback src={getPublicUrl(selectedClassicQuest.image)} alt={selectedClassicQuest.name} className="w-full h-full object-cover" />
+                    <ImageWithFallback src={getPublicUrl(selectedClassicQuest.image)} alt={selectedClassicQuest.name} className="w-full h-full object-contain object-bottom pt-8 px-4" />
                   ) : (
                     <span className="text-8xl sm:text-9xl filter drop-shadow-md">{selectedClassicQuest.emoji}</span>
                   )}

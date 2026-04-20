@@ -178,11 +178,7 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
       if (state.packageType === "custom") {
         total += state.questType.startsWith("phygital_") ? 8000 : 15000;
       } else {
-        // According to user: "В пакетах можно выбрать любой квест".
-        // No checkout +10000 for classic, optionally +2000 for phygital (keeping +2000 for phygital if package, 0 for classic)
-        if (state.questType.startsWith("phygital_")) {
-          total += PHYGITAL_QUEST_ADDON;
-        }
+        // В пакетах можно выбрать любой квест, доплат нет.
       }
     }
 

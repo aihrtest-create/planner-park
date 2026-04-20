@@ -148,9 +148,12 @@ export function StepShows() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-            onClick={() => setSelectedInfo(null)}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
           >
+            <div 
+              className="absolute top-[-50vh] bottom-[-50vh] left-0 right-0 bg-black/50 backdrop-blur-md" 
+              onClick={() => setSelectedInfo(null)} 
+            />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}

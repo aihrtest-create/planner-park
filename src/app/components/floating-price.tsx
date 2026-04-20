@@ -137,7 +137,10 @@ export function FloatingPrice() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="max-w-lg mx-auto px-4 pb-4 pt-3 flex flex-col gap-2 bg-gradient-to-t from-[#F7F7F7] via-[#F7F7F7] to-[#F7F7F7]/0">
+      {/* Safari Bottom Bounce Cover */}
+      <div className="absolute top-full left-0 right-0 h-[50vh] bg-[#F7F7F7]" />
+      
+      <div className="max-w-lg mx-auto px-4 pb-4 pt-3 flex flex-col gap-2 bg-gradient-to-t from-[#F7F7F7] via-[#F7F7F7] to-[#F7F7F7]/0 relative">
 
         {/* ─── Validation Toast ─── */}
         <AnimatePresence>
