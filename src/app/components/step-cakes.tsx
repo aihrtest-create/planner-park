@@ -228,6 +228,15 @@ const CAKES = [
     "gradient": "from-white to-white",
     "image": "/cakes/image_p3_28.jpeg",
     "price": "8 400 ₽"
+  },
+  {
+    "id": "own_cake",
+    "name": "Свой торт",
+    "emoji": "🎁",
+    "desc": "Принесите свой торт! К стоимости пакета прибавляется сервировка и подача.",
+    "gradient": "from-white to-white",
+    "image": "",
+    "price": "+2 000 ₽"
   }
 ];
 
@@ -288,7 +297,14 @@ export function StepCakes() {
             <motion.div
               key={mc.id}
               whileTap={{ scale: 0.98 }}
-              onClick={() => openBottomSheet(mc.id)}
+              onClick={() => {
+                if (mc.id === "own_cake") {
+                  // Свой торт — сразу выбрать, без начинки
+                  updateState({ cakeChoice: "own_cake", fillingChoice: null });
+                } else {
+                  openBottomSheet(mc.id);
+                }
+              }}
               className={`relative aspect-[4/5] sm:h-[280px] rounded-[24px] overflow-hidden transition-all cursor-pointer group ${
                 isSelected
                   ? "ring-2 ring-[#FF6022] shadow-xl scale-[1.01]"
@@ -296,13 +312,24 @@ export function StepCakes() {
               }`}
             >
               {/* Image / Gradient Placeholder */}
-              <div className={`absolute inset-0 flex items-center justify-center bg-white`}>
-                {(mc as any).image ? (
-                  <ImageWithFallback src={getPublicUrl((mc as any).image)} alt={mc.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 mix-blend-multiply" />
-                ) : (
-                  <span className="text-6xl sm:text-7xl filter drop-shadow-md pb-6 group-hover:scale-110 transition-transform duration-500">{mc.emoji}</span>
-                )}
-              </div>
+              {mc.id === "own_cake" ? (
+                <div className={`absolute inset-0 flex flex-col items-center justify-center bg-white pb-8`}>
+                  <span className="text-[120px] sm:text-[140px] filter drop-shadow-md group-hover:scale-110 transition-transform duration-500 leading-none mb-3">🎂</span>
+                  <span className="text-xs font-bold text-[#FF6022] bg-[#FF6022]/10 px-3 py-1 rounded-full relative z-10 mt-2">Свой торт</span>
+                </div>
+              ) : (
+                <div className={`absolute inset-0 flex items-center justify-center bg-black overflow-hidden`}>
+                  {(mc as any).image ? (
+                    <ImageWithFallback 
+                      src={getPublicUrl((mc as any).image)} 
+                      alt={mc.name} 
+                      className="w-full h-full object-contain scale-[1.25] -translate-y-2 group-hover:scale-[1.3] transition-all duration-700" 
+                    />
+                  ) : (
+                    <span className="text-6xl sm:text-7xl filter drop-shadow-md pb-6 group-hover:scale-110 transition-transform duration-500">{mc.emoji}</span>
+                  )}
+                </div>
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
 
               {/* Top details: Checkmark */}
@@ -317,7 +344,9 @@ export function StepCakes() {
               {/* Bottom pill-like panel */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
                  <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{mc.name}</h4>
-                 <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">{state.packageType === "custom" ? mc.price : "Включен в пакет"}</p>
+                 <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">
+                   {mc.id === "own_cake" ? "+2 000 ₽" : state.packageType === "custom" ? mc.price : "Включен в пакет"}
+                 </p>
               </div>
             </motion.div>
           );
@@ -328,7 +357,10 @@ export function StepCakes() {
         <div className="bg-[#FF6022]/5 rounded-2xl p-4 mb-6 text-center border border-[#FF6022]/20">
           <p className="text-sm text-[#FF6022] flex flex-col">
             <span>Выбран: <span className="font-semibold">{CAKES.find(c => c.id === state.cakeChoice)?.name}</span></span>
-            {state.fillingChoice && <span className="text-xs opacity-80 mt-0.5">Начинка: {FILLINGS.find(f => f.id === state.fillingChoice)?.name}</span>}
+            {state.cakeChoice === "own_cake" 
+              ? <span className="text-xs opacity-80 mt-0.5">+2 000 ₽ за сервировку и подачу</span>
+              : state.fillingChoice && <span className="text-xs opacity-80 mt-0.5">Начинка: {FILLINGS.find(f => f.id === state.fillingChoice)?.name}</span>
+            }
           </p>
         </div>
       )}

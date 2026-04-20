@@ -210,6 +210,8 @@ export function FloatingPrice() {
                 <span className="text-base animate-bounce">🎁</span>
                 <span className="font-bold tracking-wide">Забрать подарки</span>
               </>
+            ) : isOptionalStep && !hasOptionalSelection ? (
+              "Пропустить"
             ) : (
               "Продолжить"
             )}

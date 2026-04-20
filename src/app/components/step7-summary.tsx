@@ -13,14 +13,67 @@ import {
   PartyPopper,
   Check,
   Star,
+  Cake,
+  Gamepad2,
 } from "lucide-react";
 import { format, isWeekend } from "date-fns";
 
 const PACKAGE_NAMES: Record<string, string> = {
-  basic: "Hello Fun",
-  premium: "Hello Party",
-  exclusive: "Hello Bloom",
+  basic: "Базовый",
+  premium: "Премиум",
+  exclusive: "Эксклюзив",
   custom: "Индивидуальный",
+};
+
+const QUEST_NAMES: Record<string, string> = {
+  phygital_voxels: "Фиджитал: Воксели",
+  phygital_space: "Фиджитал: Космос",
+  classic_fort: "Форт Боярд",
+  classic_minecraft: "Майнкрафт",
+  classic_squid: "Игра в кальмара",
+  classic_barbie: "Барби",
+  classic_safari: "Сафари",
+  classic_harry: "Гарри Поттер",
+  classic_heroes: "Миссия Супергероев",
+  classic_pirates: "Пиратский",
+  classic_wednesday: "Уэнсдей",
+  classic_bloggers: "Блогеры",
+  classic_fortnite: "Фортнайт",
+  classic_agents: "Суперагенты",
+  none: "Без квеста",
+};
+
+const SHOW_NAMES: Record<string, string> = {
+  soap: "Мыльное шоу",
+  paper: "Бумажное шоу",
+  tesla: "Тесла шоу",
+  professor: "Профессор Тесла",
+};
+
+const MC_NAMES: Record<string, string> = {
+  elsa_tiara: "Диадема Эльзы",
+  felt_toy: "Игрушка из фетра",
+  kapitoshka: "Капитошка",
+  mc_weapon: "Оружие из Майнкрафта",
+  birthday_card: "Открытка имениннику",
+  sand_picture: "Песочная картина",
+  gingerbread: "Роспись пряников",
+  slime: "Слайм / Табо-лапки",
+  jewelry: "Трендовые украшения",
+};
+
+const CAKE_NAMES: Record<string, string> = {
+  own_cake: "Свой торт",
+};
+
+const FILLING_NAMES: Record<string, string> = {
+  filling_1: "Лаванда-Ягодный микс",
+  filling_2: "Кокос-Малина",
+  filling_3: "Красный бархат",
+  filling_4: "Фисташка-Клубника",
+  filling_5: "Ванильный",
+  filling_6: "Сникерс",
+  filling_7: "Миндаль-Вишня",
 };
 
 export function Step7Summary() {
@@ -81,6 +134,14 @@ export function Step7Summary() {
           />
         )}
 
+        {state.questType && state.questType !== "none" && (
+          <SummaryRow
+            icon={<Gamepad2 className="w-4 h-4" />}
+            label="Квест"
+            value={QUEST_NAMES[state.questType] || state.questType}
+          />
+        )}
+
         {state.patiroomDetails && (
           <SummaryRow
             icon={<MapPin className="w-4 h-4" />}
@@ -105,10 +166,8 @@ export function Step7Summary() {
         {state.animators.length > 0 && (
           <SummaryRow
             icon={<UsersIcon className="w-4 h-4" />}
-            label="Герои"
-            value={`${state.animators.length} аниматор(а)${
-              state.premiumCostume ? " + премиум костюм" : ""
-            }`}
+            label="Герой"
+            value={state.animators.join(", ")}
           />
         )}
 
@@ -116,7 +175,7 @@ export function Step7Summary() {
           <SummaryRow
             icon={<Star className="w-4 h-4" />}
             label="Шоу-программы"
-            value={`${state.shows.length} шоу`}
+            value={state.shows.map(s => SHOW_NAMES[s] || s).join(", ")}
           />
         )}
 
@@ -124,20 +183,23 @@ export function Step7Summary() {
           <SummaryRow
             icon={<Palette className="w-4 h-4" />}
             label="Мастер-классы"
-            value={`${state.masterClasses.length} МК`}
+            value={state.masterClasses.map(mc => MC_NAMES[mc] || mc).join(", ")}
           />
         )}
 
-        {(state.includeFood || state.cakeChoice) && (
+        {state.includeFood && (
           <SummaryRow
             icon={<UtensilsCrossed className="w-4 h-4" />}
             label="Питание"
-            value={[
-              state.includeFood && "Детский обед",
-              state.cakeChoice && state.cakeChoice !== "none" && "Торт",
-            ]
-              .filter(Boolean)
-              .join(", ")}
+            value="Набор детской еды"
+          />
+        )}
+
+        {state.cakeChoice && state.cakeChoice !== "none" && (
+          <SummaryRow
+            icon={<Cake className="w-4 h-4" />}
+            label="Торт"
+            value={`${CAKE_NAMES[state.cakeChoice] || state.cakeChoice}${state.fillingChoice ? " · " + (FILLING_NAMES[state.fillingChoice] || state.fillingChoice) : ""}`}
           />
         )}
 

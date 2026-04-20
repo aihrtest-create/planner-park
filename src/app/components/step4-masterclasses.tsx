@@ -57,7 +57,7 @@ export function Step4MasterClasses() {
         <p className="text-base font-bold text-[#747474] leading-relaxed">
           {isCustom || state.packageType === "basic"
             ? "Каждый мастер-класс — 7 500 ₽"
-            : "1 мастер-класс включен в пакет бесплатно. Остальные — 7 500 ₽"}
+            : "В ваш пакет входит 1 мастер-класс — выберите любой!"}
         </p>
       </div>
 
@@ -114,7 +114,7 @@ export function Step4MasterClasses() {
               {/* Bottom pill-like panel like location cards */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
                  <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{mc.name}</h4>
-                 {(isCustom || state.packageType === "basic" || state.masterClasses.length > 0) && (
+                 {(isCustom || state.packageType === "basic") && (
                     <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">7 500 ₽</p>
                  )}
               </div>
@@ -123,12 +123,23 @@ export function Step4MasterClasses() {
         })}
       </div>
 
-      {state.masterClasses.length > 0 && (isCustom || state.packageType === "basic" || state.masterClasses.length > 1) && (
+      {state.masterClasses.length > 1 && (state.packageType === "premium" || state.packageType === "exclusive") && (
+        <div className="bg-amber-50 rounded-2xl p-4 mb-6 text-center border border-amber-200">
+          <p className="text-sm text-amber-700 font-medium">
+            В пакет входит 1 мастер-класс. Дополнительные — 
+            <span className="text-base font-bold">
+              {" "}{((state.masterClasses.length - 1) * 7500).toLocaleString("ru-RU")} ₽
+            </span>
+          </p>
+        </div>
+      )}
+
+      {state.masterClasses.length > 0 && (isCustom || state.packageType === "basic") && (
         <div className="bg-[#FF6022]/5 rounded-2xl p-4 mb-6 text-center border border-[#FF6022]/20">
           <p className="text-sm text-[#FF6022]">
-            Выбрано платных: {isCustom || state.packageType === "basic" ? state.masterClasses.length : state.masterClasses.length - 1} МК ={" "}
+            Выбрано: {state.masterClasses.length} МК ={" "}
             <span className="text-base font-semibold">
-              {((isCustom || state.packageType === "basic" ? state.masterClasses.length : state.masterClasses.length - 1) * 7500).toLocaleString("ru-RU")} ₽
+              {(state.masterClasses.length * 7500).toLocaleString("ru-RU")} ₽
             </span>
           </p>
         </div>

@@ -98,7 +98,7 @@ const PHYGITAL_QUEST_ADDON = 2000;
 const CLASSIC_QUEST_ADDON = 10000;
 
 export function WizardProvider({ children }: { children: React.ReactNode }) {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [state, setState] = useState<WizardState>(initialState);
   const [submitted, setSubmitted] = useState(false);
 
@@ -243,8 +243,13 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
 
     // Cake
     if (state.cakeChoice) {
-      if (state.cakeChoice.startsWith("cake")) total += 8400; // All standard catalog cakes are 8400
-      else total += 8400; // Fallback
+      if (state.cakeChoice === "own_cake") {
+        total += 2000;
+      } else if (state.cakeChoice.startsWith("cake")) {
+        total += 8400;
+      } else {
+        total += 8400; // Fallback
+      }
     }
 
     return total;
