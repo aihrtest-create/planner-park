@@ -80,13 +80,26 @@ export function FloatingPrice() {
       return;
     }
 
-    // Mandatory step without selection → shake + toast + scroll
+    // Mandatory step without selection → shake + toast + scroll to missing element
     if (!canProceed && !isOptionalStep) {
       setIsShaking(true);
       setToastMessage(getValidationMessage());
       setShowToast(true);
       setTimeout(() => setIsShaking(false), 500);
       setTimeout(() => setShowToast(false), 2500);
+
+      // Smart scroll: target the specific missing element
+      const scrollTarget = getScrollTarget();
+      if (scrollTarget) {
+        const el = document.getElementById(scrollTarget);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          // Pulse highlight effect
+          el.classList.add("ring-2", "ring-[#FF6022]", "ring-offset-2", "transition-all");
+          setTimeout(() => el.classList.remove("ring-2", "ring-[#FF6022]", "ring-offset-2", "transition-all"), 2000);
+          return;
+        }
+      }
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }

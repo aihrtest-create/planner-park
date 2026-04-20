@@ -133,7 +133,7 @@ export function Step6DateTime() {
       </div>
 
       {/* Time slots */}
-      <div className="mb-5">
+      <div id="time-section" className="mb-5">
         <div className="flex items-center gap-2 mb-3">
           <Clock className="w-5 h-5 text-[#FF6022]" />
           <h3 className="text-[#1A1A1A]">Время начала</h3>

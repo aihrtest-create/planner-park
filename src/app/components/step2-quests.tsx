@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useWizard } from "./wizard-context";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Play, Check, ChevronLeft, ChevronRight, Users, Clock, Zap, Info } from "lucide-react";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 import rockyImg1 from "../../assets/rocky-quest-1.png";
 import rockyImg2 from "../../assets/rocky-quest-2.png";
@@ -12,6 +13,12 @@ import rockyImg6 from "../../assets/rocky-quest-6.png";
 import spaceImg from "../../assets/space-quest.png";
 
 const ROCKY_PHOTOS = [rockyImg1, rockyImg2, rockyImg3, rockyImg4, rockyImg5, rockyImg6];
+
+const getPublicUrl = (path: string) => {
+  if (!path) return path;
+  if (path.startsWith('http') || path.startsWith('data:')) return path;
+  return ((import.meta as any).env?.BASE_URL || '/') + path.replace(/^\//, '');
+};
 
 const PHYGITAL_QUESTS = [
   {
@@ -51,16 +58,114 @@ const PHYGITAL_QUESTS = [
 ];
 
 const CLASSIC_QUESTS = [
-  { id: "classic_fort", name: "Форт Боярд", emoji: "🏰" },
-  { id: "classic_minecraft", name: "Майнкрафт", emoji: "⛏️" },
-  { id: "classic_squid", name: "Игра в кальмара", emoji: "🦑" },
-  { id: "classic_barbie", name: "Барби", emoji: "💗" },
-  { id: "classic_safari", name: "Путешествие Сафари", emoji: "🦁" },
-  { id: "classic_harry", name: "Гарри Поттер", emoji: "⚡" },
-  { id: "classic_heroes", name: "Миссия Супергероев", emoji: "🦸" },
-  { id: "classic_bloggers", name: "Блогеры", emoji: "📱" },
-  { id: "classic_fortnite", name: "Фортнайт", emoji: "🎯" },
-  { id: "classic_agents", name: "Суперагенты", emoji: "🕵️" },
+  {
+    id: "classic_fort",
+    name: "Форт Боярд",
+    emoji: "🏰",
+    image: "/quests/fort.png",
+    gradient: "from-[#C8A97E] to-[#8B6914]",
+    description: "Добывать заветные ключи и проходить испытания дети будут под руководством Паспарту, которые приготовили для них много всего интересного.",
+    highlights: ["Добраться до форта быстрее соперников", "Достать капсулу с подсказкой", "Победить мастера игры", "Собрать 7 ключей для сокровищницы"],
+  },
+  {
+    id: "classic_minecraft",
+    name: "Майнкрафт",
+    emoji: "⛏️",
+    image: "/quests/minecraft.png",
+    gradient: "from-[#4CAF50] to-[#2E7D32]",
+    description: "Ребята погрузятся в мир Майнкрафта, где им предстоит крафтить, сражаться и проходить эпические испытания.",
+    highlights: ["Изготовить собственное оружие", "Искать ресурсы", "Выиграть бой с Эндерменами", "Эстафета с крафт-головой", "Телепортация через портал"],
+  },
+  {
+    id: "classic_squid",
+    name: "Игра в кальмара",
+    emoji: "🦑",
+    image: "/quests/squid.png",
+    gradient: "from-[#E53935] to-[#B71C1C]",
+    description: "6 раундов испытаний, каждый из которых проверит навыки, ловкость и смекалку. Привычные задания из сериала станут реальностью, но с детским смехом и забавными интерпретациями.",
+    highlights: ["6 раундов испытаний", "Головоломки и задания на скорость", "Ловушки и неожиданные повороты", "Настоящий проводник"],
+  },
+  {
+    id: "classic_barbie",
+    name: "Барби",
+    emoji: "💗",
+    image: "/quests/barbie.png",
+    gradient: "from-[#F48FB1] to-[#EC407A]",
+    description: "Барби и Кен начали новую жизнь в реальном мире, где обнаружили, что совершенства можно достичь только благодаря внутренней гармонии, доброте и дружбе!",
+    highlights: ["Знакомство с любимыми персонажами", "Примерить разные образы", "Командные игры и эстафеты", "Мини-дефиле и модные танцы"],
+  },
+  {
+    id: "classic_safari",
+    name: "Путешествие Сафари",
+    emoji: "🦁",
+    image: "/quests/safari.png",
+    gradient: "from-[#FFB74D] to-[#F57C00]",
+    description: "Исследователи набирают команду юных путешественников, которые отправятся на Сафари, чтобы изучить разнообразных животных и растения, а также отыскать следы древнего динозавра.",
+    highlights: ["Старинная карта со станциями", "Интерактив «Спаси обезьянку»", "Интерактив «Землетрясение»", "Поиск следов динозавра"],
+  },
+  {
+    id: "classic_harry",
+    name: "Гарри Поттер",
+    emoji: "⚡",
+    image: "/quests/harry.png",
+    gradient: "from-[#7B1FA2] to-[#4A148C]",
+    description: "Ученики собираются на платформе вокзала Кинг Кросс, чтобы отправиться в Хогвартс на волшебном экспрессе. Времени мало — нужно успеть подготовить ловушки и выучить новые заклинания.",
+    highlights: ["Шляпа Хогвартса выбирает имена", "Разделение на команды", "Поиск философского камня", "Урок волшебства", "Игра в квиддич"],
+  },
+  {
+    id: "classic_heroes",
+    name: "Миссия Супергероев",
+    emoji: "🦸",
+    image: "/quests/heroes.png",
+    gradient: "from-[#1565C0] to-[#0D47A1]",
+    description: "Супергерои стоят на страже нашей планеты уже долгое время. Но как показывает история, даже супергероям иногда требуется помощь!",
+    highlights: ["Сейф с зашифрованным кодом", "Задания от супергероев", "Мега-бомбы с посланиями", "Супергеройская зарядка", "Оружие каждому участнику"],
+  },
+  {
+    id: "classic_pirates",
+    name: "Пиратский",
+    emoji: "🏴‍☠️",
+    image: "/quests/pirates.png",
+    gradient: "from-[#6D4C41] to-[#3E2723]",
+    description: "Дети станут настоящими пиратами и отправятся на поиски древнего сокровища. В этом путешествии им придётся разобраться с чередой запутанных событий, изучить древние карты и добраться до пещер капитана Моргана.",
+    highlights: ["Кодекс Чести пиратов", "Пиратский танец на корабле", "Морские сражения", "Прогулки по джунглям", "Состязания на ловкость"],
+  },
+  {
+    id: "classic_wednesday",
+    name: "Уэнсдей",
+    emoji: "🖤",
+    image: "/quests/wednesday.png",
+    gradient: "from-[#424242] to-[#212121]",
+    description: "Всей семье Аддамс сегодня нужно отлучиться по важным делам, но в их странном доме скрыты не только тайны, но и сокровища, которые так отчаянно старается разыскать Фестер!",
+    highlights: ["Дегустация крови", "Зелье из белладонны", "Шокеры на вылет", "Ужасные головоломки", "Адская кухня «Лизни-откуси»"],
+  },
+  {
+    id: "classic_bloggers",
+    name: "Блогеры",
+    emoji: "📱",
+    image: "/quests/bloggers.png",
+    gradient: "from-[#00BCD4] to-[#E91E63]",
+    description: "Блогерам по всему миру стали приходить сообщения с угрозами удаления аккаунтов от некого Анонима. Чтобы угрозы прекратились, нужно выполнить ряд заданий.",
+    highlights: ["Решить множество головоломок", "Разгадать шифры Анонима", "Открыть тайные кодовые замки", "Спасти соцсети блогеров"],
+  },
+  {
+    id: "classic_fortnite",
+    name: "Фортнайт",
+    emoji: "🎯",
+    image: "/quests/fortnite.png",
+    gradient: "from-[#7C4DFF] to-[#304FFE]",
+    description: "Главное правило — скооперироваться всей командой, быстро реагировать на изменения и подстраиваться под события. Это незабываемое приключение, которое захватит дух и погрузит в атмосферу драйва.",
+    highlights: ["«Силомер» — покажи свою силу", "«Мозгоштурм» — разработка стратегии", "«Бомбоатака» — метание снарядов", "«Энергодвиж» — энергия танца", "«Невидимоход» — азы маскировки"],
+  },
+  {
+    id: "classic_agents",
+    name: "Суперагенты",
+    emoji: "🕵️",
+    image: "/quests/agents.png",
+    gradient: "from-[#37474F] to-[#263238]",
+    description: "Гангстерская вечеринка для детей — это яркое и незабываемое событие, где они смогут почувствовать себя настоящими героями мира азарта, блеска, приключений и тайн.",
+    highlights: ["Праздник в полной секретности", "Много сюрпризов", "Танцы и конкурсы", "Изысканная вечеринка в ретро-стиле"],
+  },
 ];
 
 type PhygitalId = typeof PHYGITAL_QUESTS[number]["id"];
@@ -299,6 +404,8 @@ function QuestPopup({
 export function Step2Quests() {
   const { state, updateState, nextStep, prevStep } = useWizard();
   const [openQuest, setOpenQuest] = useState<typeof PHYGITAL_QUESTS[number] | null>(null);
+  const [classicQuestInfo, setClassicQuestInfo] = useState<string | null>(null);
+  const selectedClassicQuest = CLASSIC_QUESTS.find(q => q.id === classicQuestInfo);
 
   const selectPhygital = (id: PhygitalId) => {
     updateState({ questType: id, isQuestPopupOpen: false });
@@ -442,18 +549,33 @@ export function Step2Quests() {
                   transition={{ delay: i * 0.04 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => selectClassic(quest.id as ClassicId)}
-                  className={`relative aspect-[4/5] sm:h-[220px] rounded-[24px] overflow-hidden transition-all cursor-pointer group ${
+                  className={`relative aspect-[4/5] sm:h-[280px] rounded-[24px] overflow-hidden transition-all cursor-pointer group ${
                     isSelected
                       ? "ring-2 ring-[#FF6022] shadow-xl scale-[1.01]"
                       : "ring-1 ring-[#E5E5E5] shadow-sm"
                   }`}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center`}>
-                    <span className="text-6xl sm:text-7xl filter drop-shadow-md pb-6 group-hover:scale-110 transition-transform duration-500">{quest.emoji}</span>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${quest.gradient} flex items-center justify-center`}>
+                    {quest.image ? (
+                      <ImageWithFallback src={getPublicUrl(quest.image)} alt={quest.name} className="w-full h-full object-contain object-bottom pt-4 px-2 pb-[65px] drop-shadow-xl group-hover:scale-110 transition-transform duration-700" />
+                    ) : (
+                      <span className="text-6xl sm:text-7xl filter drop-shadow-md pb-6 group-hover:scale-110 transition-transform duration-500">{quest.emoji}</span>
+                    )}
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
 
-                  <div className="absolute top-2 right-2 flex justify-end items-start z-10">
+                  <div className="absolute top-2 left-2 right-2 flex justify-between items-start z-10">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setClassicQuestInfo(quest.id);
+                      }}
+                      className="bg-gradient-to-tr from-[#FF6022] to-[#FF8A00] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-2 rounded-full flex items-center gap-1.5 transition-transform hover:scale-105 active:scale-95 shadow-md shadow-[#FF6022]/40"
+                    >
+                      <Info className="w-3.5 h-3.5" />
+                      Подробнее
+                    </button>
+
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
                         isSelected ? "bg-[#FF6022] border-2 border-white text-white shadow-md shadow-[#FF6022]/40" : "bg-white/40 backdrop-blur-md border border-white/60 text-transparent"
                     }`}>
@@ -483,6 +605,85 @@ export function Step2Quests() {
             onSelect={() => selectPhygital(openQuest.id)}
             isSelected={state.questType === openQuest.id}
           />
+        )}
+      </AnimatePresence>
+
+      {/* Classic Quest Info Popup */}
+      <AnimatePresence>
+        {classicQuestInfo && selectedClassicQuest && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+            onClick={() => setClassicQuestInfo(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              onClick={(e) => e.stopPropagation()}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh]"
+            >
+              <div className="relative shrink-0 bg-black">
+                <div className={`aspect-[4/3] w-full bg-gradient-to-br ${selectedClassicQuest.gradient} flex items-center justify-center`}>
+                  {selectedClassicQuest.image ? (
+                    <ImageWithFallback src={getPublicUrl(selectedClassicQuest.image)} alt={selectedClassicQuest.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-8xl sm:text-9xl filter drop-shadow-md">{selectedClassicQuest.emoji}</span>
+                  )}
+                </div>
+                <button
+                  onClick={() => setClassicQuestInfo(null)}
+                  className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white/70 backdrop-blur-md rounded-full text-[#1A1A1A] transition-colors hover:bg-white z-10"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-5 overflow-y-auto">
+                <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">{selectedClassicQuest.emoji} {selectedClassicQuest.name}</h3>
+                <div className="text-xs text-[#747474] mb-4">2 аниматора · до 20 детей · 60 мин.</div>
+                <p className="text-[#747474] text-sm leading-relaxed mb-5">
+                  {selectedClassicQuest.description}
+                </p>
+
+                {selectedClassicQuest.highlights.length > 0 && (
+                  <div className="mb-5">
+                    <div className="text-sm font-semibold text-[#1A1A1A] mb-2">Что ждёт ребят:</div>
+                    <div className="flex flex-col gap-1.5">
+                      {selectedClassicQuest.highlights.map((h) => (
+                        <div key={h} className="flex items-center gap-2 bg-[#F8F8F8] rounded-xl px-3 py-2">
+                          <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#FF6022]" />
+                          <span className="text-xs text-[#3A3A3A]">{h}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      const isSelected = state.questType === selectedClassicQuest.id;
+                      if (!isSelected) {
+                        selectClassic(selectedClassicQuest.id as ClassicId);
+                      }
+                      setClassicQuestInfo(null);
+                    }}
+                    className={`flex-1 py-3.5 rounded-xl font-medium text-center transition-all ${
+                      state.questType === selectedClassicQuest.id
+                        ? "bg-[#F5F5F5] text-[#747474]"
+                        : "bg-[#FF6022] text-white shadow-md shadow-[#FF6022]/30 active:scale-[0.98]"
+                    }`}
+                  >
+                    {state.questType === selectedClassicQuest.id ? "Выбрано ✓" : "Выбрать этот квест"}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </>
