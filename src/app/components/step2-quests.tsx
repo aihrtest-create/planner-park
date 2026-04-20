@@ -68,19 +68,10 @@ const CLASSIC_QUESTS = [
     highlights: ["Добраться до форта быстрее соперников", "Достать капсулу с подсказкой", "Победить мастера игры", "Собрать 7 ключей для сокровищницы"],
   },
   {
-    id: "classic_minecraft",
-    name: "Майнкрафт",
-    emoji: "⛏️",
-    image: "/quests/minecraft.png",
-    gradient: "from-[#4CAF50] to-[#2E7D32]",
-    description: "Ребята погрузятся в мир Майнкрафта, где им предстоит крафтить, сражаться и проходить эпические испытания.",
-    highlights: ["Изготовить собственное оружие", "Искать ресурсы", "Выиграть бой с Эндерменами", "Эстафета с крафт-головой", "Телепортация через портал"],
-  },
-  {
     id: "classic_squid",
     name: "Игра в кальмара",
     emoji: "🦑",
-    image: "/quests/squid.png",
+    image: "/quests/transparent/classic_squid.png",
     gradient: "from-[#E53935] to-[#B71C1C]",
     description: "6 раундов испытаний, каждый из которых проверит навыки, ловкость и смекалку. Привычные задания из сериала станут реальностью, но с детским смехом и забавными интерпретациями.",
     highlights: ["6 раундов испытаний", "Головоломки и задания на скорость", "Ловушки и неожиданные повороты", "Настоящий проводник"],
@@ -89,7 +80,7 @@ const CLASSIC_QUESTS = [
     id: "classic_barbie",
     name: "Барби",
     emoji: "💗",
-    image: "/quests/barbie.png",
+    image: "/quests/transparent/classic_barbie.png",
     gradient: "from-[#F48FB1] to-[#EC407A]",
     description: "Барби и Кен начали новую жизнь в реальном мире, где обнаружили, что совершенства можно достичь только благодаря внутренней гармонии, доброте и дружбе!",
     highlights: ["Знакомство с любимыми персонажами", "Примерить разные образы", "Командные игры и эстафеты", "Мини-дефиле и модные танцы"],
@@ -98,7 +89,7 @@ const CLASSIC_QUESTS = [
     id: "classic_safari",
     name: "Путешествие Сафари",
     emoji: "🦁",
-    image: "/quests/safari.png",
+    image: "/quests/transparent/classic_safari.png",
     gradient: "from-[#FFB74D] to-[#F57C00]",
     description: "Исследователи набирают команду юных путешественников, которые отправятся на Сафари, чтобы изучить разнообразных животных и растения, а также отыскать следы древнего динозавра.",
     highlights: ["Старинная карта со станциями", "Интерактив «Спаси обезьянку»", "Интерактив «Землетрясение»", "Поиск следов динозавра"],
@@ -107,7 +98,7 @@ const CLASSIC_QUESTS = [
     id: "classic_harry",
     name: "Гарри Поттер",
     emoji: "⚡",
-    image: "/quests/harry.png",
+    image: "/quests/transparent/classic_harry.png",
     gradient: "from-[#7B1FA2] to-[#4A148C]",
     description: "Ученики собираются на платформе вокзала Кинг Кросс, чтобы отправиться в Хогвартс на волшебном экспрессе. Времени мало — нужно успеть подготовить ловушки и выучить новые заклинания.",
     highlights: ["Шляпа Хогвартса выбирает имена", "Разделение на команды", "Поиск философского камня", "Урок волшебства", "Игра в квиддич"],
@@ -116,7 +107,7 @@ const CLASSIC_QUESTS = [
     id: "classic_heroes",
     name: "Миссия Супергероев",
     emoji: "🦸",
-    image: "/quests/heroes.png",
+    image: "/quests/transparent/classic_heroes.png",
     gradient: "from-[#1565C0] to-[#0D47A1]",
     description: "Супергерои стоят на страже нашей планеты уже долгое время. Но как показывает история, даже супергероям иногда требуется помощь!",
     highlights: ["Сейф с зашифрованным кодом", "Задания от супергероев", "Мега-бомбы с посланиями", "Супергеройская зарядка", "Оружие каждому участнику"],
@@ -125,7 +116,7 @@ const CLASSIC_QUESTS = [
     id: "classic_pirates",
     name: "Пиратский",
     emoji: "🏴‍☠️",
-    image: "/quests/pirates.png",
+    image: "/quests/transparent/classic_pirates.png",
     gradient: "from-[#6D4C41] to-[#3E2723]",
     description: "Дети станут настоящими пиратами и отправятся на поиски древнего сокровища. В этом путешествии им придётся разобраться с чередой запутанных событий, изучить древние карты и добраться до пещер капитана Моргана.",
     highlights: ["Кодекс Чести пиратов", "Пиратский танец на корабле", "Морские сражения", "Прогулки по джунглям", "Состязания на ловкость"],
@@ -134,7 +125,7 @@ const CLASSIC_QUESTS = [
     id: "classic_wednesday",
     name: "Уэнсдей",
     emoji: "🖤",
-    image: "/quests/wednesday.png",
+    image: "/quests/transparent/classic_wednesday.png",
     gradient: "from-[#424242] to-[#212121]",
     description: "Всей семье Аддамс сегодня нужно отлучиться по важным делам, но в их странном доме скрыты не только тайны, но и сокровища, которые так отчаянно старается разыскать Фестер!",
     highlights: ["Дегустация крови", "Зелье из белладонны", "Шокеры на вылет", "Ужасные головоломки", "Адская кухня «Лизни-откуси»"],
@@ -143,28 +134,10 @@ const CLASSIC_QUESTS = [
     id: "classic_bloggers",
     name: "Блогеры",
     emoji: "📱",
-    image: "/quests/bloggers.png",
+    image: "/quests/transparent/classic_bloggers.png",
     gradient: "from-[#00BCD4] to-[#E91E63]",
     description: "Блогерам по всему миру стали приходить сообщения с угрозами удаления аккаунтов от некого Анонима. Чтобы угрозы прекратились, нужно выполнить ряд заданий.",
     highlights: ["Решить множество головоломок", "Разгадать шифры Анонима", "Открыть тайные кодовые замки", "Спасти соцсети блогеров"],
-  },
-  {
-    id: "classic_fortnite",
-    name: "Фортнайт",
-    emoji: "🎯",
-    image: "/quests/fortnite.png",
-    gradient: "from-[#7C4DFF] to-[#304FFE]",
-    description: "Главное правило — скооперироваться всей командой, быстро реагировать на изменения и подстраиваться под события. Это незабываемое приключение, которое захватит дух и погрузит в атмосферу драйва.",
-    highlights: ["«Силомер» — покажи свою силу", "«Мозгоштурм» — разработка стратегии", "«Бомбоатака» — метание снарядов", "«Энергодвиж» — энергия танца", "«Невидимоход» — азы маскировки"],
-  },
-  {
-    id: "classic_agents",
-    name: "Суперагенты",
-    emoji: "🕵️",
-    image: "/quests/agents.png",
-    gradient: "from-[#37474F] to-[#263238]",
-    description: "Гангстерская вечеринка для детей — это яркое и незабываемое событие, где они смогут почувствовать себя настоящими героями мира азарта, блеска, приключений и тайн.",
-    highlights: ["Праздник в полной секретности", "Много сюрпризов", "Танцы и конкурсы", "Изысканная вечеринка в ретро-стиле"],
   },
 ];
 
@@ -559,7 +532,7 @@ export function Step2Quests() {
                 >
                   <div className={`absolute inset-0 bg-gradient-to-br ${quest.gradient} flex items-center justify-center`}>
                     {quest.image ? (
-                      <ImageWithFallback src={getPublicUrl(quest.image)} alt={quest.name} className="w-full h-full object-contain object-bottom pt-4 px-2 pb-[65px] drop-shadow-xl group-hover:scale-110 transition-transform duration-700" />
+                      <ImageWithFallback src={getPublicUrl(quest.image)} alt={quest.name} className="w-full h-full object-contain object-bottom pt-7 px-5 pb-[70px] drop-shadow-xl group-hover:scale-110 transition-transform duration-700" />
                     ) : (
                       <span className="text-6xl sm:text-7xl filter drop-shadow-md pb-6 group-hover:scale-110 transition-transform duration-500">{quest.emoji}</span>
                     )}
