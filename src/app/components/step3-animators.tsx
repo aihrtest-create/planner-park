@@ -185,7 +185,7 @@ export function Step3Animators() {
     const el = sectionRefs.current[catId];
     if (el) {
       isScrollingToRef.current = true;
-      const yOffset = -200; // App header (~140px) + sticky tabs (~60px)
+      const yOffset = -210; // App header (~145px) + sticky tabs (~65px)
       const y = el.getBoundingClientRect().top + window.scrollY + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
 
@@ -254,7 +254,7 @@ export function Step3Animators() {
       </div>
 
       {/* Sticky category tabs */}
-      <div className="sticky top-[138px] z-30 bg-[#F7F7F7] pt-1 pb-3 -mx-4 px-4">
+      <div className="sticky top-[145px] z-30 bg-[#F7F7F7] pt-2 pb-3 -mx-4 px-4 shadow-[0_-1px_0_0_#F7F7F7]">
         <div
           ref={tabsRef}
           className="flex gap-1.5 overflow-x-auto scrollbar-hide"
