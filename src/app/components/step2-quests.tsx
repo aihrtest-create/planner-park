@@ -249,7 +249,7 @@ function QuestPopup({
     >
       {/* Backdrop */}
       <div 
-        className="absolute top-[-50vh] bottom-[-50vh] left-0 right-0 bg-black/60 backdrop-blur-md" 
+        className="absolute inset-0 bg-black/60 backdrop-blur-md" 
         onClick={onClose}
       />
 
@@ -307,7 +307,7 @@ function QuestPopup({
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto flex-1 p-5">
+        <div className="overflow-y-auto flex-1 p-5 overscroll-contain">
           {/* Stats */}
           <div className="flex gap-3 mb-5">
             <div className="flex items-center gap-1.5 bg-[#F5F5F5] rounded-xl px-3 py-2 flex-1">
@@ -617,12 +617,9 @@ export function Step2Quests() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md"
+            onClick={() => setClassicQuestInfo(null)}
           >
-            <div 
-              className="absolute top-[-50vh] bottom-[-50vh] left-0 right-0 bg-black/50 backdrop-blur-md" 
-              onClick={() => setClassicQuestInfo(null)} 
-            />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -647,7 +644,7 @@ export function Step2Quests() {
                 </button>
               </div>
 
-              <div className="p-5 overflow-y-auto">
+              <div className="p-5 overflow-y-auto overscroll-contain">
                 <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">{selectedClassicQuest.emoji} {selectedClassicQuest.name}</h3>
                 <div className="text-xs text-[#747474] mb-4">2 аниматора · до 20 детей · 60 мин.</div>
                 <p className="text-[#747474] text-sm leading-relaxed mb-5">

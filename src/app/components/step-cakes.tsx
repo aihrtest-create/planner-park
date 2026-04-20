@@ -343,7 +343,7 @@ export function StepCakes() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed top-[-50vh] bottom-[-50vh] left-0 right-0 bg-black/50 z-[90] backdrop-blur-md"
+              className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-md"
               onClick={() => setBottomSheetCake(null)}
             />
             <motion.div
@@ -354,7 +354,7 @@ export function StepCakes() {
               className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[100] flex flex-col pb-safe"
             >
               <div className="w-12 h-1.5 bg-[#E5E5E5] rounded-full mx-auto mt-4 mb-2" />
-              <div className="px-5 pb-8 pt-2 overflow-y-auto">
+              <div className="px-5 pb-8 pt-2 overflow-y-auto overscroll-contain">
                 <div className="mb-5 flex flex-col items-center text-center">
                    <h3 className="text-2xl font-bold text-[#1A1A1A] leading-tight mb-2">Выберите начинку</h3>
                    <p className="text-xs font-semibold text-[#747474] bg-[#F5F5F5] px-3 py-1.5 rounded-full">

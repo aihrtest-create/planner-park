@@ -209,7 +209,7 @@ export function Step5Food() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed top-[-50vh] bottom-[-50vh] left-0 right-0 bg-black/50 z-[90] backdrop-blur-md"
+              className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-md"
               onClick={() => setActiveCategory(null)}
             />
             <motion.div
@@ -231,7 +231,7 @@ export function Step5Food() {
                  </div>
               </div>
               
-              <div className="flex-1 overflow-y-auto px-5 py-4">
+              <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-4">
                  <div className="flex flex-col gap-4">
                     {activeCategoryData.items.map(item => {
                        const qty = state.customFood[item.id] || 0;
