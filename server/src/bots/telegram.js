@@ -68,7 +68,14 @@ export function initTelegramBot() {
 
     if (!lead) {
       await bot.sendMessage(chatId, 
-        'Извините, не удалось найти вашу заявку. Пожалуйста, попробуйте ещё раз через сайт.'
+        '⚠️ Ваша заявка не найдена или срок ссылки истек. Пожалуйста, оставьте новую заявку на сайте!',
+        {
+          reply_markup: {
+            inline_keyboard: [[
+              { text: '🌐 Перейти на сайт', url: CONFIGURATOR_URL }
+            ]]
+          }
+        }
       );
       return;
     }
@@ -102,40 +109,15 @@ export function initTelegramBot() {
 
   // Handle any other messages
   bot.on('message', async (msg) => {
-    if (msg.text && msg.text.startsWith('/start')) return; // Already handled above
+    if (msg.text && msg.text.startsWith('/start')) return;
 
     const chatId = msg.chat.id;
-    
-    // Check if this chat is linked to a lead
     const lead = statements.getLeadByChat.get(String(chatId), 'telegram');
 
-    if (lead && lead.status === 'submitted') {
-      await bot.sendMessage(chatId, 
-        'Спасибо за ваше сообщение! Менеджер свяжется с вами в ближайшее время для подтверждения деталей праздника. 🎉'
-      );
-    } else if (lead) {
-      const configUrl = `${CONFIGURATOR_URL}?lead=${lead.id}`;
-      await bot.sendMessage(chatId, 
-        'Если вы ещё не заполнили конфигуратор, нажмите на кнопку ниже 👇',
-        {
-          reply_markup: {
-            inline_keyboard: [[
-              { text: '🎂 Собрать праздник', url: configUrl }
-            ]]
-          }
-        }
-      );
-    } else {
-      await bot.sendMessage(chatId, 
-        'Здравствуйте! Чтобы начать оформление праздника, оставьте заявку на нашем сайте.',
-        {
-          reply_markup: {
-            inline_keyboard: [[
-              { text: '🌐 Перейти на сайт', url: CONFIGURATOR_URL }
-            ]]
-          }
-        }
-      );
+    if (lead) {
+      // Log client message to database events
+      statements.addEvent.run(lead.id, 'client_message', msg.text || '[Медиафайл]');
+      console.log(`[TG BOT] Сообщение от ${lead.name}: ${msg.text}`);
     }
   });
 
@@ -143,20 +125,16 @@ export function initTelegramBot() {
 }
 
 /**
- * Отправить уведомление клиенту в Telegram
+ * Отправить произвольное сообщение клиенту
  */
-export async function notifyTelegramUser(chatId, message, keyboard = null) {
-  if (!bot) return;
-  
-  const options = {};
-  if (keyboard) {
-    options.reply_markup = { inline_keyboard: keyboard };
-  }
-  
+export async function sendMessage(chatId, text) {
+  if (!bot) return false;
   try {
-    await bot.sendMessage(chatId, message, options);
+    await bot.sendMessage(chatId, text);
+    return true;
   } catch (error) {
-    console.error(`[TG BOT] Ошибка отправки в чат ${chatId}:`, error.message);
+    console.error(`[TG BOT] Ошибка отправки:`, error.message);
+    return false;
   }
 }
 

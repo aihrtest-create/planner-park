@@ -60,6 +60,37 @@
     .btn-primary{background:linear-gradient(135deg,#FF6022,#FF8A50);color:#fff}
     .btn-secondary{background:#27272A;color:#E4E4E7}
     .btn-success{background:#16A34A;color:#fff}
+    .chat-section {
+      border-top: 1px solid #27272A;
+      margin-top: 20px;
+      padding-top: 20px;
+    }
+    .chat-messages {
+      height: 200px;
+      overflow-y: auto;
+      background: #0F0F12;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .msg {
+      max-width: 80%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+    .msg-client { background: #27272A; align-self: flex-start; color: #E4E4E7; }
+    .msg-manager { background: #FF6022; align-self: flex-end; color: #fff; }
+    .msg-time { font-size: 10px; opacity: 0.5; margin-top: 4px; display: block; }
+    .chat-input-wrap { display: flex; gap: 8px; }
+    .chat-input {
+      flex: 1; background: #1C1C1F; border: 1px solid #27272A;
+      border-radius: 8px; padding: 8px 12px; color: #fff; font-family: inherit;
+    }
+
     textarea.notes-input{width:100%;background:#1C1C1F;border:1px solid #27272A;border-radius:8px;padding:12px;color:#E4E4E7;font-family:inherit;font-size:13px;resize:vertical;min-height:80px}
     textarea.notes-input:focus{outline:none;border-color:#FF6022}
     .empty-state{text-align:center;padding:60px 20px;color:#52525B}

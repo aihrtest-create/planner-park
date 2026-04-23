@@ -94,7 +94,18 @@ function openLead(id) {
   h += `<div style="margin-top:20px"><div class="detail-label">Заметки менеджера</div>
     <textarea class="notes-input" id="manager-notes" placeholder="Добавьте заметку...">${esc(l.manager_notes||'')}</textarea></div>`;
   
+  // Chat Section
+  h += `<div class="chat-section">
+    <div class="detail-label">Переписка (через бота)</div>
+    <div class="chat-messages" id="chat-messages">Загрузка...</div>
+    <div class="chat-input-wrap">
+      <input type="text" class="chat-input" id="chat-input" placeholder="Напишите клиенту..." onkeypress="if(event.key==='Enter')sendChatMessage()">
+      <button class="btn btn-primary" style="padding: 8px 16px" onclick="sendChatMessage()">📤</button>
+    </div>
+  </div>`;
+
   document.getElementById('modal-body').innerHTML = h;
+  loadChatMessages(id);
   
   let a = `<button class="btn btn-secondary" onclick="saveNotes()">💾 Сохранить</button>`;
   if(l.status==='submitted') a += `<button class="btn btn-primary" onclick="markStatus('contacted')">📞 Связался</button>`;
@@ -115,6 +126,59 @@ async function markStatus(status) {
   if(!currentLeadId) return;
   await fetch(`/api/leads/${currentLeadId}/status`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status}) });
   closeModal(); loadLeads();
+}
+
+async function loadChatMessages(id) {
+  try {
+    const r = await fetch(`/api/leads/${id}/events`);
+    const d = await r.json();
+    const chat = document.getElementById('chat-messages');
+    if(!chat) return;
+
+    const messages = d.events.filter(e => ['client_message', 'manager_message', 'lead_created'].includes(e.event_type));
+    
+    if(!messages.length) {
+      chat.innerHTML = '<div style="color:#52525B; font-size:12px; text-align:center">Нет сообщений</div>';
+      return;
+    }
+
+    chat.innerHTML = messages.map(m => {
+      const isManager = m.event_type === 'manager_message';
+      const isSystem = m.event_type === 'lead_created';
+      const cls = isManager ? 'msg-manager' : (isSystem ? '' : 'msg-client');
+      const label = isSystem ? 'Создана заявка' : (isManager ? 'Вы' : 'Клиент');
+      
+      if(isSystem) return `<div style="text-align:center; font-size:10px; color:#52525B; margin:8px 0">${label}</div>`;
+
+      return `<div class="msg ${cls}">
+        <div style="font-size:10px; opacity:0.7; margin-bottom:4px">${label}</div>
+        ${esc(m.event_data)}
+        <span class="msg-time">${new Date(m.created_at+'Z').toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+      </div>`;
+    }).join('');
+    chat.scrollTop = chat.scrollHeight;
+  } catch(e) { console.error(e); }
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text || !currentLeadId) return;
+
+  input.disabled = true;
+  try {
+    const res = await fetch(`/api/leads/${currentLeadId}/message`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    if(res.ok) {
+      input.value = '';
+      loadChatMessages(currentLeadId);
+    }
+  } catch(e) { console.error(e); }
+  input.disabled = false;
+  input.focus();
 }
 
 function esc(s) { const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
