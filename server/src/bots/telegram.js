@@ -27,7 +27,7 @@ export function initTelegramBot() {
   }
 
   const serverUrl = process.env.SERVER_URL;
-  const useWebhook = serverUrl && !serverUrl.includes('localhost');
+  const useWebhook = serverUrl && serverUrl.startsWith('https://');
 
   if (useWebhook) {
     bot = new TelegramBot(token);
@@ -38,8 +38,9 @@ export function initTelegramBot() {
       console.error('[TG BOT] ❌ Ошибка установки webhook:', err.message);
     });
   } else {
+    // Без HTTPS — используем polling (VPS без SSL или локальная разработка)
     bot = new TelegramBot(token, { polling: true });
-    console.log('[TG BOT] ✅ Запущен в режиме Long Polling (dev)');
+    console.log('[TG BOT] ✅ Запущен в режиме Long Polling');
   }
 
   // Handle /start command with lead ID payload
