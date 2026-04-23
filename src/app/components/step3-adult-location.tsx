@@ -105,7 +105,7 @@ export function Step3AdultLocation() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-5">
+        <div className="grid grid-cols-1 gap-4">
           {CAFE_OPTIONS.map((opt) => {
             const isSelected = state.cafeZones.includes(opt.id);
             return (
@@ -130,22 +130,16 @@ export function Step3AdultLocation() {
                   </div>
                 )}
 
-                <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[24px] p-5 shadow-2xl border border-white/20">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-lg font-bold text-[#1A1A1A] mb-1.5">{opt.name}</h4>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-3">
-                        <div className="flex items-center gap-1.5">
-                          <Users className="w-4 h-4 text-[#ABABAB]" />
-                          <span className="text-xs text-[#747474]">до {opt.seats} мест</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Coffee className="w-4 h-4 text-[#ABABAB]" />
-                          <span className="text-xs text-[#747474]">3 часа</span>
-                        </div>
+                <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[24px] p-5 shadow-2xl flex items-center justify-between border border-white/20">
+                  <div>
+                    <h4 className="text-lg font-bold text-[#1A1A1A]">{opt.name}</h4>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <Users className="w-4 h-4 text-[#ABABAB]" />
+                        <span className="text-xs text-[#747474]">до {opt.seats} мест</span>
                       </div>
-                      <div className="inline-flex items-baseline gap-2">
-                        <span className="text-base font-bold text-[#FF6022]">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-bold text-[#FF6022]">
                           Депозит {formatDeposit(opt)}
                         </span>
                         <span className="text-[10px] text-[#ABABAB] font-semibold uppercase tracking-wider">
@@ -153,14 +147,14 @@ export function Step3AdultLocation() {
                         </span>
                       </div>
                     </div>
+                  </div>
 
-                    <div 
-                      className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-all ${
-                        isSelected ? "bg-[#FF6022] text-white shadow-lg shadow-orange-500/30" : "bg-gray-50 text-[#D1D1D1] group-hover:bg-gray-100"
-                      }`}
-                    >
-                      <Check className="w-6 h-6" />
-                    </div>
+                  <div 
+                    className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                      isSelected ? "bg-[#FF6022] text-white shadow-lg shadow-orange-500/30" : "bg-gray-50 text-[#D1D1D1] group-hover:bg-gray-100"
+                    }`}
+                  >
+                    <Check className="w-6 h-6" />
                   </div>
                 </div>
               </motion.div>

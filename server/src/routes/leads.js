@@ -1,0 +1,187 @@
+import { Router } from 'express';
+import { nanoid } from 'nanoid';
+import { statements } from '../database.js';
+
+const router = Router();
+
+/**
+ * POST /api/leads — Создать нового лида (с лендинга)
+ * Body: { name, phone, messenger: 'telegram' | 'max' }
+ */
+router.post('/', (req, res) => {
+  try {
+    const { name, phone, messenger } = req.body;
+
+    if (!name || !phone || !messenger) {
+      return res.status(400).json({ error: 'Необходимы поля: name, phone, messenger' });
+    }
+
+    if (!['telegram', 'max'].includes(messenger)) {
+      return res.status(400).json({ error: 'messenger должен быть telegram или max' });
+    }
+
+    const id = nanoid(12);
+    statements.createLead.run(id, name.trim(), phone.trim(), messenger);
+    statements.addEvent.run(id, 'lead_created', JSON.stringify({ name, phone, messenger }));
+
+    const lead = statements.getLead.get(id);
+
+    console.log(`[LEAD] Новый лид: ${name} (${phone}) → ${messenger} [${id}]`);
+
+    res.status(201).json({
+      success: true,
+      lead: {
+        id: lead.id,
+        name: lead.name,
+        messenger: lead.messenger,
+      },
+    });
+  } catch (error) {
+    console.error('[LEAD ERROR]', error);
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
+});
+
+/**
+ * GET /api/leads/:id — Получить информацию о лиде
+ */
+router.get('/:id', (req, res) => {
+  try {
+    const lead = statements.getLead.get(req.params.id);
+    if (!lead) {
+      return res.status(404).json({ error: 'Лид не найден' });
+    }
+    res.json({ success: true, lead });
+  } catch (error) {
+    console.error('[LEAD ERROR]', error);
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
+});
+
+/**
+ * POST /api/leads/:id/opened — Отметить что клиент открыл конфигуратор
+ */
+router.post('/:id/opened', (req, res) => {
+  try {
+    const lead = statements.getLead.get(req.params.id);
+    if (!lead) {
+      return res.status(404).json({ error: 'Лид не найден' });
+    }
+
+    // Only update if status allows it
+    if (['link_sent', 'bot_connected'].includes(lead.status)) {
+      statements.markConfigOpened.run(req.params.id);
+      statements.addEvent.run(req.params.id, 'config_opened', null);
+      console.log(`[LEAD] Конфигуратор открыт: ${lead.name} [${lead.id}]`);
+    }
+
+    res.json({ success: true, lead: statements.getLead.get(req.params.id) });
+  } catch (error) {
+    console.error('[LEAD ERROR]', error);
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
+});
+
+/**
+ * POST /api/leads/:id/configure — Отправить конфигурацию праздника
+ * Body: { конфигурация из визарда }
+ */
+router.post('/:id/configure', (req, res) => {
+  try {
+    const lead = statements.getLead.get(req.params.id);
+    if (!lead) {
+      return res.status(404).json({ error: 'Лид не найден' });
+    }
+
+    const configData = JSON.stringify(req.body);
+    statements.saveConfiguration.run(configData, req.params.id);
+    statements.addEvent.run(req.params.id, 'config_submitted', configData);
+
+    console.log(`[LEAD] Конфигурация получена: ${lead.name} [${lead.id}]`);
+
+    // Notify via bot that config was received
+    res.json({
+      success: true,
+      message: 'Конфигурация сохранена',
+      lead: statements.getLead.get(req.params.id),
+    });
+  } catch (error) {
+    console.error('[LEAD ERROR]', error);
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
+});
+
+/**
+ * GET /api/leads — Получить все лиды (для менеджерской панели)
+ */
+router.get('/', (req, res) => {
+  try {
+    const { status } = req.query;
+    const leads = status
+      ? statements.getLeadsByStatus.all(status)
+      : statements.getAllLeads.all();
+
+    const stats = statements.getStats.all();
+
+    res.json({ success: true, leads, stats });
+  } catch (error) {
+    console.error('[LEAD ERROR]', error);
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
+});
+
+/**
+ * PATCH /api/leads/:id/status — Обновить статус лида (менеджером)
+ */
+router.patch('/:id/status', (req, res) => {
+  try {
+    const { status } = req.body;
+    const validStatuses = ['new', 'bot_connected', 'link_sent', 'configuring', 'submitted', 'contacted', 'confirmed'];
+    
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: `Недопустимый статус. Допустимые: ${validStatuses.join(', ')}` });
+    }
+
+    statements.updateLeadStatus.run(status, req.params.id);
+    if (status === 'contacted') {
+      statements.markContacted.run(req.params.id);
+    }
+    statements.addEvent.run(req.params.id, 'status_changed', JSON.stringify({ status }));
+
+    res.json({ success: true, lead: statements.getLead.get(req.params.id) });
+  } catch (error) {
+    console.error('[LEAD ERROR]', error);
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
+});
+
+/**
+ * PATCH /api/leads/:id/notes — Обновить заметки менеджера
+ */
+router.patch('/:id/notes', (req, res) => {
+  try {
+    const { notes } = req.body;
+    statements.updateNotes.run(notes || '', req.params.id);
+    statements.addEvent.run(req.params.id, 'notes_updated', null);
+
+    res.json({ success: true, lead: statements.getLead.get(req.params.id) });
+  } catch (error) {
+    console.error('[LEAD ERROR]', error);
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
+});
+
+/**
+ * GET /api/leads/:id/events — Получить историю событий лида
+ */
+router.get('/:id/events', (req, res) => {
+  try {
+    const events = statements.getLeadEvents.all(req.params.id);
+    res.json({ success: true, events });
+  } catch (error) {
+    console.error('[LEAD ERROR]', error);
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
+});
+
+export default router;

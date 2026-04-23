@@ -39,9 +39,9 @@ const PATIROOMS = [
     name: "Аркада",
     seats: 16,
     hasProjection: true,
-    thumbnail: "/locations/kometa/1.jpg",
-    gallery: ["/locations/kometa/1.jpg", "/locations/kometa/2.jpg"],
-    video: "/locations/kometa/video.mp4",
+    thumbnail: "/locations/arkada/1.jpg",
+    gallery: ["/locations/arkada/1.jpg"],
+    video: "/locations/arkada/video.mp4",
     description: "Футуристичное пространство для современных детей. Множество интерактивных зон и проекций сделают праздник невероятно увлекательным.",
   },
   {

@@ -4,10 +4,11 @@ import { ShoppingBag, Send, Gift } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export function FloatingPrice() {
-  const { totalPrice, step, totalSteps, visibleSteps, state, nextStep, prevStep, submitted, setSubmitted } = useWizard();
+  const { totalPrice, step, totalSteps, visibleSteps, state, nextStep, prevStep, submitted, setSubmitted, submitToAPI } = useWizard();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [isShaking, setIsShaking] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Reset toast and shake when step changes
   useEffect(() => {
@@ -64,11 +65,18 @@ export function FloatingPrice() {
   };
 
   // ─── Handle navigation ───
-  const handleNext = () => {
+  const handleNext = async () => {
     // Final step — submit
     if (step === totalSteps) {
       if (state.contactName && state.contactPhone) {
+        setIsSubmitting(true);
+        try {
+          await submitToAPI(totalPrice);
+        } catch {
+          // Submit even if API fails — don't block the user
+        }
         setSubmitted(true);
+        setIsSubmitting(false);
       } else {
         // Trigger validation on final step too
         setIsShaking(true);
@@ -201,10 +209,14 @@ export function FloatingPrice() {
             className={getButtonClasses()}
           >
             {step === totalSteps ? (
+              isSubmitting ? (
+                <>Отправляем...</>
+              ) : (
               <>
                 <Send className="w-4 h-4" />
                 Оставить заявку
               </>
+              )
             ) : step === 11 ? (
               <>
                 <span className="text-base animate-bounce">🎁</span>

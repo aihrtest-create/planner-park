@@ -25,3 +25,21 @@ dist-ssr
 
 AntigravityMobile
 tmp_img_processor/
+
+# Heavy files
+*.MOV
+*.mov
+*.xlsx
+*.pdf
+*.MP4
+.venv/
+.tmp-img/
+Видео локаций/
+Иссдедование/
+Начинки/
+Костюмы  White bg/
+Дизайн карточек предложений/
+processed_pdfs/
+scratch/
+server/.env
+server/data/

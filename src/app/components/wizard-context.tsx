@@ -1,6 +1,9 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { isWeekend } from "date-fns";
 import { FOOD_MENU } from "../data/foodMenu";
+
+// Backend API URL — change to production URL when deploying
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 export interface WizardState {
   // Step 1
@@ -49,6 +52,8 @@ interface WizardContextType {
   totalPrice: number;
   submitted: boolean;
   setSubmitted: (v: boolean) => void;
+  leadId: string | null;
+  submitToAPI: (price?: number) => Promise<boolean>;
 }
 
 const initialState: WizardState = {
@@ -101,6 +106,57 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
   const [step, setStep] = useState(0);
   const [state, setState] = useState<WizardState>(initialState);
   const [submitted, setSubmitted] = useState(false);
+
+  // Lead ID from URL parameter (?lead=abc123)
+  const [leadId] = useState<string | null>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('lead');
+  });
+
+  // On mount: if we have a leadId, notify server and pre-fill contact data
+  useEffect(() => {
+    if (!leadId || !API_BASE) return;
+
+    // Notify server that configurator was opened
+    fetch(`${API_BASE}/api/leads/${leadId}/opened`, { method: 'POST' }).catch(() => {});
+
+    // Fetch lead data to pre-fill name and phone
+    fetch(`${API_BASE}/api/leads/${leadId}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.lead) {
+          setState(s => ({
+            ...s,
+            contactName: data.lead.name || s.contactName,
+            contactPhone: data.lead.phone || s.contactPhone,
+          }));
+        }
+      })
+      .catch(() => {});
+  }, [leadId]);
+
+  // Submit configuration to API
+  // Note: totalPrice is passed by the component calling submitToAPI
+  const submitToAPI = useCallback(async (price?: number): Promise<boolean> => {
+    if (!leadId || !API_BASE) return true; // No lead = standalone mode, always OK
+    try {
+      const payload = {
+        ...state,
+        date: state.date?.toISOString(),
+        totalPrice: price ?? 0,
+      };
+      const res = await fetch(`${API_BASE}/api/leads/${leadId}/configure`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      return data.success;
+    } catch {
+      console.error('Failed to submit to API');
+      return false;
+    }
+  }, [leadId, state]);
 
   const nextStep = useCallback(() => {
     setStep((s) => {
@@ -274,7 +330,8 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
     <WizardContext.Provider
       value={{
         step, totalSteps: TOTAL_STEPS, visibleSteps, state, setStep,
-        nextStep, prevStep, updateState, totalPrice, submitted, setSubmitted
+        nextStep, prevStep, updateState, totalPrice, submitted, setSubmitted,
+        leadId, submitToAPI
       }}
     >
       {children}
