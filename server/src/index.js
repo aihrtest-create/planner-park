@@ -48,6 +48,11 @@ app.get('/landing', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'landing.html'));
 });
 
+// ---- Root redirect ----
+app.get('/', (req, res) => {
+  res.redirect('/landing');
+});
+
 // ---- Health check ----
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
