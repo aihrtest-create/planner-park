@@ -2,8 +2,8 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { isWeekend } from "date-fns";
 import { FOOD_MENU } from "../data/foodMenu";
 
-// Backend API URL — change to production URL when deploying
-const API_BASE = import.meta.env.VITE_API_URL || '';
+// Backend API URL — Render production server
+const API_BASE = import.meta.env.VITE_API_URL || 'https://planner-park.onrender.com';
 
 export interface WizardState {
   // Step 1

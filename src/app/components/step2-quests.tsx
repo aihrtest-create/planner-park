@@ -4,13 +4,13 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, Play, Check, ChevronLeft, ChevronRight, Users, Clock, Zap, Info } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
-import rockyImg1 from "../../assets/rocky-quest-1.png";
-import rockyImg2 from "../../assets/rocky-quest-2.png";
-import rockyImg3 from "../../assets/rocky-quest-3.png";
-import rockyImg4 from "../../assets/rocky-quest-4.png";
-import rockyImg5 from "../../assets/rocky-quest-5.png";
-import rockyImg6 from "../../assets/rocky-quest-6.png";
-import spaceImg from "../../assets/space-quest.png";
+import rockyImg1 from "../../assets/rocky-quest-1.webp";
+import rockyImg2 from "../../assets/rocky-quest-2.webp";
+import rockyImg3 from "../../assets/rocky-quest-3.webp";
+import rockyImg4 from "../../assets/rocky-quest-4.webp";
+import rockyImg5 from "../../assets/rocky-quest-5.webp";
+import rockyImg6 from "../../assets/rocky-quest-6.webp";
+import spaceImg from "../../assets/space-quest.webp";
 
 const ROCKY_PHOTOS = [rockyImg1, rockyImg2, rockyImg3, rockyImg4, rockyImg5, rockyImg6];
 
@@ -62,7 +62,7 @@ const CLASSIC_QUESTS = [
     id: "classic_fort",
     name: "Форт Боярд",
     emoji: "🏰",
-    image: "/quests/fort.png",
+    image: "/quests/fort.webp",
     gradient: "from-[#C8A97E] to-[#8B6914]",
     description: "Добывать заветные ключи и проходить испытания дети будут под руководством Паспарту, которые приготовили для них много всего интересного.",
     highlights: ["Добраться до форта быстрее соперников", "Достать капсулу с подсказкой", "Победить мастера игры", "Собрать 7 ключей для сокровищницы"],
@@ -71,7 +71,7 @@ const CLASSIC_QUESTS = [
     id: "classic_squid",
     name: "Игра в кальмара",
     emoji: "🦑",
-    image: "/quests/transparent/classic_squid.png",
+    image: "/quests/transparent/classic_squid.webp",
     gradient: "from-[#E53935] to-[#B71C1C]",
     description: "6 раундов испытаний, каждый из которых проверит навыки, ловкость и смекалку. Привычные задания из сериала станут реальностью, но с детским смехом и забавными интерпретациями.",
     highlights: ["6 раундов испытаний", "Головоломки и задания на скорость", "Ловушки и неожиданные повороты", "Настоящий проводник"],
@@ -80,7 +80,7 @@ const CLASSIC_QUESTS = [
     id: "classic_barbie",
     name: "Барби",
     emoji: "💗",
-    image: "/quests/transparent/classic_barbie.png",
+    image: "/quests/transparent/classic_barbie.webp",
     gradient: "from-[#F48FB1] to-[#EC407A]",
     description: "Барби и Кен начали новую жизнь в реальном мире, где обнаружили, что совершенства можно достичь только благодаря внутренней гармонии, доброте и дружбе!",
     highlights: ["Знакомство с любимыми персонажами", "Примерить разные образы", "Командные игры и эстафеты", "Мини-дефиле и модные танцы"],
@@ -89,7 +89,7 @@ const CLASSIC_QUESTS = [
     id: "classic_safari",
     name: "Путешествие Сафари",
     emoji: "🦁",
-    image: "/quests/transparent/classic_safari.png",
+    image: "/quests/transparent/classic_safari.webp",
     gradient: "from-[#FFB74D] to-[#F57C00]",
     description: "Исследователи набирают команду юных путешественников, которые отправятся на Сафари, чтобы изучить разнообразных животных и растения, а также отыскать следы древнего динозавра.",
     highlights: ["Старинная карта со станциями", "Интерактив «Спаси обезьянку»", "Интерактив «Землетрясение»", "Поиск следов динозавра"],
@@ -98,7 +98,7 @@ const CLASSIC_QUESTS = [
     id: "classic_harry",
     name: "Гарри Поттер",
     emoji: "⚡",
-    image: "/quests/transparent/classic_harry.png",
+    image: "/quests/transparent/classic_harry.webp",
     gradient: "from-[#7B1FA2] to-[#4A148C]",
     description: "Ученики собираются на платформе вокзала Кинг Кросс, чтобы отправиться в Хогвартс на волшебном экспрессе. Времени мало — нужно успеть подготовить ловушки и выучить новые заклинания.",
     highlights: ["Шляпа Хогвартса выбирает имена", "Разделение на команды", "Поиск философского камня", "Урок волшебства", "Игра в квиддич"],
@@ -107,7 +107,7 @@ const CLASSIC_QUESTS = [
     id: "classic_heroes",
     name: "Миссия Супергероев",
     emoji: "🦸",
-    image: "/quests/transparent/classic_heroes.png",
+    image: "/quests/transparent/classic_heroes.webp",
     gradient: "from-[#1565C0] to-[#0D47A1]",
     description: "Супергерои стоят на страже нашей планеты уже долгое время. Но как показывает история, даже супергероям иногда требуется помощь!",
     highlights: ["Сейф с зашифрованным кодом", "Задания от супергероев", "Мега-бомбы с посланиями", "Супергеройская зарядка", "Оружие каждому участнику"],
@@ -116,7 +116,7 @@ const CLASSIC_QUESTS = [
     id: "classic_pirates",
     name: "Пиратский",
     emoji: "🏴‍☠️",
-    image: "/quests/transparent/classic_pirates.png",
+    image: "/quests/transparent/classic_pirates.webp",
     gradient: "from-[#6D4C41] to-[#3E2723]",
     description: "Дети станут настоящими пиратами и отправятся на поиски древнего сокровища. В этом путешествии им придётся разобраться с чередой запутанных событий, изучить древние карты и добраться до пещер капитана Моргана.",
     highlights: ["Кодекс Чести пиратов", "Пиратский танец на корабле", "Морские сражения", "Прогулки по джунглям", "Состязания на ловкость"],
@@ -125,7 +125,7 @@ const CLASSIC_QUESTS = [
     id: "classic_wednesday",
     name: "Уэнсдей",
     emoji: "🖤",
-    image: "/quests/transparent/classic_wednesday.png",
+    image: "/quests/transparent/classic_wednesday.webp",
     gradient: "from-[#424242] to-[#212121]",
     description: "Всей семье Аддамс сегодня нужно отлучиться по важным делам, но в их странном доме скрыты не только тайны, но и сокровища, которые так отчаянно старается разыскать Фестер!",
     highlights: ["Дегустация крови", "Зелье из белладонны", "Шокеры на вылет", "Ужасные головоломки", "Адская кухня «Лизни-откуси»"],
@@ -134,7 +134,7 @@ const CLASSIC_QUESTS = [
     id: "classic_bloggers",
     name: "Блогеры",
     emoji: "📱",
-    image: "/quests/transparent/classic_bloggers.png",
+    image: "/quests/transparent/classic_bloggers.webp",
     gradient: "from-[#00BCD4] to-[#E91E63]",
     description: "Блогерам по всему миру стали приходить сообщения с угрозами удаления аккаунтов от некого Анонима. Чтобы угрозы прекратились, нужно выполнить ряд заданий.",
     highlights: ["Решить множество головоломок", "Разгадать шифры Анонима", "Открыть тайные кодовые замки", "Спасти соцсети блогеров"],

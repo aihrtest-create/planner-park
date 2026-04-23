@@ -1,7 +1,7 @@
 import { useWizard } from "./wizard-context";
 import { motion } from "motion/react";
 import { Clock, PartyPopper, Sparkles, ChevronRight } from "lucide-react";
-import rockyImg from "../../assets/rocky-quest-1.png";
+import rockyImg from "../../assets/rocky-quest-1.webp";
 
 export function Step0Welcome() {
   const { nextStep } = useWizard();

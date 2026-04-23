@@ -241,13 +241,13 @@ const CAKES = [
 ];
 
 const FILLINGS = [
-  { id: "filling_1", name: "Лаванда-Ягодный микс", image: "/fillings/filling_1.jpg", kkal: "256 Ккал", desc: "Белки 5.4г, жиры 12.5г, углеводы 30г" },
-  { id: "filling_2", name: "Кокос-Малина", image: "/fillings/filling_2.jpg", kkal: "284 Ккал", desc: "Белки 5.7г, жиры 15.7г, углеводы 30г" },
-  { id: "filling_3", name: "Красный бархат", image: "/fillings/filling_3.jpg", kkal: "280 Ккал", desc: "Белки 4.2г, жиры 16.7г, углеводы 28г" },
-  { id: "filling_4", name: "Фисташка-Клубника", image: "/fillings/filling_4.jpg", kkal: "273 Ккал", desc: "Белки 6г, жиры 14.8г, углеводы 28.8г" },
-  { id: "filling_5", name: "Ванильный", image: "/fillings/filling_5.jpg", kkal: "350 Ккал", desc: "Белки 5.3г, жиры 22.8г, углеводы 31.6г" },
-  { id: "filling_6", name: "Сникерс", image: "/fillings/filling_6.jpg", kkal: "316 Ккал", desc: "Белки 6.2г, жиры 20.3г, углеводы 27г" },
-  { id: "filling_7", name: "Миндаль-Вишня", image: "/fillings/filling_7.jpg", kkal: "306 Ккал", desc: "Белки 6.81г, жиры 18.03г, углеводы 26.70г" },
+  { id: "filling_1", name: "Лаванда-Ягодный микс", image: "/fillings/filling_1.webp", kkal: "256 Ккал", desc: "Белки 5.4г, жиры 12.5г, углеводы 30г" },
+  { id: "filling_2", name: "Кокос-Малина", image: "/fillings/filling_2.webp", kkal: "284 Ккал", desc: "Белки 5.7г, жиры 15.7г, углеводы 30г" },
+  { id: "filling_3", name: "Красный бархат", image: "/fillings/filling_3.webp", kkal: "280 Ккал", desc: "Белки 4.2г, жиры 16.7г, углеводы 28г" },
+  { id: "filling_4", name: "Фисташка-Клубника", image: "/fillings/filling_4.webp", kkal: "273 Ккал", desc: "Белки 6г, жиры 14.8г, углеводы 28.8г" },
+  { id: "filling_5", name: "Ванильный", image: "/fillings/filling_5.webp", kkal: "350 Ккал", desc: "Белки 5.3г, жиры 22.8г, углеводы 31.6г" },
+  { id: "filling_6", name: "Сникерс", image: "/fillings/filling_6.webp", kkal: "316 Ккал", desc: "Белки 6.2г, жиры 20.3г, углеводы 27г" },
+  { id: "filling_7", name: "Миндаль-Вишня", image: "/fillings/filling_7.webp", kkal: "306 Ккал", desc: "Белки 6.81г, жиры 18.03г, углеводы 26.70г" },
 ];
 
 

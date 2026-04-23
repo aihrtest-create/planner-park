@@ -85,7 +85,7 @@ export function Step5Food() {
               onClick={() => updateState({ includeFood: !state.includeFood })}
            >
               <ImageWithFallback
-                src={getPublicUrl("/images/food/kids_set.png")}
+                src={getPublicUrl("/images/food/kids_set.webp")}
                 alt="Набор детской еды"
                 className="w-full h-full object-cover mix-blend-multiply group-hover:scale-[1.02] transition-transform duration-500"
               />
