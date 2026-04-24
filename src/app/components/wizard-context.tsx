@@ -2,8 +2,8 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { isWeekend } from "date-fns";
 import { FOOD_MENU } from "../data/foodMenu";
 
-// Backend API URL — Timeweb VPS
-const API_BASE = import.meta.env.VITE_API_URL || 'http://194.87.118.33';
+// Backend API URL — Timeweb VPS (HTTPS через nip.io)
+const API_BASE = import.meta.env.VITE_API_URL || 'https://194-87-118-33.nip.io';
 
 export interface WizardState {
   // Step 1
