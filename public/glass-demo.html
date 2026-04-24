@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Интерактивные варианты стекол</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #F0F2F5;
+    -webkit-font-smoothing: antialiased;
+    color: #1A1A1A;
+  }
+
+  h1 {
+    text-align: center;
+    padding: 32px 16px 8px;
+    font-size: 24px;
+    font-weight: 800;
+  }
+  h1 span { 
+    font-weight: 500; 
+    color: #747474; 
+    font-size: 15px; 
+    display: block; 
+    margin-top: 8px; 
+  }
+
+  .variants-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px 16px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .variant-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .variant-label {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    text-align: center;
+    background: white;
+    padding: 12px 24px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  .variant-label span {
+    font-weight: 500;
+    color: #747474;
+    font-size: 13px;
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* 📱 Phone Frame */
+  .phone-frame {
+    width: 100%;
+    height: 700px; /* Tall enough to scroll */
+    border-radius: 40px;
+    position: relative;
+    border: 8px solid #FFFFFF;
+    box-shadow: 
+      0 20px 40px rgba(0,0,0,0.1),
+      inset 0 0 0 2px #E5E5E5;
+    background: #F7F7F7;
+    overflow: hidden; /* Clips the scrolling content and fixed bars */
+  }
+
+  /* 📜 Scrollable Content */
+  .scroll-container {
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-top: 100px; /* Space for top bar */
+    padding-bottom: 120px; /* Space for bottom bar */
+    scrollbar-width: none; /* Firefox */
+  }
+  .scroll-container::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+
+  .fake-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .fake-card {
+    border-radius: 24px;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  /* Colorful gradients to test glass transparency */
+  .fake-card:nth-child(1) { background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%); }
+  .fake-card:nth-child(2) { background: linear-gradient(120deg, #F6D365 0%, #FDA085 100%); }
+  .fake-card:nth-child(3) { background: linear-gradient(120deg, #84FAB0 0%, #8FD3F4 100%); }
+  .fake-card:nth-child(4) { background: linear-gradient(120deg, #A1C4FD 0%, #C2E9FB 100%); }
+  .fake-card:nth-child(5) { background: linear-gradient(120deg, #E0C3FC 0%, #8EC5FC 100%); }
+  .fake-card:nth-child(6) { background: linear-gradient(120deg, #FF0844 0%, #FFB199 100%); }
+  .fake-card:nth-child(7) { background: linear-gradient(120deg, #4FACFE 0%, #00F2FE 100%); }
+  .fake-card:nth-child(8) { background: linear-gradient(120deg, #43E97B 0%, #38F9D7 100%); }
+
+  .fake-card-label {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1A1A1A;
+    text-align: center;
+  }
+
+  /* ═══════════════════════════════════════ */
+  /* Shared Bar Styles                       */
+  /* ═══════════════════════════════════════ */
+  .top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 44px 16px 16px; /* 44px simulates iOS status bar */
+    z-index: 10;
+  }
+
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 16px 34px; /* 34px simulates iOS home indicator */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+  }
+
+  /* Top Step Indicator */
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 100px;
+    justify-content: space-between;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .step-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    background: #F0F0F0;
+    color: #ABABAB;
+  }
+  .step.active .step-circle {
+    background: #FF6022;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255,96,34,0.3);
+  }
+  .step-label {
+    font-size: 8px;
+    font-weight: 700;
+    color: #ABABAB;
+  }
+  .step.active .step-label { color: #FF6022; }
+
+  /* Bottom Bar Elements */
+  .btn-back {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-back svg { width: 24px; height: 24px; }
+
+  .price-pill {
+    flex: 1;
+    height: 52px;
+    border-radius: 26px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px 0 8px;
+  }
+  .price-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #FF6022;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .price-icon svg { width: 16px; height: 16px; color: white; }
+  .price-text { display: flex; flex-direction: column; }
+  .price-label { font-size: 9px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .price-value { font-size: 15px; font-weight: 700; }
+
+  .btn-next {
+    height: 52px;
+    padding: 0 24px;
+    border-radius: 26px;
+    background: #FF6022;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(255,96,34,0.3);
+  }
+
+  /* ═══════════════════════════════════════ */
+  /* VARIANT A — Frosted White (iOS Style)   */
+  /* ═══════════════════════════════════════ */
+  .variant-a .top-bar, .variant-a .bottom-bar {
+    background: rgba(255, 255, 255, 0.75);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    backdrop-filter: blur(30px) saturate(180%);
+  }
+  .variant-a .top-bar { border-bottom: 1px solid rgba(255, 255, 255, 0.9); }
+  .variant-a .bottom-bar { border-top: 1px solid rgba(255, 255, 255, 0.9); }
+  
+  .variant-a .step-indicator, .variant-a .btn-back, .variant-a .price-pill {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .variant-a .btn-back, .variant-a .price-value { color: #1A1A1A; }
+  .variant-a .price-label { color: #ABABAB; }
+
+  /* ═══════════════════════════════════════ */
+  /* VARIANT B — Dark Glass                  */
+  /* ═══════════════════════════════════════ */
+  .variant-b .top-bar, .variant-b .bottom-bar {
+    background: rgba(30, 30, 30, 0.75);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    backdrop-filter: blur(30px) saturate(180%);
+  }
+  .variant-b .top-bar { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+  .variant-b .bottom-bar { border-top: 1px solid rgba(255, 255, 255, 0.1); }
+
+  .variant-b .step-indicator, .variant-b .btn-back, .variant-b .price-pill {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .variant-b .btn-back, .variant-b .price-value { color: #FFFFFF; }
+  .variant-b .price-label { color: rgba(255,255,255,0.6); }
+  .variant-b .step-circle { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); }
+  .variant-b .step-label { color: rgba(255,255,255,0.5); }
+
+  /* ═══════════════════════════════════════ */
+  /* VARIANT C — Orange Tinted Glass         */
+  /* ═══════════════════════════════════════ */
+  .variant-c .top-bar, .variant-c .bottom-bar {
+    background: rgba(255, 96, 34, 0.15);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    backdrop-filter: blur(30px) saturate(200%);
+  }
+  .variant-c .top-bar { border-bottom: 1px solid rgba(255, 255, 255, 0.4); }
+  .variant-c .bottom-bar { border-top: 1px solid rgba(255, 255, 255, 0.4); }
+
+  .variant-c .step-indicator, .variant-c .btn-back, .variant-c .price-pill {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(255,96,34,0.08);
+  }
+  .variant-c .btn-back, .variant-c .price-value { color: #1A1A1A; }
+  .variant-c .price-label { color: #ABABAB; }
+  
+  /* ═══════════════════════════════════════ */
+  /* VARIANT D — Subtle Gradient Glass       */
+  /* ═══════════════════════════════════════ */
+  .variant-d .top-bar {
+    background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+  }
+  .variant-d .bottom-bar {
+    background: linear-gradient(0deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.8);
+  }
+  
+  .variant-d .step-indicator, .variant-d .btn-back, .variant-d .price-pill {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  }
+  .variant-d .btn-back, .variant-d .price-value { color: #1A1A1A; }
+  .variant-d .price-label { color: #ABABAB; }
+
+</style>
+</head>
+<body>
+
+<h1>
+  Интерактивные стёкла
+  <span>Скролльте карточки внутри телефонов, чтобы увидеть эффект</span>
+</h1>
+
+<div class="variants-container">
+
+  <!-- ============================================== -->
+  <!-- VARIANT A -->
+  <!-- ============================================== -->
+  <div class="variant-section">
+    <div class="variant-label">A — Frosted White <span>Классическое белое матовое стекло (как в iOS)</span></div>
+    
+    <div class="phone-frame variant-a">
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <div class="step-indicator">
+          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">1</div><span class="step-label" style="color:#FF6022">Дата</span></div>
+          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">2</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
+          <div class="step active"><div class="step-circle">3</div><span class="step-label">Квест</span></div>
+          <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
+          <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
+        </div>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="scroll-container">
+        <div class="fake-content">
+          <div class="fake-card"><div class="fake-card-label">Барби</div></div>
+          <div class="fake-card"><div class="fake-card-label">Путешествие Сафари</div></div>
+          <div class="fake-card"><div class="fake-card-label">Гарри Поттер</div></div>
+          <div class="fake-card"><div class="fake-card-label">Миссия Супергероев</div></div>
+          <div class="fake-card"><div class="fake-card-label">Игра в кальмара</div></div>
+          <div class="fake-card"><div class="fake-card-label">Майнкрафт</div></div>
+          <div class="fake-card"><div class="fake-card-label">Форт Боярд</div></div>
+          <div class="fake-card"><div class="fake-card-label">Амонг Ас</div></div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="bottom-bar">
+        <button class="btn-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        </button>
+        <div class="price-pill">
+          <div class="price-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <div class="price-text">
+            <span class="price-label">Итого</span>
+            <span class="price-value">47 900 ₽</span>
+          </div>
+        </div>
+        <button class="btn-next">Продолжить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- VARIANT B -->
+  <!-- ============================================== -->
+  <div class="variant-section">
+    <div class="variant-label">B — Dark Glass <span>Тёмное матовое стекло, контрастное</span></div>
+    
+    <div class="phone-frame variant-b">
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <div class="step-indicator">
+          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">1</div><span class="step-label" style="color:#FF6022">Дата</span></div>
+          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">2</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
+          <div class="step active"><div class="step-circle" style="background:white;color:#FF6022">3</div><span class="step-label" style="color:white">Квест</span></div>
+          <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
+          <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
+        </div>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="scroll-container">
+        <div class="fake-content">
+          <div class="fake-card"><div class="fake-card-label">Барби</div></div>
+          <div class="fake-card"><div class="fake-card-label">Путешествие Сафари</div></div>
+          <div class="fake-card"><div class="fake-card-label">Гарри Поттер</div></div>
+          <div class="fake-card"><div class="fake-card-label">Миссия Супергероев</div></div>
+          <div class="fake-card"><div class="fake-card-label">Игра в кальмара</div></div>
+          <div class="fake-card"><div class="fake-card-label">Майнкрафт</div></div>
+          <div class="fake-card"><div class="fake-card-label">Форт Боярд</div></div>
+          <div class="fake-card"><div class="fake-card-label">Амонг Ас</div></div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="bottom-bar">
+        <button class="btn-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        </button>
+        <div class="price-pill">
+          <div class="price-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <div class="price-text">
+            <span class="price-label">Итого</span>
+            <span class="price-value">47 900 ₽</span>
+          </div>
+        </div>
+        <button class="btn-next">Продолжить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- VARIANT C -->
+  <!-- ============================================== -->
+  <div class="variant-section">
+    <div class="variant-label">C — Orange Tint <span>Тёплое стекло с брендовым оранжевым оттенком</span></div>
+    
+    <div class="phone-frame variant-c">
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <div class="step-indicator">
+          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">1</div><span class="step-label" style="color:#FF6022">Дата</span></div>
+          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">2</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
+          <div class="step active"><div class="step-circle">3</div><span class="step-label">Квест</span></div>
+          <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
+          <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
+        </div>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="scroll-container">
+        <div class="fake-content">
+          <div class="fake-card"><div class="fake-card-label">Барби</div></div>
+          <div class="fake-card"><div class="fake-card-label">Путешествие Сафари</div></div>
+          <div class="fake-card"><div class="fake-card-label">Гарри Поттер</div></div>
+          <div class="fake-card"><div class="fake-card-label">Миссия Супергероев</div></div>
+          <div class="fake-card"><div class="fake-card-label">Игра в кальмара</div></div>
+          <div class="fake-card"><div class="fake-card-label">Майнкрафт</div></div>
+          <div class="fake-card"><div class="fake-card-label">Форт Боярд</div></div>
+          <div class="fake-card"><div class="fake-card-label">Амонг Ас</div></div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="bottom-bar">
+        <button class="btn-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        </button>
+        <div class="price-pill">
+          <div class="price-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <div class="price-text">
+            <span class="price-label">Итого</span>
+            <span class="price-value">47 900 ₽</span>
+          </div>
+        </div>
+        <button class="btn-next">Продолжить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- VARIANT D -->
+  <!-- ============================================== -->
+  <div class="variant-section">
+    <div class="variant-label">D — Gradient Fade <span>Градиентное полупрозрачное стекло</span></div>
+    
+    <div class="phone-frame variant-d">
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <div class="step-indicator">
+          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">1</div><span class="step-label" style="color:#FF6022">Дата</span></div>
+          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">2</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
+          <div class="step active"><div class="step-circle">3</div><span class="step-label">Квест</span></div>
+          <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
+          <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
+        </div>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="scroll-container">
+        <div class="fake-content">
+          <div class="fake-card"><div class="fake-card-label">Барби</div></div>
+          <div class="fake-card"><div class="fake-card-label">Путешествие Сафари</div></div>
+          <div class="fake-card"><div class="fake-card-label">Гарри Поттер</div></div>
+          <div class="fake-card"><div class="fake-card-label">Миссия Супергероев</div></div>
+          <div class="fake-card"><div class="fake-card-label">Игра в кальмара</div></div>
+          <div class="fake-card"><div class="fake-card-label">Майнкрафт</div></div>
+          <div class="fake-card"><div class="fake-card-label">Форт Боярд</div></div>
+          <div class="fake-card"><div class="fake-card-label">Амонг Ас</div></div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="bottom-bar">
+        <button class="btn-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        </button>
+        <div class="price-pill">
+          <div class="price-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <div class="price-text">
+            <span class="price-label">Итого</span>
+            <span class="price-value">47 900 ₽</span>
+          </div>
+        </div>
+        <button class="btn-next">Продолжить</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
