@@ -67,9 +67,9 @@ const PHYGITAL_QUESTS = [
     photos: [spaceImg, ...ROCKY_PHOTOS.slice().reverse()],
     media: [
       { type: 'image' as const, url: '/quests/space/04.png' },
-      { type: 'video' as const, url: '/quests/space/v1.mov' },
+      { type: 'video' as const, url: '/quests/space/v1.mp4' },
       { type: 'image' as const, url: '/quests/space/01.png' },
-      { type: 'video' as const, url: '/quests/space/v2.mov' },
+      { type: 'video' as const, url: '/quests/space/v2.mp4' },
       { type: 'image' as const, url: '/quests/space/02.png' },
       { type: 'image' as const, url: '/quests/space/05.png' },
       { type: 'image' as const, url: '/quests/space/03.jpg' },
@@ -185,8 +185,6 @@ function QuestPopup({
   onSelect: () => void;
   isSelected: boolean;
 }) {
-  const [designVariant, setDesignVariant] = useState<'scroll' | 'collage'>('scroll');
-
   const renderBold = (text: string) => {
     return text.split('**').map((part, i) => i % 2 === 1 ? <strong key={i} className="font-bold text-[#1A1A1A]">{part}</strong> : part);
   };
@@ -231,68 +229,33 @@ function QuestPopup({
             <h2 className="text-3xl sm:text-4xl font-black text-[#1A1A1A] leading-tight mb-2">
               {quest.subtitle}
             </h2>
-            
-            {/* Design Variant Toggle */}
-            <div className="flex bg-[#F5F5F5] rounded-xl p-1 w-max mt-4">
-              <button 
-                onClick={() => setDesignVariant('scroll')}
-                className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${designVariant === 'scroll' ? 'bg-white shadow-sm text-[#1A1A1A]' : 'text-[#747474]'}`}
-              >
-                Скролл-галерея
-              </button>
-              <button 
-                onClick={() => setDesignVariant('collage')}
-                className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${designVariant === 'collage' ? 'bg-white shadow-sm text-[#1A1A1A]' : 'text-[#747474]'}`}
-              >
-                Коллаж
-              </button>
-            </div>
           </div>
 
           {/* Media Section */}
           <div className="mb-8">
-            {designVariant === 'scroll' ? (
-              <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 px-6 pb-4">
-                {quest.media?.map((item, i) => (
-                  <div key={i} className="snap-center shrink-0 w-[85%] sm:w-[70%] aspect-[4/5] sm:aspect-video rounded-[24px] overflow-hidden shadow-lg relative bg-[#1A1A1A]">
-                    {item.type === 'video' ? (
-                      <video 
-                        src={getPublicUrl(item.url)} 
-                        autoPlay 
-                        loop 
-                        muted 
-                        playsInline 
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <img src={getPublicUrl(item.url)} className="w-full h-full object-cover" alt="" />
-                    )}
-                    {item.type === 'video' && (
-                      <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 text-white text-[10px] font-bold tracking-wider uppercase">
-                        <Play className="w-3 h-3 fill-current" /> Видео
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="px-6 grid grid-cols-2 gap-3">
-                {quest.media?.slice(0, 3).map((item, i) => (
-                  <div key={i} className={`rounded-[20px] overflow-hidden bg-[#1A1A1A] relative shadow-md ${i === 0 ? 'col-span-2 aspect-video' : 'aspect-square'}`}>
-                    {item.type === 'video' ? (
-                      <video src={getPublicUrl(item.url)} autoPlay loop muted playsInline className="w-full h-full object-cover" />
-                    ) : (
-                      <img src={getPublicUrl(item.url)} className="w-full h-full object-cover" alt="" />
-                    )}
-                    {item.type === 'video' && (
-                      <div className="absolute top-3 left-3 bg-black/40 backdrop-blur-md w-8 h-8 rounded-full flex items-center justify-center text-white">
-                        <Play className="w-4 h-4 fill-current ml-0.5" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 px-6 pb-4">
+              {quest.media?.map((item, i) => (
+                <div key={i} className="snap-center shrink-0 w-[85%] sm:w-[70%] aspect-[4/5] sm:aspect-video rounded-[24px] overflow-hidden shadow-lg relative bg-[#1A1A1A]">
+                  {item.type === 'video' ? (
+                    <video 
+                      src={getPublicUrl(item.url)} 
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <img src={getPublicUrl(item.url)} className="w-full h-full object-cover" alt="" />
+                  )}
+                  {item.type === 'video' && (
+                    <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 text-white text-[10px] font-bold tracking-wider uppercase">
+                      <Play className="w-3 h-3 fill-current" /> Видео
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="px-6 flex flex-col gap-8">
