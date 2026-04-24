@@ -13,11 +13,7 @@ const PORT = process.env.PORT || 3001;
 
 // ---- Middleware ----
 app.use(cors({
-  origin: [
-    'https://aihrtest-create.github.io',
-    'http://localhost:5173',
-    'http://localhost:3000',
-  ],
+  origin: true,  // Allow all origins (пока без HTTPS)
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true,
 }));
