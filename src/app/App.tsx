@@ -51,11 +51,16 @@ function WizardContent() {
     <div className="min-h-screen bg-[#F7F7F7]">
       {/* Header — hide on welcome */}
       {step > 0 && (
-        <div className="sticky top-4 z-40 max-w-lg mx-auto px-4 pointer-events-none">
-          <div className="bg-white/95 backdrop-blur-md rounded-full shadow-md border border-[#E5E5E5] pointer-events-auto overflow-hidden">
-            <StepIndicator />
+        <header className="sticky top-0 z-40 w-full pt-[max(0.5rem,env(safe-area-inset-top))] pb-3 bg-white/80 backdrop-blur-xl border-b border-white/40 shadow-[0_10px_30px_rgba(0,0,0,0.03)]">
+          {/* Safari Top Bounce Cover */}
+          <div className="absolute bottom-full left-0 right-0 h-[50vh] bg-white/80 backdrop-blur-xl" />
+          
+          <div className="max-w-lg mx-auto px-4">
+            <div className="bg-white/90 rounded-full shadow-sm border border-white/60 overflow-hidden">
+              <StepIndicator />
+            </div>
           </div>
-        </div>
+        </header>
       )}
 
       {/* Content */}
