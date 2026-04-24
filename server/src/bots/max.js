@@ -128,6 +128,34 @@ export async function initMaxBot() {
 }
 
 /**
+ * Отправить произвольное сообщение клиенту в Max (из дашборда)
+ */
+export async function sendMessage(chatId, text) {
+  if (!bot) return false;
+  try {
+    await bot.api.sendMessage(null, { chatId: Number(chatId), text });
+    return true;
+  } catch (error) {
+    // Fallback: try direct API call
+    try {
+      const token = process.env.MAX_BOT_TOKEN;
+      const res = await fetch(`https://botapi.max.ru/messages?chat_id=${chatId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });
+      return res.ok;
+    } catch (e) {
+      console.error(`[MAX BOT] Ошибка отправки:`, e.message);
+      return false;
+    }
+  }
+}
+
+/**
  * Отправить уведомление клиенту в Max
  */
 export async function notifyMaxUser(userId, message) {

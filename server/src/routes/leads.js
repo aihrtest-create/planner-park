@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { nanoid } from 'nanoid';
 import { statements } from '../database.js';
-import { sendMessage } from '../bots/telegram.js';
+import { sendMessage as sendTelegramMessage } from '../bots/telegram.js';
+import { sendMessage as sendMaxMessage } from '../bots/max.js';
 
 const router = Router();
 
@@ -17,7 +18,12 @@ router.post('/:id/message', async (req, res) => {
       return res.status(404).json({ error: 'Клиент не подключен к боту' });
     }
 
-    const success = await sendMessage(lead.chat_id, text);
+    let success = false;
+    if (lead.messenger === 'max') {
+      success = await sendMaxMessage(lead.chat_id, text);
+    } else {
+      success = await sendTelegramMessage(lead.chat_id, text);
+    }
     
     if (success) {
       statements.addEvent.run(lead.id, 'manager_message', text);
