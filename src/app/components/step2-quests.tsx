@@ -454,10 +454,6 @@ export function Step2Quests() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
 
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-[#1A1A1A] text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full z-10 shadow-sm flex items-center gap-1.5">
-                      <span className="text-base">🚀</span> С полным погружением
-                    </div>
-
                     <button 
                       className="absolute top-4 right-4 bg-gradient-to-tr from-[#FF6022] to-[#FF8A00] text-white text-[11px] font-bold uppercase tracking-wider px-4 py-2 rounded-full flex items-center gap-2 z-10 transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-[#FF6022]/40"
                       onClick={(e) => {
