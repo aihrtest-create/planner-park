@@ -51,28 +51,11 @@ function WizardContent() {
     <div className="min-h-screen bg-[#F7F7F7]">
       {/* Header — hide on welcome */}
       {step > 0 && (
-        <header className="sticky top-0 z-40 bg-white shadow-sm rounded-b-3xl">
-          {/* Safari Top Bounce Cover */}
-          <div className="absolute left-0 right-0 h-[50vh] bg-white bottom-full" />
-          <div className="max-w-lg mx-auto">
-            {/* Logo bar */}
-            <div className="flex items-center justify-between pt-3 pb-2 px-4 relative">
-              <div className="w-[64px] h-[37px] flex-shrink-0">
-                <HParkLogo />
-              </div>
-              <span className="text-[11px] text-[#747474] bg-[#F5F5F5] px-3 py-1.5 rounded-full font-medium">
-                Конструктор праздников
-              </span>
-            </div>
-
-            <div className="px-4">
-              <div className="w-full h-[1px] bg-[#F0F0F0]" />
-            </div>
-
-            {/* Step indicator */}
+        <div className="sticky top-4 z-40 max-w-lg mx-auto px-4 pointer-events-none">
+          <div className="bg-white/95 backdrop-blur-md rounded-full shadow-md border border-[#E5E5E5] pointer-events-auto overflow-hidden">
             <StepIndicator />
           </div>
-        </header>
+        </div>
       )}
 
       {/* Content */}

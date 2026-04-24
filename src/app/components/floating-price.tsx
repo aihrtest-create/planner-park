@@ -1,6 +1,6 @@
 import { useWizard } from "./wizard-context";
 import { motion, AnimatePresence } from "motion/react";
-import { ShoppingBag, Send, Gift } from "lucide-react";
+import { ShoppingBag, Send, ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export function FloatingPrice() {
@@ -143,6 +143,28 @@ export function FloatingPrice() {
     return `${base} bg-[#FF6022] text-white font-medium`;
   };
 
+  const getNextButtonClasses = () => {
+    const base = `h-[52px] rounded-full shadow-lg transition-all duration-300 active:scale-[0.98] flex items-center justify-center px-6 whitespace-nowrap`;
+
+    // Bonuses step — special gradient CTA
+    if (step === 11) {
+      return `${base} flex-1 bg-gradient-to-r from-[#FF6022] to-[#FF8000] scale-[1.02] shadow-xl shadow-[#FF6022]/30 text-white font-bold`;
+    }
+
+    // Optional step without selection → outlined button
+    if (isOptionalStep && !hasOptionalSelection) {
+      return `${base} bg-white text-[#FF6022] border border-[#FF6022] font-medium ${step === 1 ? 'flex-1' : ''}`;
+    }
+
+    // Mandatory step without selection → semi-transparent
+    if (!canProceed && !isOptionalStep) {
+      return `${base} bg-[#FF6022] text-white opacity-[0.45] ${step === 1 ? 'flex-1' : ''}`;
+    }
+
+    // Normal active state (valid selection or optional with selection)
+    return `${base} bg-[#FF6022] text-white font-medium ${step === 1 ? 'flex-1' : ''}`;
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
       {/* Safari Bottom Bounce Cover */}
@@ -165,63 +187,61 @@ export function FloatingPrice() {
           )}
         </AnimatePresence>
 
-        {/* ─── Price pill ─── */}
-        <AnimatePresence>
-          {totalPrice > 0 && step < totalSteps && (
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 20, opacity: 0 }}
-              className="bg-white/95 backdrop-blur-md rounded-full shadow-xl border border-[#E5E5E5] px-5 py-3 flex items-center justify-between"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#FF6022] flex items-center justify-center">
-                  <ShoppingBag className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-[#ABABAB] uppercase tracking-wide">Итого</p>
-                  <p className="text-lg text-[#1A1A1A]">
-                    {totalPrice.toLocaleString("ru-RU")} ₽
-                  </p>
-                </div>
-              </div>
-              <div className="text-xs text-[#ABABAB] bg-[#F5F5F5] px-3 py-1 rounded-full">
-                Шаг {currentDisplayStep}/{currentTotalSteps}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* ─── Navigation buttons ─── */}
-        <div className="flex gap-3">
+        {/* ─── Navigation & Price in one line ─── */}
+        <div className="flex items-center gap-2">
+          {/* Back Button */}
           {step > 1 && (
             <button
               onClick={prevStep}
-              className="flex-1 bg-white text-[#1A1A1A] py-3.5 rounded-full border border-[#E5E5E5] shadow-lg transition-all active:scale-[0.98]"
+              className="w-[52px] h-[52px] flex-shrink-0 bg-white text-[#1A1A1A] rounded-full border border-[#E5E5E5] shadow-sm flex items-center justify-center transition-all active:scale-[0.98]"
             >
-              Назад
+              <ArrowLeft className="w-6 h-6" />
             </button>
           )}
+
+          {/* Price Pill */}
+          <AnimatePresence>
+            {totalPrice > 0 && step < totalSteps && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="h-[52px] flex-1 bg-white rounded-full border border-[#E5E5E5] shadow-sm flex items-center px-2 gap-2 overflow-hidden"
+              >
+                <div className="w-9 h-9 rounded-full bg-[#FF6022] flex items-center justify-center flex-shrink-0">
+                  <ShoppingBag className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <span className="text-[9px] text-[#ABABAB] uppercase tracking-wider leading-none mb-0.5">Итого</span>
+                  <span className="text-[14px] font-medium text-[#1A1A1A] leading-none truncate">
+                    {totalPrice.toLocaleString("ru-RU")} ₽
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Next Button */}
           <motion.button
             onClick={handleNext}
             animate={isShaking ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }}
             transition={isShaking ? { duration: 0.4, ease: "easeInOut" } : { duration: 0 }}
-            className={getButtonClasses()}
+            className={getNextButtonClasses() + (totalPrice === 0 || step === totalSteps ? ' flex-1' : '')}
           >
             {step === totalSteps ? (
               isSubmitting ? (
                 <>Отправляем...</>
               ) : (
-              <>
-                <Send className="w-4 h-4" />
-                Оставить заявку
-              </>
+                <div className="flex items-center gap-2">
+                  <Send className="w-4 h-4" />
+                  <span>Оставить заявку</span>
+                </div>
               )
             ) : step === 11 ? (
-              <>
-                <span className="text-base animate-bounce">🎁</span>
-                <span className="font-bold tracking-wide">Забрать подарки</span>
-              </>
+              <div className="flex items-center gap-2">
+                <span className="text-lg animate-bounce">🎁</span>
+                <span>Забрать подарки</span>
+              </div>
             ) : isOptionalStep && !hasOptionalSelection ? (
               "Пропустить"
             ) : (
