@@ -20,6 +20,13 @@ const getPublicUrl = (path: string) => {
   return ((import.meta as any).env?.BASE_URL || '/') + path.replace(/^\//, '');
 };
 
+type QuestMedia = { type: 'image' | 'video'; url: string; };
+type QuestStory = {
+  legend: string | React.ReactNode;
+  whatHappened?: string;
+  roles?: { role: string; name: string; desc: string; icon: string; }[];
+};
+
 const PHYGITAL_QUESTS = [
   {
     id: "phygital_voxels" as const,
@@ -37,11 +44,15 @@ const PHYGITAL_QUESTS = [
       "Лис Рокки приглашает детей в цифровой мир вокселей! Квест объединяет физические активности в парке с интерактивными проекциями — дети «добывают» ресурсы, строят конструкции и сражаются с боссами. Каждый ребёнок — герой, а Рокки — их проводник.",
     highlights: ["Интерактивные проекции", "Физические испытания", "Командная работа", "Финальный босс"],
     photos: ROCKY_PHOTOS,
+    media: ROCKY_PHOTOS.map(url => ({ type: 'image' as const, url })),
+    story: {
+      legend: "Лис Рокки приглашает детей в цифровой мир вокселей! Квест объединяет физические активности в парке с интерактивными проекциями — дети «добывают» ресурсы, строят конструкции и сражаются с боссами. Каждый ребёнок — герой, а Рокки — их проводник.",
+    }
   },
   {
     id: "phygital_space" as const,
     title: "Космическое приключение",
-    subtitle: "Звёзды ждут тебя!",
+    subtitle: "Межгалактическая вечеринка на Марсе!",
     emoji: "🚀",
     color: "#3B4DD4",
     gradientFrom: "#3B4DD4",
@@ -52,8 +63,27 @@ const PHYGITAL_QUESTS = [
     animators: 1,
     description:
       "Лис Рокки — капитан космического корабля! Дети отправляются в межгалактическую миссию: проходят испытания на невесомость, расшифровывают сигналы с других планет и спасают Вселенную. Цифровые технологии делают каждое задание магически реальным.",
-    highlights: ["Космические миссии", "Цифровые спецэффекты", "Командная игра", "Финальное награждение"],
+    highlights: ["Космические миссии", "Интерактивные проекции", "Цифровые аватары", "Битва с Глоргом", "Финальная дискотека"],
     photos: [spaceImg, ...ROCKY_PHOTOS.slice().reverse()],
+    media: [
+      { type: 'image' as const, url: '/quests/space/04.png' },
+      { type: 'video' as const, url: '/quests/space/v1.mov' },
+      { type: 'image' as const, url: '/quests/space/01.png' },
+      { type: 'video' as const, url: '/quests/space/v2.mov' },
+      { type: 'image' as const, url: '/quests/space/02.png' },
+      { type: 'image' as const, url: '/quests/space/05.png' },
+      { type: 'image' as const, url: '/quests/space/03.jpg' },
+    ],
+    story: {
+      legend: "Лис Рокки приглашает именинника и его друзей в цифровое приключение: они отправляются в солнечную систему. **Их ждёт квест по организации межгалактической вечеринки на Марсе**. Для этого нужно пройти цифровые испытания в играх и победить злодея Глорга, который украл кристалл бесконечной энергии и хочет сорвать вечеринку. В финале Рокки и дети устроят грандиозную вечеринку на всю солнечную систему.",
+      whatHappened: "Глорг украл кристалл бесконечности, а без него организовать вечеринку и сделать про нее стрим не получится. Детям вместе с Рокки нужно отыскать этот кристалл и спасти вечеринку.",
+      roles: [
+        { role: "Лис Рокки", name: "Ведущий-навигатор", desc: "Отвечает за подачу сценария, дает подсказки и задания в играх.", icon: "🦊" },
+        { role: "Команда Рокки", name: "Именинник и гости", desc: "Главные герои с цифровыми аватарами.", icon: "🧑‍🚀" },
+        { role: "Аниматор", name: "Координатор", desc: "Сопровождает детей, дает подводки и создает атмосферу праздника.", icon: "✨" },
+        { role: "Глорг", name: "Главный злодей", desc: "Хочет помешать вечеринке вместе со своей командой.", icon: "👾" },
+      ]
+    }
   },
 ];
 
@@ -144,61 +174,6 @@ const CLASSIC_QUESTS = [
 type PhygitalId = typeof PHYGITAL_QUESTS[number]["id"];
 type ClassicId = typeof CLASSIC_QUESTS[number]["id"];
 
-function PhotoStories({ photos, onClose }: { photos: string[]; onClose: () => void }) {
-  const [current, setCurrent] = useState(0);
-
-  const prev = () => setCurrent((c) => (c - 1 + photos.length) % photos.length);
-  const next = () => setCurrent((c) => (c + 1) % photos.length);
-
-  return (
-    <div className="relative w-full h-full" onClick={next}>
-      {/* Story progress bars */}
-      <div className="absolute top-0 left-0 right-0 z-10 flex gap-1 p-3">
-        {photos.map((_, i) => (
-          <div key={i} className="flex-1 h-0.5 bg-white/40 rounded-full overflow-hidden">
-            <div
-              className={`h-full bg-white rounded-full transition-all duration-300 ${
-                i < current ? "w-full" : i === current ? "w-full" : "w-0"
-              }`}
-              style={i === current ? { animation: "story-progress 4s linear" } : undefined}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Image */}
-      <img
-        src={photos[current]}
-        alt=""
-        className="w-full h-full object-cover"
-        draggable={false}
-      />
-
-      {/* Navigation */}
-      <button
-        onClick={(e) => { e.stopPropagation(); prev(); }}
-        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/30 rounded-full flex items-center justify-center text-white"
-      >
-        <ChevronLeft className="w-5 h-5" />
-      </button>
-      <button
-        onClick={(e) => { e.stopPropagation(); next(); }}
-        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/30 rounded-full flex items-center justify-center text-white"
-      >
-        <ChevronRight className="w-5 h-5" />
-      </button>
-
-      {/* Close */}
-      <button
-        onClick={(e) => { e.stopPropagation(); onClose(); }}
-        className="absolute top-3 right-3 w-8 h-8 bg-black/30 rounded-full flex items-center justify-center text-white z-20"
-      >
-        <X className="w-4 h-4" />
-      </button>
-    </div>
-  );
-}
-
 function QuestPopup({
   quest,
   onClose,
@@ -210,165 +185,217 @@ function QuestPopup({
   onSelect: () => void;
   isSelected: boolean;
 }) {
-  const [showStories, setShowStories] = useState(true);
-  const [currentPhoto, setCurrentPhoto] = useState(0);
+  const [designVariant, setDesignVariant] = useState<'scroll' | 'collage'>('scroll');
+
+  const renderBold = (text: string) => {
+    return text.split('**').map((part, i) => i % 2 === 1 ? <strong key={i} className="font-bold text-[#1A1A1A]">{part}</strong> : part);
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-end justify-center"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
     >
-      {/* Backdrop */}
       <div 
-        className="absolute top-[-50vh] bottom-[-50vh] left-0 right-0 bg-black/60 backdrop-blur-md" 
+        className="absolute inset-0 bg-black/60 backdrop-blur-md" 
         onClick={onClose}
       />
 
-      {/* Sheet */}
       <motion.div
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
+        initial={{ y: "100%", scale: 0.95 }}
+        animate={{ y: 0, scale: 1 }}
+        exit={{ y: "100%", scale: 0.95 }}
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
-        className="relative w-full max-w-lg bg-white rounded-t-3xl overflow-hidden max-h-[90vh] flex flex-col"
+        className="relative w-full max-w-2xl bg-white rounded-t-[32px] sm:rounded-[32px] overflow-hidden h-[90vh] sm:h-[85vh] flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Stories / Media preview */}
-        <div className="relative h-64 bg-gray-900 shrink-0">
-          {showStories ? (
-            <PhotoStories photos={quest.photos} onClose={() => setShowStories(false)} />
-          ) : (
-            <>
-              <img
-                src={quest.photos[currentPhoto]}
-                alt={quest.title}
-                className="w-full h-full object-cover"
-              />
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: `linear-gradient(to top, ${quest.gradientTo}CC 0%, transparent 50%)`,
-                }}
-              />
+        {/* Floating Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-10 h-10 bg-black/20 backdrop-blur-xl rounded-full flex items-center justify-center text-white z-50 hover:bg-black/40 transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
-              {/* Play stories button */}
-              <button
-                onClick={() => setShowStories(true)}
-                className="absolute top-4 right-4 flex items-center gap-2 bg-black/40 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-full"
+        {/* Content Scroll Area */}
+        <div className="overflow-y-auto flex-1 overscroll-contain pb-32 hide-scrollbar">
+          
+          {/* Header Area */}
+          <div className="px-6 pt-8 pb-4">
+            <div className="inline-flex items-center gap-2 bg-[#F5F5F5] rounded-full px-3 py-1.5 mb-4">
+              <span className="text-xl">{quest.emoji}</span>
+              <span className="text-sm font-semibold text-[#1A1A1A]">{quest.title}</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black text-[#1A1A1A] leading-tight mb-2">
+              {quest.subtitle}
+            </h2>
+            
+            {/* Design Variant Toggle */}
+            <div className="flex bg-[#F5F5F5] rounded-xl p-1 w-max mt-4">
+              <button 
+                onClick={() => setDesignVariant('scroll')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${designVariant === 'scroll' ? 'bg-white shadow-sm text-[#1A1A1A]' : 'text-[#747474]'}`}
               >
-                <Play className="w-3.5 h-3.5 fill-current" />
-                Смотреть фото
+                Скролл-галерея
               </button>
-
-              {/* Close */}
-              <button
-                onClick={onClose}
-                className="absolute top-4 left-4 w-8 h-8 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white"
+              <button 
+                onClick={() => setDesignVariant('collage')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${designVariant === 'collage' ? 'bg-white shadow-sm text-[#1A1A1A]' : 'text-[#747474]'}`}
               >
-                <X className="w-4 h-4" />
+                Коллаж
               </button>
+            </div>
+          </div>
 
-              {/* Title on image */}
-              <div className="absolute bottom-4 left-5">
-                <div className="text-white/80 text-sm mb-1">{quest.subtitle}</div>
-                <div className="text-white text-2xl font-bold">{quest.emoji} {quest.title}</div>
+          {/* Media Section */}
+          <div className="mb-8">
+            {designVariant === 'scroll' ? (
+              <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 px-6 pb-4">
+                {quest.media?.map((item, i) => (
+                  <div key={i} className="snap-center shrink-0 w-[85%] sm:w-[70%] aspect-[4/5] sm:aspect-video rounded-[24px] overflow-hidden shadow-lg relative bg-[#1A1A1A]">
+                    {item.type === 'video' ? (
+                      <video 
+                        src={getPublicUrl(item.url)} 
+                        autoPlay 
+                        loop 
+                        muted 
+                        playsInline 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <img src={getPublicUrl(item.url)} className="w-full h-full object-cover" alt="" />
+                    )}
+                    {item.type === 'video' && (
+                      <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 text-white text-[10px] font-bold tracking-wider uppercase">
+                        <Play className="w-3 h-3 fill-current" /> Видео
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-            </>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="overflow-y-auto flex-1 p-5 overscroll-contain">
-          {/* Stats */}
-          <div className="flex gap-3 mb-5">
-            <div className="flex items-center gap-1.5 bg-[#F5F5F5] rounded-xl px-3 py-2 flex-1">
-              <Clock className="w-4 h-4 text-[#747474]" />
-              <span className="text-sm text-[#1A1A1A]">{quest.duration} мин.</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-[#F5F5F5] rounded-xl px-3 py-2 flex-1">
-              <Users className="w-4 h-4 text-[#747474]" />
-              <span className="text-sm text-[#1A1A1A]">до {quest.maxKids} детей</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-[#F5F5F5] rounded-xl px-3 py-2 flex-1">
-              <Zap className="w-4 h-4 text-[#747474]" />
-              <span className="text-sm text-[#1A1A1A]">1 аниматор</span>
-            </div>
+            ) : (
+              <div className="px-6 grid grid-cols-2 gap-3">
+                {quest.media?.slice(0, 3).map((item, i) => (
+                  <div key={i} className={`rounded-[20px] overflow-hidden bg-[#1A1A1A] relative shadow-md ${i === 0 ? 'col-span-2 aspect-video' : 'aspect-square'}`}>
+                    {item.type === 'video' ? (
+                      <video src={getPublicUrl(item.url)} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+                    ) : (
+                      <img src={getPublicUrl(item.url)} className="w-full h-full object-cover" alt="" />
+                    )}
+                    {item.type === 'video' && (
+                      <div className="absolute top-3 left-3 bg-black/40 backdrop-blur-md w-8 h-8 rounded-full flex items-center justify-center text-white">
+                        <Play className="w-4 h-4 fill-current ml-0.5" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Rocky badge */}
-          <div
-            className="flex items-center gap-3 p-4 rounded-2xl mb-5"
-            style={{ background: `${quest.color}12`, border: `1px solid ${quest.color}30` }}
-          >
-            <span className="text-2xl">🦊</span>
-            <div>
-              <div className="text-sm font-semibold text-[#1A1A1A]">Лис Рокки — ведущий</div>
-              <div className="text-xs text-[#747474]">Маскот Hello Park проводит весь праздник</div>
+          <div className="px-6 flex flex-col gap-8">
+            
+            {/* Stats */}
+            <div className="flex flex-wrap gap-2">
+              <div className="flex items-center gap-1.5 bg-[#F5F5F5] rounded-xl px-3 py-2">
+                <Clock className="w-4 h-4 text-[#747474]" />
+                <span className="text-sm font-medium text-[#1A1A1A]">{quest.duration} мин.</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-[#F5F5F5] rounded-xl px-3 py-2">
+                <Users className="w-4 h-4 text-[#747474]" />
+                <span className="text-sm font-medium text-[#1A1A1A]">до {quest.maxKids} детей</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-[#F5F5F5] rounded-xl px-3 py-2">
+                <Zap className="w-4 h-4 text-[#747474]" />
+                <span className="text-sm font-medium text-[#1A1A1A]">{quest.animators} аниматор</span>
+              </div>
             </div>
-          </div>
 
-          {/* Description */}
-          <p className="text-sm text-[#3A3A3A] leading-relaxed mb-5">
-            {quest.description}
-          </p>
+            {/* Legend & What Happened */}
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">Легенда</h3>
+                <p className="text-[#3A3A3A] text-base leading-relaxed">
+                  {renderBold(quest.story?.legend as string || quest.description)}
+                </p>
+              </div>
 
-          {/* Highlights */}
-          <div className="mb-6">
-            <div className="text-sm font-semibold text-[#1A1A1A] mb-3">Что будет на квесте:</div>
-            <div className="grid grid-cols-2 gap-2">
-              {quest.highlights.map((h) => (
-                <div
-                  key={h}
-                  className="flex items-center gap-2 bg-[#F8F8F8] rounded-xl px-3 py-2.5"
-                >
-                  <div
-                    className="w-1.5 h-1.5 rounded-full shrink-0"
-                    style={{ backgroundColor: quest.color }}
-                  />
-                  <span className="text-xs text-[#3A3A3A]">{h}</span>
+              {quest.story?.whatHappened && (
+                <div className="bg-red-50 border border-red-100 rounded-[24px] p-5 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 transform translate-x-2 -translate-y-4">
+                    <span className="text-8xl">🚨</span>
+                  </div>
+                  <h3 className="text-red-600 font-bold mb-2 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                    Что случилось?
+                  </h3>
+                  <p className="text-red-900/80 text-sm leading-relaxed relative z-10">
+                    {quest.story.whatHappened}
+                  </p>
                 </div>
-              ))}
+              )}
             </div>
-          </div>
 
-          {/* Video placeholder */}
-          <div className="bg-[#1A1A1A] rounded-2xl overflow-hidden mb-6 relative">
-            <div className="aspect-video flex flex-col items-center justify-center gap-3">
-              <div
-                className="w-14 h-14 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: quest.color }}
-              >
-                <Play className="w-7 h-7 text-white fill-current ml-1" />
+            {/* Narrative Roles */}
+            {quest.story?.roles && (
+              <div>
+                <h3 className="text-xl font-bold text-[#1A1A1A] mb-4">Нарративные роли</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {quest.story.roles.map((r, i) => (
+                    <div key={i} className="bg-[#F8F8F8] border border-[#E5E5E5] rounded-[20px] p-4 flex gap-4 items-start">
+                      <div className="text-3xl bg-white w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-sm border border-[#E5E5E5]">
+                        {r.icon}
+                      </div>
+                      <div>
+                        <div className="font-bold text-[#1A1A1A] text-base mb-0.5">{r.role}</div>
+                        <div className="text-xs font-semibold mb-1" style={{ color: quest.color }}>{r.name}</div>
+                        <div className="text-xs text-[#747474] leading-relaxed">{r.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="text-white/70 text-sm">Промо-видео квеста</div>
-              <div className="text-white/40 text-xs">Скоро добавим</div>
+            )}
+
+            {/* Highlights */}
+            <div>
+              <h3 className="text-xl font-bold text-[#1A1A1A] mb-4">В программе:</h3>
+              <div className="flex flex-wrap gap-2">
+                {quest.highlights.map((h, i) => (
+                  <div key={i} className="bg-[#F5F5F5] rounded-xl px-3.5 py-2 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: quest.color }} />
+                    <span className="text-sm font-medium text-[#1A1A1A]">{h}</span>
+                  </div>
+                ))}
+              </div>
             </div>
+
           </div>
         </div>
 
-        {/* CTA - Fixed at bottom of popup */}
-        <div className="mt-auto p-5 pb-8 bg-gradient-to-t from-white via-white to-white/0 relative z-10">
+        {/* Fixed Footer CTA */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 bg-white border-t border-[#E5E5E5] pb-8 sm:pb-5">
           <button
-            onClick={onSelect}
-            className="w-full py-4 rounded-2xl text-white font-semibold text-base transition-all active:scale-[0.98] flex items-center justify-center gap-2 mb-3 shadow-lg shadow-orange-200"
-            style={{ backgroundColor: isSelected ? "#22C55E" : quest.color }}
+            onClick={() => {
+              onSelect();
+              onClose();
+            }}
+            className="w-full py-4 rounded-2xl text-white font-bold text-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-xl"
+            style={{ 
+              background: isSelected ? "#22C55E" : `linear-gradient(to right, ${quest.gradientFrom}, ${quest.gradientTo})`,
+              boxShadow: isSelected ? "0 10px 25px -5px rgba(34, 197, 94, 0.4)" : `0 10px 25px -5px ${quest.color}66`
+            }}
           >
             {isSelected ? (
               <>
-                <Check className="w-5 h-5" />
-                Выбрано, продолжаем →
+                <Check className="w-6 h-6" />
+                Квест выбран
               </>
             ) : (
-              `Выбрать этот квест →`
+              `Выбрать этот квест`
             )}
-          </button>
-          <button
-            onClick={onClose}
-            className="w-full py-2 text-[#747474] font-medium text-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-          >
-            ← Назад к списку квестов
           </button>
         </div>
       </motion.div>
