@@ -166,12 +166,11 @@ export function FloatingPrice() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50">
-      {/* Safari Bottom Bounce Cover */}
-      <div className="absolute top-full left-0 right-0 h-[50vh] bg-white/80 backdrop-blur-xl" />
-      
-      <div className="w-full bg-white/80 backdrop-blur-xl border-t border-white/40 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
-        <div className="max-w-lg mx-auto px-4 flex flex-col gap-2 relative">
+    <div className="fixed bottom-3 left-3 right-3 z-50 max-w-lg mx-auto">
+      <div
+        className="rounded-full bg-white/65 backdrop-blur-[40px] saturate-[180%] border-[1.5px] border-white/85 p-[6px] flex flex-col gap-2"
+        style={{boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.95)'}}
+      >
 
         {/* ─── Validation Toast ─── */}
         <AnimatePresence>
@@ -194,9 +193,9 @@ export function FloatingPrice() {
           {step > 1 && (
             <button
               onClick={prevStep}
-              className="w-[52px] h-[52px] flex-shrink-0 bg-white text-[#1A1A1A] rounded-full border border-[#E5E5E5] shadow-sm flex items-center justify-center transition-all active:scale-[0.98]"
+              className="w-[48px] h-[48px] flex-shrink-0 bg-white/85 text-[#1A1A1A] rounded-full border border-white/90 shadow-sm flex items-center justify-center transition-all active:scale-[0.98]"
             >
-              <ArrowLeft className="w-6 h-6" />
+              <ArrowLeft className="w-5 h-5" />
             </button>
           )}
 
@@ -207,10 +206,10 @@ export function FloatingPrice() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="h-[52px] flex-1 bg-white rounded-full border border-[#E5E5E5] shadow-sm flex items-center px-2 gap-2 overflow-hidden"
+                className="h-[48px] flex-1 bg-white/85 rounded-full border border-white/90 shadow-sm flex items-center px-2 gap-2 overflow-hidden"
               >
-                <div className="w-9 h-9 rounded-full bg-[#FF6022] flex items-center justify-center flex-shrink-0">
-                  <ShoppingBag className="w-4 h-4 text-white" />
+                <div className="w-8 h-8 rounded-full bg-[#FF6022] flex items-center justify-center flex-shrink-0">
+                  <ShoppingBag className="w-3.5 h-3.5 text-white" />
                 </div>
                 <div className="flex flex-col justify-center min-w-0">
                   <span className="text-[9px] text-[#ABABAB] uppercase tracking-wider leading-none mb-0.5">Итого</span>
@@ -249,7 +248,6 @@ export function FloatingPrice() {
               "Продолжить"
             )}
           </motion.button>
-        </div>
         </div>
       </div>
     </div>

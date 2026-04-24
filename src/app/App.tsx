@@ -52,7 +52,7 @@ function WizardContent() {
       {/* Header — hide on welcome */}
       {step > 0 && (
         <div className="sticky top-3 z-40 max-w-lg mx-auto px-4 pointer-events-none">
-          <div className="bg-white/95 backdrop-blur-md rounded-full shadow-md border border-[#E5E5E5] pointer-events-auto overflow-hidden">
+          <div className="bg-white/65 backdrop-blur-[40px] saturate-[180%] rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04)] border-[1.5px] border-white/85 pointer-events-auto overflow-hidden" style={{boxShadow: '0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.95)'}}>
             <StepIndicator />
           </div>
         </div>

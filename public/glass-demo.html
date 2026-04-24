@@ -69,7 +69,7 @@
   /* 📱 Phone Frame */
   .phone-frame {
     width: 100%;
-    height: 700px; /* Tall enough to scroll */
+    height: 700px;
     border-radius: 40px;
     position: relative;
     border: 8px solid #FFFFFF;
@@ -77,7 +77,7 @@
       0 20px 40px rgba(0,0,0,0.1),
       inset 0 0 0 2px #E5E5E5;
     background: #F7F7F7;
-    overflow: hidden; /* Clips the scrolling content and fixed bars */
+    overflow: hidden;
   }
 
   /* 📜 Scrollable Content */
@@ -85,11 +85,11 @@
     height: 100%;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-top: 100px; /* Space for top bar */
-    padding-bottom: 120px; /* Space for bottom bar */
-    scrollbar-width: none; /* Firefox */
+    padding-top: 16px;
+    padding-bottom: 16px;
+    scrollbar-width: none;
   }
-  .scroll-container::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+  .scroll-container::-webkit-scrollbar { display: none; }
 
   .fake-content {
     display: grid;
@@ -105,8 +105,7 @@
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   }
-  /* Colorful gradients to test glass transparency */
-  .fake-card:nth-child(1) { background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%); }
+  .fake-card:nth-child(1) { background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%); }
   .fake-card:nth-child(2) { background: linear-gradient(120deg, #F6D365 0%, #FDA085 100%); }
   .fake-card:nth-child(3) { background: linear-gradient(120deg, #84FAB0 0%, #8FD3F4 100%); }
   .fake-card:nth-child(4) { background: linear-gradient(120deg, #A1C4FD 0%, #C2E9FB 100%); }
@@ -131,43 +130,40 @@
   }
 
   /* ═══════════════════════════════════════ */
-  /* Shared Bar Styles                       */
+  /* Floating pills — NO full-width bg      */
   /* ═══════════════════════════════════════ */
-  .top-bar {
+  .top-pill {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 44px 16px 16px; /* 44px simulates iOS status bar */
+    top: 12px;
+    left: 16px;
+    right: 16px;
     z-index: 10;
-  }
-
-  .bottom-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 16px 16px 34px; /* 34px simulates iOS home indicator */
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    z-index: 10;
-  }
-
-  /* Top Step Indicator */
-  .step-indicator {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 12px;
     border-radius: 100px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
   }
+
+  .bottom-pill {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 10;
+    border-radius: 100px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Step circles */
   .step {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
   }
   .step-circle {
     width: 28px;
@@ -181,22 +177,16 @@
     background: #F0F0F0;
     color: #ABABAB;
   }
-  .step.active .step-circle {
-    background: #FF6022;
-    color: white;
-    box-shadow: 0 4px 12px rgba(255,96,34,0.3);
-  }
   .step-label {
     font-size: 8px;
     font-weight: 700;
     color: #ABABAB;
   }
-  .step.active .step-label { color: #FF6022; }
 
-  /* Bottom Bar Elements */
+  /* Bottom bar elements */
   .btn-back {
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -204,21 +194,23 @@
     flex-shrink: 0;
     border: none;
     cursor: pointer;
+    background: rgba(255,255,255,0.85);
   }
-  .btn-back svg { width: 24px; height: 24px; }
+  .btn-back svg { width: 22px; height: 22px; color: #1A1A1A; }
 
-  .price-pill {
+  .price-pill-inner {
     flex: 1;
-    height: 52px;
-    border-radius: 26px;
+    height: 48px;
+    border-radius: 24px;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 0 16px 0 8px;
+    padding: 0 12px 0 6px;
+    background: rgba(255,255,255,0.85);
   }
   .price-icon {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: #FF6022;
     display: flex;
@@ -226,136 +218,114 @@
     justify-content: center;
     flex-shrink: 0;
   }
-  .price-icon svg { width: 16px; height: 16px; color: white; }
+  .price-icon svg { width: 15px; height: 15px; color: white; }
   .price-text { display: flex; flex-direction: column; }
-  .price-label { font-size: 9px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 2px; }
-  .price-value { font-size: 15px; font-weight: 700; }
+  .price-label { font-size: 9px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 2px; color: #ABABAB; }
+  .price-value { font-size: 14px; font-weight: 700; color: #1A1A1A; }
 
   .btn-next {
-    height: 52px;
-    padding: 0 24px;
-    border-radius: 26px;
+    height: 48px;
+    padding: 0 22px;
+    border-radius: 24px;
     background: #FF6022;
     color: white;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     border: none;
     cursor: pointer;
     box-shadow: 0 4px 16px rgba(255,96,34,0.3);
+    white-space: nowrap;
   }
 
   /* ═══════════════════════════════════════ */
-  /* VARIANT A — Frosted White (iOS Style)   */
+  /* VARIANT A — Frosted White Glass         */
   /* ═══════════════════════════════════════ */
-  .variant-a .top-bar, .variant-a .bottom-bar {
-    background: rgba(255, 255, 255, 0.75);
-    -webkit-backdrop-filter: blur(30px) saturate(180%);
-    backdrop-filter: blur(30px) saturate(180%);
+  .variant-a .top-pill,
+  .variant-a .bottom-pill {
+    background: rgba(255, 255, 255, 0.65);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(40px) saturate(180%);
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.08),
+      0 2px 8px rgba(0, 0, 0, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95);
   }
-  .variant-a .top-bar { border-bottom: 1px solid rgba(255, 255, 255, 0.9); }
-  .variant-a .bottom-bar { border-top: 1px solid rgba(255, 255, 255, 0.9); }
-  
-  .variant-a .step-indicator, .variant-a .btn-back, .variant-a .price-pill {
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-  }
-  .variant-a .btn-back, .variant-a .price-value { color: #1A1A1A; }
-  .variant-a .price-label { color: #ABABAB; }
 
   /* ═══════════════════════════════════════ */
   /* VARIANT B — Dark Glass                  */
   /* ═══════════════════════════════════════ */
-  .variant-b .top-bar, .variant-b .bottom-bar {
-    background: rgba(30, 30, 30, 0.75);
-    -webkit-backdrop-filter: blur(30px) saturate(180%);
-    backdrop-filter: blur(30px) saturate(180%);
+  .variant-b .top-pill,
+  .variant-b .bottom-pill {
+    background: rgba(20, 20, 20, 0.65);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
-  .variant-b .top-bar { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-  .variant-b .bottom-bar { border-top: 1px solid rgba(255, 255, 255, 0.1); }
-
-  .variant-b .step-indicator, .variant-b .btn-back, .variant-b .price-pill {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-  }
-  .variant-b .btn-back, .variant-b .price-value { color: #FFFFFF; }
-  .variant-b .price-label { color: rgba(255,255,255,0.6); }
   .variant-b .step-circle { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); }
   .variant-b .step-label { color: rgba(255,255,255,0.5); }
+  .variant-b .btn-back { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15); }
+  .variant-b .btn-back svg { color: white; }
+  .variant-b .price-pill-inner { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.12); }
+  .variant-b .price-label { color: rgba(255,255,255,0.5); }
+  .variant-b .price-value { color: white; }
 
   /* ═══════════════════════════════════════ */
   /* VARIANT C — Orange Tinted Glass         */
   /* ═══════════════════════════════════════ */
-  .variant-c .top-bar, .variant-c .bottom-bar {
-    background: rgba(255, 96, 34, 0.15);
-    -webkit-backdrop-filter: blur(30px) saturate(200%);
-    backdrop-filter: blur(30px) saturate(200%);
+  .variant-c .top-pill,
+  .variant-c .bottom-pill {
+    background: rgba(255, 96, 34, 0.12);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    backdrop-filter: blur(40px) saturate(200%);
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 
+      0 8px 32px rgba(255, 96, 34, 0.08),
+      0 2px 8px rgba(0, 0, 0, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
   }
-  .variant-c .top-bar { border-bottom: 1px solid rgba(255, 255, 255, 0.4); }
-  .variant-c .bottom-bar { border-top: 1px solid rgba(255, 255, 255, 0.4); }
 
-  .variant-c .step-indicator, .variant-c .btn-back, .variant-c .price-pill {
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: 0 4px 12px rgba(255,96,34,0.08);
-  }
-  .variant-c .btn-back, .variant-c .price-value { color: #1A1A1A; }
-  .variant-c .price-label { color: #ABABAB; }
-  
   /* ═══════════════════════════════════════ */
-  /* VARIANT D — Subtle Gradient Glass       */
+  /* VARIANT D — Gradient Glass              */
   /* ═══════════════════════════════════════ */
-  .variant-d .top-bar {
-    background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+  .variant-d .top-pill,
+  .variant-d .bottom-pill {
+    background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.5) 100%);
+    -webkit-backdrop-filter: blur(30px) saturate(150%);
+    backdrop-filter: blur(30px) saturate(150%);
+    border: 1.5px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.3);
   }
-  .variant-d .bottom-bar {
-    background: linear-gradient(0deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.8);
-  }
-  
-  .variant-d .step-indicator, .variant-d .btn-back, .variant-d .price-pill {
-    background: #FFFFFF;
-    border: 1px solid #E5E5E5;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-  }
-  .variant-d .btn-back, .variant-d .price-value { color: #1A1A1A; }
-  .variant-d .price-label { color: #ABABAB; }
-
 </style>
 </head>
 <body>
 
 <h1>
   Интерактивные стёкла
-  <span>Скролльте карточки внутри телефонов, чтобы увидеть эффект</span>
+  <span>Скролльте карточки внутри, чтобы увидеть эффект стекла</span>
 </h1>
 
 <div class="variants-container">
 
-  <!-- ============================================== -->
   <!-- VARIANT A -->
-  <!-- ============================================== -->
   <div class="variant-section">
-    <div class="variant-label">A — Frosted White <span>Классическое белое матовое стекло (как в iOS)</span></div>
-    
+    <div class="variant-label">A — Frosted White <span>Классическое белое матовое стекло</span></div>
     <div class="phone-frame variant-a">
-      <!-- Top Bar -->
-      <div class="top-bar">
-        <div class="step-indicator">
-          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">1</div><span class="step-label" style="color:#FF6022">Дата</span></div>
-          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">2</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
-          <div class="step active"><div class="step-circle">3</div><span class="step-label">Квест</span></div>
-          <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
-          <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
-        </div>
+      <div class="top-pill">
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white">✓</div><span class="step-label" style="color:#FF6022">Дата</span></div>
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white">✓</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white;box-shadow:0 4px 12px rgba(255,96,34,0.3)">3</div><span class="step-label" style="color:#FF6022">Квест</span></div>
+        <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
+        <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
+        <div class="step"><div class="step-circle">6</div><span class="step-label">Взросл</span></div>
+        <div class="step"><div class="step-circle">7</div><span class="step-label">МК</span></div>
       </div>
-
-      <!-- Scrollable Content -->
       <div class="scroll-container">
         <div class="fake-content">
           <div class="fake-card"><div class="fake-card-label">Барби</div></div>
@@ -368,45 +338,30 @@
           <div class="fake-card"><div class="fake-card-label">Амонг Ас</div></div>
         </div>
       </div>
-
-      <!-- Bottom Bar -->
-      <div class="bottom-bar">
-        <button class="btn-back">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-        </button>
-        <div class="price-pill">
-          <div class="price-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          </div>
-          <div class="price-text">
-            <span class="price-label">Итого</span>
-            <span class="price-value">47 900 ₽</span>
-          </div>
+      <div class="bottom-pill">
+        <button class="btn-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg></button>
+        <div class="price-pill-inner">
+          <div class="price-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+          <div class="price-text"><span class="price-label">Итого</span><span class="price-value">47 900 ₽</span></div>
         </div>
         <button class="btn-next">Продолжить</button>
       </div>
     </div>
   </div>
 
-  <!-- ============================================== -->
   <!-- VARIANT B -->
-  <!-- ============================================== -->
   <div class="variant-section">
-    <div class="variant-label">B — Dark Glass <span>Тёмное матовое стекло, контрастное</span></div>
-    
+    <div class="variant-label">B — Dark Glass <span>Тёмное контрастное стекло</span></div>
     <div class="phone-frame variant-b">
-      <!-- Top Bar -->
-      <div class="top-bar">
-        <div class="step-indicator">
-          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">1</div><span class="step-label" style="color:#FF6022">Дата</span></div>
-          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">2</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
-          <div class="step active"><div class="step-circle" style="background:white;color:#FF6022">3</div><span class="step-label" style="color:white">Квест</span></div>
-          <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
-          <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
-        </div>
+      <div class="top-pill">
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white">✓</div><span class="step-label" style="color:#FF6022">Дата</span></div>
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white">✓</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white;box-shadow:0 4px 12px rgba(255,96,34,0.3)">3</div><span class="step-label" style="color:#FF6022">Квест</span></div>
+        <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
+        <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
+        <div class="step"><div class="step-circle">6</div><span class="step-label">Взросл</span></div>
+        <div class="step"><div class="step-circle">7</div><span class="step-label">МК</span></div>
       </div>
-
-      <!-- Scrollable Content -->
       <div class="scroll-container">
         <div class="fake-content">
           <div class="fake-card"><div class="fake-card-label">Барби</div></div>
@@ -419,45 +374,30 @@
           <div class="fake-card"><div class="fake-card-label">Амонг Ас</div></div>
         </div>
       </div>
-
-      <!-- Bottom Bar -->
-      <div class="bottom-bar">
-        <button class="btn-back">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-        </button>
-        <div class="price-pill">
-          <div class="price-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          </div>
-          <div class="price-text">
-            <span class="price-label">Итого</span>
-            <span class="price-value">47 900 ₽</span>
-          </div>
+      <div class="bottom-pill">
+        <button class="btn-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg></button>
+        <div class="price-pill-inner">
+          <div class="price-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+          <div class="price-text"><span class="price-label">Итого</span><span class="price-value">47 900 ₽</span></div>
         </div>
         <button class="btn-next">Продолжить</button>
       </div>
     </div>
   </div>
 
-  <!-- ============================================== -->
   <!-- VARIANT C -->
-  <!-- ============================================== -->
   <div class="variant-section">
-    <div class="variant-label">C — Orange Tint <span>Тёплое стекло с брендовым оранжевым оттенком</span></div>
-    
+    <div class="variant-label">C — Orange Tint <span>Тёплое стекло с оранжевым оттенком</span></div>
     <div class="phone-frame variant-c">
-      <!-- Top Bar -->
-      <div class="top-bar">
-        <div class="step-indicator">
-          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">1</div><span class="step-label" style="color:#FF6022">Дата</span></div>
-          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">2</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
-          <div class="step active"><div class="step-circle">3</div><span class="step-label">Квест</span></div>
-          <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
-          <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
-        </div>
+      <div class="top-pill">
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white">✓</div><span class="step-label" style="color:#FF6022">Дата</span></div>
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white">✓</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white;box-shadow:0 4px 12px rgba(255,96,34,0.3)">3</div><span class="step-label" style="color:#FF6022">Квест</span></div>
+        <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
+        <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
+        <div class="step"><div class="step-circle">6</div><span class="step-label">Взросл</span></div>
+        <div class="step"><div class="step-circle">7</div><span class="step-label">МК</span></div>
       </div>
-
-      <!-- Scrollable Content -->
       <div class="scroll-container">
         <div class="fake-content">
           <div class="fake-card"><div class="fake-card-label">Барби</div></div>
@@ -470,45 +410,30 @@
           <div class="fake-card"><div class="fake-card-label">Амонг Ас</div></div>
         </div>
       </div>
-
-      <!-- Bottom Bar -->
-      <div class="bottom-bar">
-        <button class="btn-back">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-        </button>
-        <div class="price-pill">
-          <div class="price-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          </div>
-          <div class="price-text">
-            <span class="price-label">Итого</span>
-            <span class="price-value">47 900 ₽</span>
-          </div>
+      <div class="bottom-pill">
+        <button class="btn-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg></button>
+        <div class="price-pill-inner">
+          <div class="price-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+          <div class="price-text"><span class="price-label">Итого</span><span class="price-value">47 900 ₽</span></div>
         </div>
         <button class="btn-next">Продолжить</button>
       </div>
     </div>
   </div>
 
-  <!-- ============================================== -->
   <!-- VARIANT D -->
-  <!-- ============================================== -->
   <div class="variant-section">
-    <div class="variant-label">D — Gradient Fade <span>Градиентное полупрозрачное стекло</span></div>
-    
+    <div class="variant-label">D — Gradient Glass <span>Градиентное стекло с переливами</span></div>
     <div class="phone-frame variant-d">
-      <!-- Top Bar -->
-      <div class="top-bar">
-        <div class="step-indicator">
-          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">1</div><span class="step-label" style="color:#FF6022">Дата</span></div>
-          <div class="step"><div class="step-circle" style="background:#FF6022;color:white">2</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
-          <div class="step active"><div class="step-circle">3</div><span class="step-label">Квест</span></div>
-          <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
-          <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
-        </div>
+      <div class="top-pill">
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white">✓</div><span class="step-label" style="color:#FF6022">Дата</span></div>
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white">✓</div><span class="step-label" style="color:#FF6022">Пакет</span></div>
+        <div class="step"><div class="step-circle" style="background:#FF6022;color:white;box-shadow:0 4px 12px rgba(255,96,34,0.3)">3</div><span class="step-label" style="color:#FF6022">Квест</span></div>
+        <div class="step"><div class="step-circle">4</div><span class="step-label">Герои</span></div>
+        <div class="step"><div class="step-circle">5</div><span class="step-label">Патирум</span></div>
+        <div class="step"><div class="step-circle">6</div><span class="step-label">Взросл</span></div>
+        <div class="step"><div class="step-circle">7</div><span class="step-label">МК</span></div>
       </div>
-
-      <!-- Scrollable Content -->
       <div class="scroll-container">
         <div class="fake-content">
           <div class="fake-card"><div class="fake-card-label">Барби</div></div>
@@ -521,20 +446,11 @@
           <div class="fake-card"><div class="fake-card-label">Амонг Ас</div></div>
         </div>
       </div>
-
-      <!-- Bottom Bar -->
-      <div class="bottom-bar">
-        <button class="btn-back">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-        </button>
-        <div class="price-pill">
-          <div class="price-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          </div>
-          <div class="price-text">
-            <span class="price-label">Итого</span>
-            <span class="price-value">47 900 ₽</span>
-          </div>
+      <div class="bottom-pill">
+        <button class="btn-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg></button>
+        <div class="price-pill-inner">
+          <div class="price-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+          <div class="price-text"><span class="price-label">Итого</span><span class="price-value">47 900 ₽</span></div>
         </div>
         <button class="btn-next">Продолжить</button>
       </div>
