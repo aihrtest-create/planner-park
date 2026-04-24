@@ -250,6 +250,7 @@ export function FloatingPrice() {
             )}
           </motion.button>
         </div>
+        </div>
       </div>
     </div>
   );
