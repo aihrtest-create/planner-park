@@ -98,9 +98,16 @@ function openLead(id) {
   h += `<div class="chat-section">
     <div class="detail-label">Переписка (через бота)</div>
     <div class="chat-messages" id="chat-messages">Загрузка...</div>
+    <div id="chat-preview-bar" class="chat-preview-bar" style="display:none"></div>
     <div class="chat-input-wrap">
-      <input type="text" class="chat-input" id="chat-input" placeholder="Напишите клиенту..." onkeypress="if(event.key==='Enter')sendChatMessage()">
-      <button class="btn btn-primary" style="padding: 8px 16px" onclick="sendChatMessage()">📤</button>
+      <button class="chat-btn-attach" onclick="document.getElementById('chat-file-input').click()" title="Прикрепить файл">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+      </button>
+      <input type="file" id="chat-file-input" multiple accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar" onchange="handleFileSelect(this)">
+      <textarea class="chat-input" id="chat-input" rows="1" placeholder="Напишите клиенту..." oninput="autoResizeInput(this); updateSendBtn()" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage()}"></textarea>
+      <button class="chat-btn-send disabled" id="chat-send-btn" onclick="sendChatMessage()" title="Отправить">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
     </div>
   </div>`;
 
@@ -160,24 +167,96 @@ async function loadChatMessages(id) {
   } catch(e) { console.error(e); }
 }
 
+let pendingFiles = [];
+
+function autoResizeInput(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+function updateSendBtn() {
+  const input = document.getElementById('chat-input');
+  const btn = document.getElementById('chat-send-btn');
+  if (!input || !btn) return;
+  const hasContent = input.value.trim().length > 0 || pendingFiles.length > 0;
+  btn.classList.toggle('disabled', !hasContent);
+}
+
+function handleFileSelect(input) {
+  const files = Array.from(input.files);
+  pendingFiles.push(...files);
+  renderFilePreviews();
+  updateSendBtn();
+  input.value = '';
+}
+
+function renderFilePreviews() {
+  const bar = document.getElementById('chat-preview-bar');
+  if (!bar) return;
+  if (!pendingFiles.length) { bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+  bar.innerHTML = pendingFiles.map((f, i) => {
+    const isImg = f.type.startsWith('image/');
+    const thumb = isImg ? `<img src="${URL.createObjectURL(f)}" alt="">` : '';
+    const icon = f.type.startsWith('video/') ? '🎬' : f.type.startsWith('audio/') ? '🎵' : '📎';
+    return `<div class="chat-preview-item">
+      ${isImg ? thumb : `<span>${icon}</span>`}
+      <span>${f.name.length > 15 ? f.name.slice(0,12)+'...' : f.name}</span>
+      <span class="chat-preview-remove" onclick="removeFile(${i})">&times;</span>
+    </div>`;
+  }).join('');
+}
+
+function removeFile(i) {
+  pendingFiles.splice(i, 1);
+  renderFilePreviews();
+  updateSendBtn();
+}
+
 async function sendChatMessage() {
   const input = document.getElementById('chat-input');
+  const btn = document.getElementById('chat-send-btn');
   const text = input.value.trim();
-  if(!text || !currentLeadId) return;
+  if((!text && !pendingFiles.length) || !currentLeadId) return;
 
   input.disabled = true;
+  btn.classList.add('disabled');
+
   try {
-    const res = await fetch(`/api/leads/${currentLeadId}/message`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
-    });
-    if(res.ok) {
-      input.value = '';
-      loadChatMessages(currentLeadId);
+    // Send attachments first
+    for (const file of pendingFiles) {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('caption', '');
+      await fetch(`/api/leads/${currentLeadId}/attachment`, { method: 'POST', body: fd });
     }
-  } catch(e) { console.error(e); }
+    pendingFiles = [];
+    renderFilePreviews();
+
+    // Send text message
+    if (text) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+      const res = await fetch(`/api/leads/${currentLeadId}/message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
+    }
+
+    input.value = '';
+    autoResizeInput(input);
+    loadChatMessages(currentLeadId);
+  } catch(e) {
+    if (e.name === 'AbortError') {
+      alert('Таймаут отправки. Попробуйте ещё раз.');
+    }
+    console.error(e);
+  }
   input.disabled = false;
+  updateSendBtn();
   input.focus();
 }
 

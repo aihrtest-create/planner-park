@@ -1,8 +1,24 @@
 import { Router } from 'express';
 import { nanoid } from 'nanoid';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { statements } from '../database.js';
-import { sendMessage as sendTelegramMessage } from '../bots/telegram.js';
-import { sendMessage as sendMaxMessage } from '../bots/max.js';
+import { sendMessage as sendTelegramMessage, sendAttachment as sendTelegramAttachment } from '../bots/telegram.js';
+import { sendMessage as sendMaxMessage, sendAttachment as sendMaxAttachment } from '../bots/max.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadsDir = path.join(__dirname, '..', 'data', 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadsDir),
+    filename: (req, file, cb) => cb(null, `${Date.now()}-${nanoid(6)}${path.extname(file.originalname)}`),
+  }),
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB max
+});
 
 const router = Router();
 
@@ -32,6 +48,43 @@ router.post('/:id/message', async (req, res) => {
       res.status(500).json({ error: 'Ошибка отправки через бота' });
     }
   } catch (error) {
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+/**
+ * POST /api/leads/:id/attachment — Отправить файл клиенту
+ */
+router.post('/:id/attachment', upload.single('file'), async (req, res) => {
+  try {
+    const lead = statements.getLead.get(req.params.id);
+    if (!lead || !lead.chat_id) {
+      return res.status(404).json({ error: 'Клиент не подключен к боту' });
+    }
+    if (!req.file) {
+      return res.status(400).json({ error: 'Файл не прикреплён' });
+    }
+
+    const filePath = req.file.path;
+    const caption = req.body.caption || '';
+    const mime = req.file.mimetype;
+
+    let success = false;
+    if (lead.messenger === 'max') {
+      success = await sendMaxAttachment(lead.chat_id, filePath, mime, caption);
+    } else {
+      success = await sendTelegramAttachment(lead.chat_id, filePath, mime, caption);
+    }
+
+    if (success) {
+      const fileInfo = JSON.stringify({ filename: req.file.originalname, mime, caption });
+      statements.addEvent.run(lead.id, 'manager_attachment', fileInfo);
+      res.json({ success: true });
+    } else {
+      res.status(500).json({ error: 'Ошибка отправки файла' });
+    }
+  } catch (error) {
+    console.error('[ATTACHMENT ERROR]', error);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 });

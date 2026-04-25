@@ -140,6 +140,29 @@ export async function sendMessage(chatId, text) {
 }
 
 /**
+ * Отправить файл клиенту (фото, видео, аудио, документ)
+ */
+export async function sendAttachment(chatId, filePath, mimeType, caption = '') {
+  if (!bot) return false;
+  try {
+    const opts = caption ? { caption } : {};
+    if (mimeType.startsWith('image/')) {
+      await bot.sendPhoto(chatId, filePath, opts);
+    } else if (mimeType.startsWith('video/')) {
+      await bot.sendVideo(chatId, filePath, opts);
+    } else if (mimeType.startsWith('audio/')) {
+      await bot.sendAudio(chatId, filePath, opts);
+    } else {
+      await bot.sendDocument(chatId, filePath, opts);
+    }
+    return true;
+  } catch (error) {
+    console.error(`[TG BOT] Ошибка отправки файла:`, error.message);
+    return false;
+  }
+}
+
+/**
  * Получить инстанс бота для webhook обработки
  */
 export function getTelegramBot() {

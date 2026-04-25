@@ -133,25 +133,73 @@ export async function initMaxBot() {
 export async function sendMessage(chatId, text) {
   if (!bot) return false;
   try {
-    await bot.api.sendMessage(null, { chatId: Number(chatId), text });
-    return true;
-  } catch (error) {
-    // Fallback: try direct API call
-    try {
-      const token = process.env.MAX_BOT_TOKEN;
-      const res = await fetch(`https://botapi.max.ru/messages?chat_id=${chatId}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': token,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text }),
-      });
-      return res.ok;
-    } catch (e) {
-      console.error(`[MAX BOT] Ошибка отправки:`, e.message);
+    const token = process.env.MAX_BOT_TOKEN;
+    const res = await fetch(`https://botapi.max.ru/messages?chat_id=${chatId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text }),
+    });
+    return res.ok;
+  } catch (e) {
+    console.error(`[MAX BOT] Ошибка отправки:`, e.message);
+    return false;
+  }
+}
+
+/**
+ * Отправить файл клиенту в Max
+ */
+export async function sendAttachment(chatId, filePath, mimeType, caption = '') {
+  try {
+    const token = process.env.MAX_BOT_TOKEN;
+    const fs = await import('fs');
+    const path = await import('path');
+    const { FormData, File } = await import('undici');
+
+    // Step 1: Upload file to Max
+    const fileBuffer = fs.default.readFileSync(filePath);
+    const fileName = path.default.basename(filePath);
+    const file = new File([fileBuffer], fileName, { type: mimeType });
+
+    const uploadForm = new FormData();
+    uploadForm.append('data', file);
+
+    const uploadType = mimeType.startsWith('image/') ? 'image' :
+                       mimeType.startsWith('video/') ? 'video' : 'file';
+
+    const uploadRes = await fetch(`https://botapi.max.ru/uploads?type=${uploadType}`, {
+      method: 'POST',
+      headers: { 'Authorization': token },
+      body: uploadForm,
+    });
+
+    if (!uploadRes.ok) {
+      console.error('[MAX BOT] Upload failed:', await uploadRes.text());
       return false;
     }
+
+    // Step 2: Send message with attachment
+    const uploadData = await uploadRes.json();
+    const msgBody = {
+      text: caption || undefined,
+      attachments: [uploadData],
+    };
+
+    const msgRes = await fetch(`https://botapi.max.ru/messages?chat_id=${chatId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(msgBody),
+    });
+    return msgRes.ok;
+  } catch (e) {
+    console.error(`[MAX BOT] Ошибка отправки файла:`, e.message);
+    return false;
   }
 }
 
