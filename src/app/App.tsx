@@ -59,7 +59,7 @@ function WizardContent() {
       )}
 
       {/* Content */}
-      <main className="max-w-lg mx-auto py-4 pb-40">
+      <main className="max-w-lg mx-auto py-4 pb-14">
         <AnimatePresence mode="wait" onExitComplete={() => window.scrollTo({ top: 0 })}>
           {renderStep()}
         </AnimatePresence>

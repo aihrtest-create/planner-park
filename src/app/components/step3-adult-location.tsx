@@ -89,9 +89,15 @@ export function Step3AdultLocation() {
       className="px-4 pb-6"
     >
       <div className="text-center mb-8 px-4 pt-2">
+        {/* Дополнительные услуги label */}
+        <div className="flex justify-center mb-4">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FF6022]/10 to-[#FF8A00]/10 text-[#FF6022] text-[13px] font-bold px-4 py-2 rounded-full border border-[#FF6022]/20">
+            <span>✨</span> Дополнительные услуги
+          </div>
+        </div>
         <h2 className="text-3xl font-black text-[#1A1A1A] mb-2 leading-tight flex items-center justify-center gap-3">
           <span className="text-4xl drop-shadow-md hover:scale-110 transition-transform cursor-pointer">🛋️</span>
-          Локации для родителей
+          Стол для родителей
         </h2>
         <p className="text-base font-bold text-[#747474] leading-relaxed">Выберите место для комфортного отдыха</p>
       </div>

@@ -4,7 +4,7 @@ import { ShoppingBag, Send, ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export function FloatingPrice() {
-  const { totalPrice, step, totalSteps, visibleSteps, state, nextStep, prevStep, submitted, setSubmitted, submitToAPI } = useWizard();
+  const { totalPrice, step, totalSteps, visibleSteps, state, nextStep, prevStep, submitted, setSubmitted, submitToAPI, clearCache } = useWizard();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [isShaking, setIsShaking] = useState(false);
@@ -18,11 +18,17 @@ export function FloatingPrice() {
 
   if (submitted || state.isQuestPopupOpen) return null;
 
-  // ─── Optional steps: Adult Location (6) and Cakes (10) ───
-  const isOptionalStep = step === 6 || step === 10;
+  // ─── Optional steps: depends on mode ───
+  // Custom mode: everything except date(1), package(2), and contact(12) is optional
+  const isCustom = state.packageType === "custom";
+  const isOptionalStep = isCustom
+    ? step !== 1 && step !== 2 && step !== 12
+    : step === 6 || step === 10;
 
   // ─── Mandatory validation ───
   const canProceed = (() => {
+    // In custom mode, only date/package/contact are mandatory
+    if (isCustom && step !== 1 && step !== 2 && step !== 12) return true;
     switch (step) {
       case 1: return !!state.date && !!state.time;
       case 2: return !!state.packageType;
@@ -38,8 +44,15 @@ export function FloatingPrice() {
   // ─── Whether optional step has a selection ───
   const hasOptionalSelection = (() => {
     if (!isOptionalStep) return false;
+    if (step === 3) return !!state.questType && state.questType !== "none";
+    if (step === 4) return (state.animators || []).length > 0;
+    if (step === 5) return !!state.patiroom;
     if (step === 6) return (state.cafeZones || []).length > 0;
+    if (step === 7) return (state.shows || []).length > 0;
+    if (step === 8) return (state.masterClasses || []).length > 0;
+    if (step === 9) return state.includeFood || Object.values(state.customFood).some(v => v > 0);
     if (step === 10) return !!state.cakeChoice;
+    if (step === 11) return true; // gifts step — always "selected" (just display)
     return false;
   })();
 
@@ -75,6 +88,7 @@ export function FloatingPrice() {
         } catch {
           // Submit even if API fails — don't block the user
         }
+        clearCache(); // Clear saved state after successful submission
         setSubmitted(true);
         setIsSubmitting(false);
       } else {

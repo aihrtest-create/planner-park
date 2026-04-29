@@ -21,6 +21,7 @@ export function StepShows() {
   const { state, updateState } = useWizard();
   const isCustom = state.packageType === "custom";
   const [selectedInfo, setSelectedInfo] = useState<string | null>(null);
+  const [surchargeShow, setSurchargeShow] = useState<{ id: string; price: number } | null>(null);
 
   const toggleShow = (id: string, e?: React.MouseEvent) => {
     if (e) {
@@ -30,7 +31,20 @@ export function StepShows() {
     if (current.includes(id)) {
       updateState({ shows: current.filter((m) => m !== id) });
     } else {
-      updateState({ shows: [...current, id] });
+      // In exclusive: first show is free, second+ needs confirmation
+      if (state.packageType === "exclusive" && current.length >= 1) {
+        const show = SHOWS.find(s => s.id === id);
+        setSurchargeShow({ id, price: show?.price || 0 });
+      } else {
+        updateState({ shows: [...current, id] });
+      }
+    }
+  };
+
+  const confirmShowSurcharge = () => {
+    if (surchargeShow) {
+      updateState({ shows: [...state.shows, surchargeShow.id] });
+      setSurchargeShow(null);
     }
   };
 
@@ -49,6 +63,7 @@ export function StepShows() {
   };
 
   return (
+    <>
     <motion.div
       initial={{ opacity: 0, x: 30 }}
       animate={{ opacity: 1, x: 0 }}
@@ -63,7 +78,7 @@ export function StepShows() {
         </h2>
         <p className="text-base font-bold text-[#747474] leading-relaxed">
           {state.packageType === "exclusive"
-            ? "1 шоу-программа включена. Остальные за доп. плату"
+            ? "Одна шоу-программа включена в пакет. Остальные за доп. плату"
             : "Выберите шоу-программы для вашего праздника"}
         </p>
       </div>
@@ -121,9 +136,7 @@ export function StepShows() {
               {/* Bottom pill-like panel like location cards */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
                  <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{show.name}</h4>
-                 {(isCustom || state.packageType === "exclusive" && state.shows.length > 0) && (
-                    <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">{show.price.toLocaleString("ru-RU")} ₽</p>
-                 )}
+                 <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">{show.price.toLocaleString("ru-RU")} ₽</p>
               </div>
             </motion.div>
           );
@@ -223,5 +236,55 @@ export function StepShows() {
       </AnimatePresence>
 
     </motion.div>
+
+      {/* Surcharge popup for additional show */}
+      <AnimatePresence>
+        {surchargeShow && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-6"
+          >
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={() => setSurchargeShow(null)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl"
+            >
+              <div className="text-center mb-5">
+                <div className="w-16 h-16 bg-[#FF6022]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">✨</span>
+                </div>
+                <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Дополнительное шоу</h3>
+                <p className="text-sm text-[#747474] leading-relaxed">
+                  Одно шоу уже входит в пакет. За дополнительное нужно доплатить
+                </p>
+                <p className="text-2xl font-black text-[#FF6022] mt-2">
+                  +{surchargeShow.price.toLocaleString("ru-RU")} ₽
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setSurchargeShow(null)}
+                  className="flex-1 py-3.5 rounded-xl font-medium text-center bg-[#F5F5F5] text-[#747474] transition-all active:scale-[0.98]"
+                >
+                  Отмена
+                </button>
+                <button
+                  onClick={confirmShowSurcharge}
+                  className="flex-1 py-3.5 rounded-xl font-medium text-center bg-[#FF6022] text-white shadow-md shadow-[#FF6022]/30 active:scale-[0.98]"
+                >
+                  Добавить
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

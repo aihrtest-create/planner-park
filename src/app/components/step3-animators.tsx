@@ -2,6 +2,7 @@ import { useWizard } from "./wizard-context";
 import { motion } from "motion/react";
 import { Check, Sparkles } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { AnimatePresence } from "motion/react";
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -29,7 +30,7 @@ const SECTION_CATEGORIES: { id: AnimatorCategory; label: string; emoji: string }
   { id: "universal", label: "Другие", emoji: "🌟" },
 ];
 
-const ANIMATORS: Animator[] = [
+export const ANIMATORS: Animator[] = [
   // 👑 Принцессы
   { id: "elsa", name: "Эльза", category: "princesses", image: "/animators/cropped/elsa.webp" },
   { id: "anna", name: "Анна", category: "princesses", image: "/animators/cropped/anna.webp" },
@@ -113,6 +114,7 @@ const ANIMATORS: Animator[] = [
 export function Step3Animators() {
   const { state, updateState } = useWizard();
   const [activeCategory, setActiveCategory] = useState<AnimatorCategory>("princesses");
+  const [surchargePopup, setSurchargePopup] = useState<string | null>(null);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const tabsRef = useRef<HTMLDivElement>(null);
   const tabButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -121,9 +123,21 @@ export function Step3Animators() {
   const toggleAnimator = (id: string) => {
     const current = state.animators;
     if (current.includes(id)) {
+      // Deselect
       updateState({ animators: current.filter((a) => a !== id) });
-    } else {
+    } else if (current.length === 0) {
+      // First animator — free
       updateState({ animators: [id] });
+    } else {
+      // Second+ animator — show surcharge popup
+      setSurchargePopup(id);
+    }
+  };
+
+  const confirmAddAnimator = () => {
+    if (surchargePopup) {
+      updateState({ animators: [...state.animators, surchargePopup] });
+      setSurchargePopup(null);
     }
   };
 
@@ -201,7 +215,7 @@ export function Step3Animators() {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -30 }}
       transition={{ duration: 0.3 }}
-      className="pb-6"
+      className="pb-16"
     >
       {/* Header */}
       <div className="text-center mb-4 px-8 pt-2">
@@ -212,7 +226,7 @@ export function Step3Animators() {
           Любимые герои
         </h2>
         <p className="text-base font-bold text-[#747474] leading-relaxed">
-          На празднике 2 артиста. Выберите героя для праздника
+          Выберите героя для праздника
         </p>
       </div>
 
@@ -233,16 +247,15 @@ export function Step3Animators() {
         </div>
       )}
 
-      {/* Selection counter */}
+      {/* Selection info */}
       <div className="flex items-center justify-between mb-3 px-5">
         <span className="text-sm text-[#747474]">
           Выбрано:{" "}
           <span className="font-bold text-[#1A1A1A]">
             {state.animators.length}
-          </span>{" "}
-          / 1
+          </span>
         </span>
-        {state.animators.length === 1 && (
+        {state.animators.length >= 1 && (
           <motion.span
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -253,8 +266,8 @@ export function Step3Animators() {
         )}
       </div>
 
-      {/* Sticky category tabs */}
-      <div className="sticky top-[145px] z-30 bg-[#F7F7F7] pt-2 pb-3 -mx-4 px-4 shadow-[0_-1px_0_0_#F7F7F7]">
+      {/* Sticky category tabs with glassmorphism */}
+      <div className="sticky top-[110px] z-30 pt-2 pb-3 px-1 mx-0 rounded-2xl" style={{ background: 'rgba(247,247,247,0.65)', backdropFilter: 'blur(20px) saturate(180%)', WebkitBackdropFilter: 'blur(20px) saturate(180%)' }}>
         <div
           ref={tabsRef}
           className="flex gap-1.5 overflow-x-auto scrollbar-hide"
@@ -335,6 +348,11 @@ export function Step3Animators() {
                         <h4 className="text-[14px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">
                           {anim.name}
                         </h4>
+                        {state.packageType === "custom" && (
+                          <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">
+                            {state.animators.length >= 1 && !isSelected ? "+8 000 ₽" : isSelected && state.animators.indexOf(anim.id) === 0 ? "Включён" : isSelected ? "+8 000 ₽" : "Включён"}
+                          </p>
+                        )}
                       </div>
                     </button>
                   );
@@ -363,6 +381,55 @@ export function Step3Animators() {
           ✨
         </div>
       </div>
+
+      {/* Surcharge popup for additional animator */}
+      <AnimatePresence>
+        {surchargePopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-6"
+          >
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={() => setSurchargePopup(null)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl"
+            >
+              <div className="text-center mb-5">
+                <div className="w-16 h-16 bg-[#FF6022]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🦸</span>
+                </div>
+                <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Дополнительный герой</h3>
+                <p className="text-sm text-[#747474] leading-relaxed">
+                  За дополнительного героя нужно доплатить
+                </p>
+                <p className="text-2xl font-black text-[#FF6022] mt-2">
+                  +8 000 ₽
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setSurchargePopup(null)}
+                  className="flex-1 py-3.5 rounded-xl font-medium text-center bg-[#F5F5F5] text-[#747474] transition-all active:scale-[0.98]"
+                >
+                  Отмена
+                </button>
+                <button
+                  onClick={confirmAddAnimator}
+                  className="flex-1 py-3.5 rounded-xl font-medium text-center bg-[#FF6022] text-white shadow-md shadow-[#FF6022]/30 active:scale-[0.98]"
+                >
+                  Добавить
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

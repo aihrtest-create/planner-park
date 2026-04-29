@@ -136,7 +136,7 @@ export function Step1Format() {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -30 }}
       transition={{ duration: 0.3 }}
-      className="px-4 pb-6"
+      className="px-4 pb-16"
     >
       {/* Header */}
       <div className="text-center mb-8 px-4 pt-2">
@@ -289,7 +289,7 @@ export function Step1Format() {
           );
         })}
 
-        {/* Custom Package - Light minimal card */}
+        {/* Custom Package - Expressive large card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -297,29 +297,68 @@ export function Step1Format() {
         >
           <div
             onClick={() => handleSelect("custom")}
-            className="bg-white rounded-[20px] p-[16px] flex items-center justify-between cursor-pointer active:scale-[0.98] transition-transform"
-            style={{ 
-              border: `2px dashed ${state.packageType === "custom" ? '#1A1A1A' : '#D5D5D5'}`,
-              backgroundColor: state.packageType === "custom" ? '#F7F7F7' : '#FFFFFF'
-            }}
+            className="relative rounded-[28px] p-[3px] cursor-pointer active:scale-[0.98] transition-all overflow-hidden"
           >
-            <div className="flex items-center gap-[12px]">
-              <span className="text-[28px]">🧩</span>
-              <div>
-                <div className="font-black text-[#1A1A1A] text-[16px]">Собери сам</div>
-                <div className="text-[13px] text-[#ABABAB] font-medium mt-0.5">Выбери только нужные опции</div>
+            {/* Border based on selection */}
+            <div 
+              className={`absolute inset-0 rounded-[28px] transition-all duration-500 ${
+                state.packageType === "custom" 
+                  ? "bg-[#ff6022] opacity-100" 
+                  : "bg-[#E5E5E5] opacity-80"
+              }`}
+              style={state.packageType === "custom" ? { boxShadow: '0 0 32px rgba(255,96,34,0.4)' } : {}}
+            />
+            
+            {/* Inner card */}
+            <div className={`relative rounded-[26px] px-6 py-7 transition-colors ${
+                state.packageType === "custom" ? "bg-white/95" : "bg-white hover:bg-gray-50/80"
+              }`}
+            >
+              {/* Top row */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-[64px] h-[64px] rounded-2xl bg-[#ff6022]/10 flex items-center justify-center">
+                    <span className="text-[40px]">🧩</span>
+                  </div>
+                  <div>
+                    <div className={`font-black text-[28px] leading-tight tracking-[-0.5px] ${
+                      state.packageType === "custom" 
+                        ? "text-[#ff6022]" 
+                        : "text-[#1A1A1A]"
+                    }`}>
+                      Собери сам
+                    </div>
+                    <div className="text-[14px] text-[#747474] font-medium mt-1">
+                      Создай уникальный праздник
+                    </div>
+                  </div>
+                </div>
+                {state.packageType === "custom" && (
+                  <div className="w-[40px] h-[40px] rounded-full bg-[#ff6022] flex items-center justify-center text-white shadow-lg shrink-0 mt-1">
+                    <Check className="w-5 h-5" />
+                  </div>
+                )}
+              </div>
+
+              {/* Features */}
+              <div className="flex flex-wrap gap-2 mb-5">
+                {["Любой квест", "Любые герои", "Только нужные опции"].map((feat) => (
+                  <div key={feat} className="flex items-center gap-1.5 bg-[#F5F5F5] rounded-lg px-3 py-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#ff6022]" />
+                    <span className="text-[12px] font-medium text-[#3A3A3A]">{feat}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA */}
+              <div className={`w-full py-3.5 rounded-2xl text-center font-bold text-[16px] transition-all ${
+                state.packageType === "custom"
+                  ? "bg-[#ff6022] text-white shadow-lg shadow-[#ff6022]/25"
+                  : "bg-[#ff6022] text-white"
+              }`}>
+                {state.packageType === "custom" ? "✓ Выбрано" : "Выбрать →"}
               </div>
             </div>
-            
-            {state.packageType === "custom" ? (
-              <div className="w-[36px] h-[36px] rounded-full bg-[#1A1A1A] flex items-center justify-center text-white shrink-0">
-                <Check className="w-5 h-5" />
-              </div>
-            ) : (
-              <div className="w-[36px] h-[36px] rounded-full bg-[#1A1A1A] text-white flex items-center justify-center text-[16px] shrink-0 font-bold">
-                →
-              </div>
-            )}
           </div>
         </motion.div>
 

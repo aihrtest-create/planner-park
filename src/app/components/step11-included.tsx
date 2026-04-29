@@ -1,4 +1,4 @@
-import { useWizard } from "./wizard-context";
+import { useWizard, getCustomGifts } from "./wizard-context";
 import { motion } from "motion/react";
 import { useEffect } from "react";
 import { Check } from "lucide-react";
@@ -66,9 +66,11 @@ const ALL_EXTRAS = [
 export function Step11Included() {
   const { state } = useWizard();
 
+  const isCustom = state.packageType === "custom";
+  const customGifts = isCustom ? getCustomGifts(state) : [];
+
   useEffect(() => {
-    // Only fire confetti if not custom
-    if (state.packageType === "custom") return;
+    if (isCustom && customGifts.length === 0) return;
     
     // Add canvas-confetti dynamically
     const script = document.createElement("script");
@@ -89,22 +91,8 @@ export function Step11Included() {
     };
   }, [state.packageType]);
 
-  if (state.packageType === "custom") {
-    return (
-      <motion.div
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -30 }}
-        className="px-4 pb-6 text-center pt-10"
-      >
-         <h2 className="text-xl text-[#1A1A1A] mb-2 font-bold">Индивидуальный пакет</h2>
-         <p className="text-[#747474]">Вы сами формируете свой праздник. Продолжайте для завершения.</p>
-      </motion.div>
-    );
-  }
-
   const packageName = state.packageType ? PACKAGE_NAMES[state.packageType] || "" : "";
-  const displayExtras = ALL_EXTRAS.filter(extra => state.packageType && extra.packages.includes(state.packageType));
+  const displayExtras = isCustom ? customGifts : ALL_EXTRAS.filter(extra => state.packageType && extra.packages.includes(state.packageType));
 
   return (
     <motion.div
@@ -120,7 +108,11 @@ export function Step11Included() {
         </div>
         <h2 className="text-3xl font-black text-[#1A1A1A] mb-2 leading-tight">Приятные бонусы!</h2>
         <p className="text-sm text-[#747474] leading-relaxed">
-          А ещё в пакет <strong className="text-[#FF6022] uppercase tracking-wide bg-[#FF6022]/10 px-2 py-0.5 rounded-md mx-1">{packageName}</strong> уже включены эти подарки:
+          {isCustom ? (
+            <>Вот что вы получите в подарок!</>
+          ) : (
+            <>А ещё в пакет <strong className="text-[#FF6022] uppercase tracking-wide bg-[#FF6022]/10 px-2 py-0.5 rounded-md mx-1">{packageName}</strong> уже включены эти подарки:</>
+          )}
         </p>
       </div>
 

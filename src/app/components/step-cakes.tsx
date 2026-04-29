@@ -10,7 +10,7 @@ const getPublicUrl = (path: string) => {
   return ((import.meta as any).env?.BASE_URL || '/') + path.replace(/^\//, '');
 };
 
-const CAKES = [
+export const CAKES = [
   
   {
     "id": "cake_2",
@@ -273,6 +273,12 @@ export function StepCakes() {
       className="px-4 pb-6"
     >
       <div className="text-center mb-8 px-4 pt-2">
+        {/* Дополнительные услуги label */}
+        <div className="flex justify-center mb-4">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FF6022]/10 to-[#FF8A00]/10 text-[#FF6022] text-[13px] font-bold px-4 py-2 rounded-full border border-[#FF6022]/20">
+            <span>✨</span> Дополнительные услуги
+          </div>
+        </div>
         <h2 className="text-3xl font-black text-[#1A1A1A] mb-2 leading-tight flex items-center justify-center gap-3">
           <span className="text-4xl drop-shadow-md hover:scale-110 transition-transform cursor-pointer">🎂</span>
           Праздничный торт
@@ -313,24 +319,23 @@ export function StepCakes() {
             >
               {/* Image / Gradient Placeholder */}
               {mc.id === "own_cake" ? (
-                <div className={`absolute inset-0 flex flex-col items-center justify-center bg-white pb-8`}>
-                  <span className="text-[120px] sm:text-[140px] filter drop-shadow-md group-hover:scale-110 transition-transform duration-500 leading-none mb-3">🎂</span>
-                  <span className="text-xs font-bold text-[#FF6022] bg-[#FF6022]/10 px-3 py-1 rounded-full relative z-10 mt-2">Свой торт</span>
+                <div className={`absolute inset-0 flex flex-col items-center justify-center bg-white pb-12`}>
+                  <span className="text-[120px] sm:text-[140px] filter drop-shadow-md group-hover:scale-110 transition-transform duration-500 leading-none">🎂</span>
                 </div>
               ) : (
-                <div className={`absolute inset-0 flex items-center justify-center bg-black overflow-hidden`}>
+                <div className={`absolute inset-0 flex items-end justify-center bg-black overflow-hidden pb-[50px]`}>
                   {(mc as any).image ? (
                     <ImageWithFallback 
                       src={getPublicUrl((mc as any).image)} 
                       alt={mc.name} 
-                      className="w-full h-full object-contain scale-[1.25] -translate-y-2 group-hover:scale-[1.3] transition-all duration-700" 
+                      className="w-full h-full object-contain object-bottom group-hover:scale-[1.05] transition-all duration-700" 
                     />
                   ) : (
                     <span className="text-6xl sm:text-7xl filter drop-shadow-md pb-6 group-hover:scale-110 transition-transform duration-500">{mc.emoji}</span>
                   )}
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+              {mc.id !== "own_cake" && <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />}
 
               {/* Top details: Checkmark */}
               <div className="absolute top-2 right-2 z-10">
@@ -344,9 +349,9 @@ export function StepCakes() {
               {/* Bottom pill-like panel */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
                  <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{mc.name}</h4>
-                 <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">
-                   {mc.id === "own_cake" ? "+2 000 ₽" : state.packageType === "custom" ? mc.price : "Включен в пакет"}
-                 </p>
+                  <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">
+                    {mc.id === "own_cake" ? "+2 000 ₽" : `${mc.price} • 2 кг`}
+                  </p>
               </div>
             </motion.div>
           );
@@ -390,7 +395,7 @@ export function StepCakes() {
                 <div className="mb-5 flex flex-col items-center text-center">
                    <h3 className="text-2xl font-bold text-[#1A1A1A] leading-tight mb-2">Выберите начинку</h3>
                    <p className="text-xs font-semibold text-[#747474] bg-[#F5F5F5] px-3 py-1.5 rounded-full">
-                     Опция для: {bottomSheetDetails.name} <span className="mx-1">•</span> <span className="text-[#FF6022]">{state.packageType === 'custom' ? bottomSheetDetails.price : 'Включен в пакет'}</span>
+                     Опция для: {bottomSheetDetails.name} <span className="mx-1">•</span> <span className="text-[#FF6022]">{bottomSheetDetails.price} • 2 кг</span>
                    </p>
                 </div>
                 

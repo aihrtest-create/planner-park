@@ -54,7 +54,7 @@ export function Step5Food() {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -30 }}
       transition={{ duration: 0.3 }}
-      className="px-4 pb-6"
+      className="px-4 pb-16"
     >
       <div className="text-center mb-8 px-4 pt-2">
         <h2 className="text-3xl font-black text-[#1A1A1A] mb-2 leading-tight flex items-center justify-center gap-3">
@@ -93,10 +93,18 @@ export function Step5Food() {
               
               {/* Badge for Included Packages */}
               {!isPaidSet && state.includeFood && (
-                <div className="absolute top-4 left-0 z-10 flex items-stretch">
-                  <div className="bg-[#FF6022] text-white px-5 py-2 font-black text-[11px] uppercase tracking-widest shadow-lg rounded-r-2xl flex items-center gap-1.5">
-                    <Check className="w-3.5 h-3.5" /> Включено в пакет
-                  </div>
+                <div className="absolute top-3 left-4 z-10">
+                  <span
+                    className="inline-flex items-center gap-2 text-white text-[12px] font-extrabold px-5 py-2.5 rounded-2xl uppercase tracking-wider"
+                    style={{
+                      background: "#6C4AED",
+                      boxShadow: "0 4px 16px rgba(108, 74, 237, 0.45)",
+                      transform: "rotate(-2deg)",
+                      display: "inline-flex",
+                    }}
+                  >
+                    <Check className="w-4 h-4" /> Включено в пакет
+                  </span>
                 </div>
               )}
 

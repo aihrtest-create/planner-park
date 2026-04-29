@@ -15,14 +15,18 @@ import {
   Star,
   Cake,
   Gamepad2,
+  ChevronRight,
 } from "lucide-react";
 import { format, isWeekend } from "date-fns";
+import { ru } from "date-fns/locale";
+import { CAKES } from "./step-cakes";
+import { ANIMATORS } from "./step3-animators";
 
 const PACKAGE_NAMES: Record<string, string> = {
   basic: "Базовый",
   premium: "Премиум",
   exclusive: "Эксклюзив",
-  custom: "Индивидуальный",
+  custom: "Собери сам",
 };
 
 const QUEST_NAMES: Record<string, string> = {
@@ -79,6 +83,108 @@ const FILLING_NAMES: Record<string, string> = {
 export function Step7Summary() {
   const { state, updateState, totalPrice, submitted } = useWizard();
 
+  const effectiveWeekend = state.date ? isWeekend(state.date) : state.isWeekend;
+
+  const getPackagePrice = () => {
+    if (state.packageType === "basic") return 24900;
+    if (state.packageType === "premium") return effectiveWeekend ? 57900 : 47900;
+    if (state.packageType === "exclusive") return effectiveWeekend ? 89900 : 79900;
+    return 0;
+  };
+
+  const getQuestPrice = () => {
+    if (!state.questType || state.questType === "none") return 0;
+    if (state.packageType === "custom") {
+      return state.questType.startsWith("phygital_") ? 12000 : 15000;
+    } else if (state.questType.startsWith("classic_")) {
+      if (state.packageType === "basic") return 10000;
+      if (state.packageType === "premium") return 5000;
+    }
+    return 0;
+  };
+
+  const getPatiroomPrice = () => {
+    if (state.packageType === "custom" && state.patiroom) {
+      return state.patiroomHours * 3000;
+    }
+    return 0;
+  };
+
+  const getCafeZonesPrice = () => {
+    let p = 0;
+    for (const zone of state.cafeZones) {
+      if (zone === "cafe_round") p += effectiveWeekend ? 10000 : 5000;
+      if (zone === "cafe_small") p += 5000;
+      if (zone === "cafe_pink") p += effectiveWeekend ? 10000 : 5000;
+      if (zone === "cafe_pink_full") p += effectiveWeekend ? 20000 : 10000;
+    }
+    return p;
+  };
+
+  const getAnimatorsPrice = () => {
+    if (state.animators.length > 1) {
+      return (state.animators.length - 1) * 8000;
+    }
+    return 0;
+  };
+
+  const getShowsPrice = () => {
+    const showPrices: Record<string, number> = { soap: 14000, paper: 15000, tesla: 15000, professor: 14000 };
+    let p = 0;
+    if (state.packageType === "custom" || state.packageType === "basic" || state.packageType === "premium") {
+      for (const show of state.shows) {
+        if (showPrices[show]) p += showPrices[show];
+      }
+    } else if (state.packageType === "exclusive") {
+      if (state.shows.length > 0) {
+        for (const show of state.shows) {
+          if (showPrices[show]) p += showPrices[show];
+        }
+        p -= showPrices[state.shows[0]];
+      }
+    }
+    return p;
+  };
+
+  const getMCPrice = () => {
+    if (state.packageType === "basic" || state.packageType === "custom") {
+      return state.masterClasses.length * 7500;
+    } else if (state.packageType === "premium" || state.packageType === "exclusive") {
+      return Math.max(0, state.masterClasses.length - 1) * 7500;
+    }
+    return 0;
+  };
+
+  const getFoodPrice = () => {
+    let p = 0;
+    if (state.includeFood && (state.packageType === "basic" || state.packageType === "custom")) {
+      p += 12070;
+    }
+    Object.entries(state.customFood).forEach(([itemId, qty]) => {
+      if (qty > 0) {
+        for (const cat of FOOD_MENU) {
+          const item = cat.items.find((i) => i.id === console.log(i.id === itemId) || i.id === itemId);
+          if (item) {
+            p += item.price * qty;
+            break;
+          }
+        }
+      }
+    });
+    return p;
+  };
+
+  const getCakePrice = () => {
+    if (state.cakeChoice) {
+      if (state.cakeChoice === "own_cake") return 2000;
+      return 8400;
+    }
+    return 0;
+  };
+
+  const formatPrice = (p: number) => p === 0 ? "Включено" : `${p.toLocaleString("ru-RU")} ₽`;
+  const formatPackagePrice = (p: number) => state.packageType === "custom" ? "" : formatPrice(p);
+
   if (submitted) {
     return (
       <motion.div
@@ -131,6 +237,8 @@ export function Step7Summary() {
             icon={<Package className="w-4 h-4" />}
             label="Формат"
             value={PACKAGE_NAMES[state.packageType]}
+            priceText={formatPackagePrice(getPackagePrice())}
+            stepNumber={2}
           />
         )}
 
@@ -139,6 +247,8 @@ export function Step7Summary() {
             icon={<Gamepad2 className="w-4 h-4" />}
             label="Квест"
             value={QUEST_NAMES[state.questType] || state.questType}
+            priceText={formatPrice(getQuestPrice())}
+            stepNumber={3}
           />
         )}
 
@@ -147,6 +257,8 @@ export function Step7Summary() {
             icon={<MapPin className="w-4 h-4" />}
             label="Патирум"
             value={state.patiroomDetails}
+            priceText={formatPrice(getPatiroomPrice())}
+            stepNumber={5}
           />
         )}
 
@@ -156,10 +268,13 @@ export function Step7Summary() {
             label="Стол для родителей"
             value={state.cafeZones.map(z => {
               if (z === "cafe_round") return "Круглый стол";
+              if (z === "cafe_small") return "Маленький столик";
               if (z === "cafe_pink") return "За шторками";
               if (z === "cafe_pink_full") return "Вся зона за шторками";
               return z;
             }).join(", ")}
+            priceText={formatPrice(getCafeZonesPrice())}
+            stepNumber={6}
           />
         )}
 
@@ -167,7 +282,15 @@ export function Step7Summary() {
           <SummaryRow
             icon={<UsersIcon className="w-4 h-4" />}
             label="Герой"
-            value={state.animators.join(", ")}
+            value={state.animators.map((id, index) => {
+              const name = ANIMATORS.find(a => a.id === id)?.name || id;
+              if (index === 0) {
+                return state.packageType !== "custom" ? `${name} (Входит в пакет)` : name;
+              }
+              return `${name} (+8 000 ₽)`;
+            }).join(", ")}
+            priceText={formatPrice(getAnimatorsPrice())}
+            stepNumber={4}
           />
         )}
 
@@ -176,6 +299,8 @@ export function Step7Summary() {
             icon={<Star className="w-4 h-4" />}
             label="Шоу-программы"
             value={state.shows.map(s => SHOW_NAMES[s] || s).join(", ")}
+            priceText={formatPrice(getShowsPrice())}
+            stepNumber={7}
           />
         )}
 
@@ -184,14 +309,23 @@ export function Step7Summary() {
             icon={<Palette className="w-4 h-4" />}
             label="Мастер-классы"
             value={state.masterClasses.map(mc => MC_NAMES[mc] || mc).join(", ")}
+            priceText={formatPrice(getMCPrice())}
+            stepNumber={8}
           />
         )}
 
-        {state.includeFood && (
+        {(state.includeFood || Object.values(state.customFood).some(qty => qty > 0)) && (
           <SummaryRow
             icon={<UtensilsCrossed className="w-4 h-4" />}
             label="Питание"
-            value="Набор детской еды"
+            value={
+              [
+                state.includeFood ? "Набор детской еды" : null,
+                Object.values(state.customFood).some(qty => qty > 0) ? "Доп. меню" : null
+              ].filter(Boolean).join(" + ")
+            }
+            priceText={formatPrice(getFoodPrice())}
+            stepNumber={9}
           />
         )}
 
@@ -199,7 +333,9 @@ export function Step7Summary() {
           <SummaryRow
             icon={<Cake className="w-4 h-4" />}
             label="Торт"
-            value={`${CAKE_NAMES[state.cakeChoice] || state.cakeChoice}${state.fillingChoice ? " · " + (FILLING_NAMES[state.fillingChoice] || state.fillingChoice) : ""}`}
+            value={`${CAKES.find(c => c.id === state.cakeChoice)?.name || CAKE_NAMES[state.cakeChoice] || state.cakeChoice}${state.fillingChoice ? " · " + (FILLING_NAMES[state.fillingChoice] || state.fillingChoice) : ""}${state.cakeChoice === 'own_cake' ? " (+2 000 ₽)" : " (8 400 ₽ · 2 кг)"}`}
+            priceText={formatPrice(getCakePrice())}
+            stepNumber={10}
           />
         )}
 
@@ -207,7 +343,7 @@ export function Step7Summary() {
           <SummaryRow
             icon={<Calendar className="w-4 h-4" />}
             label="Дата"
-            value={`${format(state.date, "d MMMM yyyy")}, ${state.time}${
+            value={`${format(state.date, "d MMMM yyyy", { locale: ru })}, ${state.time}${
               isWeekend(state.date) ? " (выходной)" : " (будний)"
             }`}
           />
@@ -222,10 +358,22 @@ export function Step7Summary() {
       </div>
 
       {/* Total */}
-      <div className="bg-[#FF6022] rounded-2xl p-5 mb-5 text-center text-white">
-        <p className="text-sm opacity-80 mb-1">Итого к оплате</p>
-        <p className="text-3xl">{totalPrice.toLocaleString("ru-RU")} ₽</p>
-        <p className="text-xs opacity-60 mt-1">Окончательная стоимость подтверждается менеджером</p>
+      <div 
+        className="relative overflow-hidden rounded-[28px] p-6 mb-6 text-center text-white"
+        style={{
+          background: "linear-gradient(135deg, #FF6022, #FF8A50)",
+          boxShadow: "0 12px 32px rgba(255, 96, 34, 0.3)",
+        }}
+      >
+        <p className="text-[15px] font-bold text-white/90 mb-1.5 uppercase tracking-wider">
+          Итого к оплате
+        </p>
+        <p className="text-[42px] leading-none font-black tracking-tight mb-2 drop-shadow-sm">
+          {totalPrice.toLocaleString("ru-RU")} ₽
+        </p>
+        <p className="text-[13px] font-medium text-white/80">
+          Окончательная стоимость подтверждается менеджером
+        </p>
       </div>
 
       {/* Contact form */}
@@ -275,18 +423,25 @@ function SummaryRow({
   icon,
   label,
   value,
+  priceText,
+  stepNumber,
   isLast = false,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
+  priceText?: string;
+  stepNumber?: number;
   isLast?: boolean;
 }) {
+  const { setStep } = useWizard();
+
   return (
     <div
+      onClick={stepNumber ? () => setStep(stepNumber) : undefined}
       className={`flex items-center gap-3 px-4 py-3 ${
         !isLast ? "border-b border-[#E5E5E5]" : ""
-      }`}
+      } ${stepNumber ? "cursor-pointer hover:bg-black/5 transition-colors" : ""}`}
     >
       <div className="w-8 h-8 rounded-full bg-[#FF6022]/10 flex items-center justify-center text-[#FF6022] shrink-0">
         {icon}
@@ -295,6 +450,14 @@ function SummaryRow({
         <p className="text-xs text-[#ABABAB]">{label}</p>
         <p className="text-sm text-[#1A1A1A] truncate">{value}</p>
       </div>
+      {priceText && (
+        <div className={`text-sm font-bold whitespace-nowrap mr-2 ${priceText === "Включено" || priceText === "Бесплатно" ? "text-[#4CAF50]" : "text-[#1A1A1A]"}`}>
+          {priceText}
+        </div>
+      )}
+      {stepNumber && (
+        <ChevronRight className="w-4 h-4 text-[#ABABAB] shrink-0" />
+      )}
     </div>
   );
 }

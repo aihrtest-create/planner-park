@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useWizard } from "./wizard-context";
 import { motion, AnimatePresence } from "motion/react";
-import { Users, Projector, Check, MapPin, Coffee, Info, PlayCircle, X, UtensilsCrossed, Armchair } from "lucide-react";
+import { Users, Projector, Check, MapPin, Coffee, Info, PlayCircle, X, UtensilsCrossed, Armchair, Minus, Plus, Clock } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription, DrawerClose } from "./ui/drawer";
 import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
@@ -59,13 +59,37 @@ const PATIROOMS = [
 export function Step2Location() {
   const { state, updateState } = useWizard();
   const [selectedDetails, setSelectedDetails] = useState<typeof PATIROOMS[0] | null>(null);
+  const [hoursDrawerRoom, setHoursDrawerRoom] = useState<typeof PATIROOMS[0] | null>(null);
   const isPackage = state.packageType !== "custom";
+  const isCustom = state.packageType === "custom";
+
+  const currentHours = typeof state.patiroomHours === 'number' && !Number.isNaN(state.patiroomHours) ? state.patiroomHours : 3;
 
   const handleSelectRoom = (room: typeof PATIROOMS[0]) => {
+    // If already selected — deselect
+    if (state.patiroom === room.id) {
+      updateState({ patiroom: null, patiroomDetails: null });
+      return;
+    }
+    // In custom mode — open hours drawer instead of instant select
+    if (isCustom) {
+      setHoursDrawerRoom(room);
+      return;
+    }
     updateState({
       patiroom: room.id,
       patiroomDetails: room.name,
     });
+  };
+
+  const confirmHoursSelection = () => {
+    if (hoursDrawerRoom) {
+      updateState({
+        patiroom: hoursDrawerRoom.id,
+        patiroomDetails: hoursDrawerRoom.name,
+      });
+      setHoursDrawerRoom(null);
+    }
   };
 
   return (
@@ -94,11 +118,14 @@ export function Step2Location() {
               Обязательно
             </span>
           )}
+          {isCustom && (
+            <span className="ml-auto text-[10px] font-medium text-[#FF6022] bg-[#FF6022]/10 px-2 py-0.5 rounded-full">
+              3 000 ₽/час
+            </span>
+          )}
         </div>
         <p className="text-xs text-[#747474] mb-3">
-          {state.packageType === "custom" 
-            ? "Интерактивные столы и проекции на стенах. При отдельном бронировании — 3 000 ₽/час."
-            : "Детские локации с интерактивными столами и проекциями на стенах"}
+          Детские локации с интерактивными столами и проекциями на стенах
         </p>
 
         <div className="grid grid-cols-1 gap-4">
@@ -145,6 +172,11 @@ export function Step2Location() {
                         </span>
                       </div>
                     </div>
+                    {isCustom && (
+                      <p className="text-[11px] text-[#FF6022] font-extrabold mt-1">
+                        {isSelected ? `${currentHours} ч. = ${(currentHours * 3000).toLocaleString("ru-RU")} ₽` : "3 000 ₽/час"}
+                      </p>
+                    )}
                   </div>
 
                   <div 
@@ -232,6 +264,106 @@ export function Step2Location() {
                   className="w-full h-12 bg-[#FF6022] hover:bg-[#E55015] text-white rounded-xl text-base font-medium shadow-lg shadow-orange-500/20"
                 >
                   Выбрать патирум "{selectedDetails.name}"
+                </Button>
+              </div>
+            </div>
+          )}
+        </DrawerContent>
+      </Drawer>
+
+      {/* ==================== HOURS SELECTION DRAWER (Custom mode) ==================== */}
+      <Drawer open={!!hoursDrawerRoom} onOpenChange={(open) => !open && setHoursDrawerRoom(null)}>
+        <DrawerContent className="max-h-[90vh] w-full max-w-lg mx-auto bg-white pt-2 px-2 flex flex-col rounded-t-3xl">
+          <div className="mx-auto mt-2 h-1.5 w-12 shrink-0 rounded-full bg-gray-200 mb-4" />
+          
+          {hoursDrawerRoom && (
+            <div className="flex-1 overflow-y-auto pb-safe">
+              {/* Room preview */}
+              <div className="relative rounded-2xl overflow-hidden mb-4 h-48">
+                <ImageWithFallback
+                  src={getPublicUrl(hoursDrawerRoom.thumbnail)}
+                  alt={hoursDrawerRoom.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <div className="absolute bottom-3 left-4">
+                  <DrawerTitle className="text-xl font-bold text-white">{hoursDrawerRoom.name}</DrawerTitle>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Users className="w-3.5 h-3.5 text-white/70" />
+                    <span className="text-xs text-white/80">до {hoursDrawerRoom.seats} мест</span>
+                  </div>
+                </div>
+                <DrawerClose asChild>
+                  <button className="absolute top-3 right-3 bg-black/50 backdrop-blur-md rounded-full p-2 text-white z-20 transition-transform active:scale-95 border border-white/10 hover:bg-black/70">
+                    <X className="w-5 h-5" />
+                  </button>
+                </DrawerClose>
+              </div>
+
+              <DrawerDescription className="sr-only">Выберите количество часов</DrawerDescription>
+
+              {/* Hours selector */}
+              <div className="px-4 pb-6">
+                <div className="bg-[#F8F8F8] rounded-2xl p-5 mb-4">
+                  <div className="flex items-center justify-center gap-2 mb-4">
+                    <Clock className="w-5 h-5 text-[#FF6022]" />
+                    <h3 className="text-base font-bold text-[#1A1A1A]">Количество часов</h3>
+                  </div>
+                  
+                  <div className="flex items-center justify-center gap-5">
+                    <button
+                      onClick={() => updateState({ patiroomHours: Math.max(0, currentHours - 1) })}
+                      disabled={currentHours <= 0}
+                      className="w-12 h-12 rounded-full bg-white border-2 border-[#E5E5E5] flex items-center justify-center text-[#1A1A1A] transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none shadow-sm hover:border-[#FF6022]"
+                    >
+                      <Minus className="w-5 h-5" />
+                    </button>
+                    
+                    <div className="text-center min-w-[80px]">
+                      <span className="text-4xl font-black text-[#1A1A1A]">{currentHours}</span>
+                      <p className="text-xs text-[#747474] font-medium mt-0.5">
+                        {currentHours === 0 ? "часов" : currentHours === 1 ? "час" : currentHours < 5 ? "часа" : "часов"}
+                      </p>
+                    </div>
+                    
+                    <button
+                      onClick={() => updateState({ patiroomHours: Math.min(8, currentHours + 1) })}
+                      disabled={currentHours >= 8}
+                      className="w-12 h-12 rounded-full bg-[#FF6022] border-2 border-[#FF6022] flex items-center justify-center text-white transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none shadow-md shadow-[#FF6022]/30"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Price calculation */}
+                <div className="bg-[#FF6022]/5 border border-[#FF6022]/20 rounded-2xl p-4 mb-5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-[#747474]">3 000 ₽ × {currentHours} ч.</span>
+                    <span className="text-xl font-black text-[#FF6022]">
+                      {(currentHours * 3000).toLocaleString("ru-RU")} ₽
+                    </span>
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={() => {
+                    if (currentHours === 0) {
+                      updateState({ patiroom: null, patiroomDetails: null, patiroomHours: 3 });
+                      setHoursDrawerRoom(null);
+                    } else {
+                      confirmHoursSelection();
+                    }
+                  }}
+                  className={`w-full h-12 rounded-xl text-base font-medium shadow-lg ${
+                    currentHours === 0 
+                      ? "bg-[#F5F5F5] text-[#1A1A1A] hover:bg-[#E5E5E5] shadow-none" 
+                      : "bg-[#FF6022] hover:bg-[#E55015] text-white shadow-orange-500/20"
+                  }`}
+                >
+                  {currentHours === 0 
+                    ? "Не выбирать патирум" 
+                    : `Выбрать «${hoursDrawerRoom.name}» на ${currentHours} ч.`}
                 </Button>
               </div>
             </div>

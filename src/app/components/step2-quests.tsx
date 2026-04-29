@@ -384,15 +384,45 @@ export function Step2Quests() {
   const { state, updateState, nextStep, prevStep } = useWizard();
   const [openQuest, setOpenQuest] = useState<typeof PHYGITAL_QUESTS[number] | null>(null);
   const [classicQuestInfo, setClassicQuestInfo] = useState<string | null>(null);
+  const [surchargePopup, setSurchargePopup] = useState<{ questId: string; amount: number } | null>(null);
   const selectedClassicQuest = CLASSIC_QUESTS.find(q => q.id === classicQuestInfo);
+
+  const togglePhygital = (id: PhygitalId) => {
+    if (state.questType === id) {
+      updateState({ questType: null, isQuestPopupOpen: false });
+    } else {
+      updateState({ questType: id, isQuestPopupOpen: false });
+    }
+    setOpenQuest(null);
+  };
 
   const selectPhygital = (id: PhygitalId) => {
     updateState({ questType: id, isQuestPopupOpen: false });
     setOpenQuest(null);
   };
 
-  const selectClassic = (id: ClassicId) => {
-    updateState({ questType: id });
+  const handleClassicSelect = (id: ClassicId) => {
+    // Already selected → deselect
+    if (state.questType === id) {
+      updateState({ questType: null });
+      return;
+    }
+    // Determine surcharge
+    if (state.packageType === "basic") {
+      setSurchargePopup({ questId: id, amount: 10000 });
+    } else if (state.packageType === "premium") {
+      setSurchargePopup({ questId: id, amount: 5000 });
+    } else {
+      // exclusive = free, custom = price shown on card
+      updateState({ questType: id });
+    }
+  };
+
+  const confirmSurcharge = () => {
+    if (surchargePopup) {
+      updateState({ questType: surchargePopup.questId as any });
+      setSurchargePopup(null);
+    }
   };
 
   const isPhygitalSelected = state.questType?.startsWith("phygital_");
@@ -442,10 +472,10 @@ export function Step2Quests() {
                 >
                   <div
                     className={`relative h-[300px] sm:h-[350px] rounded-[32px] overflow-hidden bg-white transition-all cursor-pointer group ${
-                      isSelected ? "ring-2 shadow-xl scale-[1.01]" : "ring-1 ring-[#E5E5E5] shadow-sm"
+                      isSelected ? "ring-4 shadow-xl scale-[1.01]" : "ring-1 ring-[#E5E5E5] shadow-sm"
                     }`}
-                    style={isSelected ? { outline: `2px solid ${quest.color}`, outlineOffset: "2px" } : {}}
-                    onClick={() => selectPhygital(quest.id)}
+                    style={isSelected ? { boxShadow: `0 0 0 4px ${quest.color}, 0 0 24px ${quest.color}40, 0 12px 40px ${quest.color}20` } : {}}
+                    onClick={() => togglePhygital(quest.id)}
                   >
                     <img
                       src={quest.photos[0]}
@@ -481,6 +511,9 @@ export function Step2Quests() {
                             <span className="text-[10px] text-[#1A1A1A] font-medium">до {quest.maxKids} детей</span>
                           </div>
                         </div>
+                        {isCustom && (
+                          <p className="text-[11px] text-[#FF6022] font-extrabold mt-1">12 000 ₽</p>
+                        )}
                       </div>
 
                       <div 
@@ -508,58 +541,83 @@ export function Step2Quests() {
             <div className="flex items-center justify-between text-[14px]">
               <span className="text-[#747474] font-medium">2 аниматора · до 20 детей · 60 мин.</span>
               {isCustom && (
+                <span className="font-semibold text-[#FF6022] bg-[#FF6022]/10 px-2.5 py-0.5 rounded-md">15 000 ₽</span>
+              )}
+              {state.packageType === "basic" && (
                 <span className="font-semibold text-[#FF6022] bg-[#FF6022]/10 px-2.5 py-0.5 rounded-md">+10 000 ₽</span>
+              )}
+              {state.packageType === "premium" && (
+                <span className="font-semibold text-[#FF6022] bg-[#FF6022]/10 px-2.5 py-0.5 rounded-md">+5 000 ₽</span>
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="flex flex-col gap-[28px] mb-6">
             {CLASSIC_QUESTS.map((quest, i) => {
               const isSelected = state.questType === quest.id;
               return (
                 <motion.div
                   key={quest.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.04 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => selectClassic(quest.id as ClassicId)}
-                  className={`relative aspect-[4/5] sm:h-[280px] rounded-[24px] overflow-hidden transition-all cursor-pointer group ${
-                    isSelected
-                      ? "ring-2 ring-[#FF6022] shadow-xl scale-[1.01]"
-                      : "ring-1 ring-[#E5E5E5] shadow-sm"
-                  }`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.08 }}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${quest.gradient} flex items-center justify-center`}>
-                    {quest.image ? (
-                      <ImageWithFallback src={getPublicUrl(quest.image)} alt={quest.name} className="w-full h-full object-contain object-bottom pt-7 px-5 pb-[70px] drop-shadow-xl group-hover:scale-110 transition-transform duration-700" />
-                    ) : (
-                      <span className="text-6xl sm:text-7xl filter drop-shadow-md pb-6 group-hover:scale-110 transition-transform duration-500">{quest.emoji}</span>
-                    )}
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+                  <div
+                    className={`relative h-[300px] sm:h-[350px] rounded-[32px] overflow-hidden bg-white transition-all cursor-pointer group ${
+                      isSelected ? "ring-4 shadow-xl scale-[1.01]" : "ring-1 ring-[#E5E5E5] shadow-sm"
+                    }`}
+                    style={isSelected ? { boxShadow: `0 0 0 4px #FF6022, 0 0 24px #FF602240, 0 12px 40px #FF602220` } : {}}
+                    onClick={() => handleClassicSelect(quest.id as ClassicId)}
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-br ${quest.gradient} flex items-center justify-center`}>
+                      {quest.image ? (
+                        <ImageWithFallback src={getPublicUrl(quest.image)} alt={quest.name} className="w-full h-full object-contain object-center pt-8 pb-[100px] drop-shadow-xl group-hover:scale-110 transition-transform duration-700" />
+                      ) : (
+                        <span className="text-6xl sm:text-7xl filter drop-shadow-md pb-[100px] group-hover:scale-110 transition-transform duration-500">{quest.emoji}</span>
+                      )}
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
 
-                  <div className="absolute top-2 left-2 right-2 flex justify-between items-start z-10">
-                    <button
+                    <button 
+                      className="absolute top-4 right-4 bg-gradient-to-tr from-[#FF6022] to-[#FF8A00] text-white text-[11px] font-bold uppercase tracking-wider px-4 py-2 rounded-full flex items-center gap-2 z-10 transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-[#FF6022]/40"
                       onClick={(e) => {
                         e.stopPropagation();
                         setClassicQuestInfo(quest.id);
                       }}
-                      className="bg-gradient-to-tr from-[#FF6022] to-[#FF8A00] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-2 rounded-full flex items-center gap-1.5 transition-transform hover:scale-105 active:scale-95 shadow-md shadow-[#FF6022]/40"
                     >
-                      <Info className="w-3.5 h-3.5" />
-                      Подробнее
+                      <Info className="w-4 h-4" />Подробнее
                     </button>
 
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
-                        isSelected ? "bg-[#FF6022] border-2 border-white text-white shadow-md shadow-[#FF6022]/40" : "bg-white/40 backdrop-blur-md border border-white/60 text-transparent"
-                    }`}>
-                       <Check className="w-4 h-4" />
-                    </div>
-                  </div>
+                    <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[24px] p-4 shadow-2xl flex items-center justify-between border border-white/20">
+                      <div className="flex-1 min-w-0 pr-3">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                          <span className="text-xl leading-none">{quest.emoji}</span>
+                          <h4 className="text-[15px] font-bold text-[#1A1A1A] truncate">{quest.name}</h4>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          <div className="flex items-center gap-1 bg-[#F5F5F5] rounded-md px-2 py-1">
+                            <Clock className="w-3 h-3 text-[#747474]" />
+                            <span className="text-[10px] text-[#1A1A1A] font-medium">60 мин</span>
+                          </div>
+                          <div className="flex items-center gap-1 bg-[#F5F5F5] rounded-md px-2 py-1">
+                            <Users className="w-3 h-3 text-[#747474]" />
+                            <span className="text-[10px] text-[#1A1A1A] font-medium">до 20 детей</span>
+                          </div>
+                        </div>
+                        {isCustom && (
+                          <p className="text-[11px] text-[#FF6022] font-extrabold mt-1">15 000 ₽</p>
+                        )}
+                      </div>
 
-                  <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
-                     <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{quest.name}</h4>
+                      <div 
+                        className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                          isSelected ? "text-white shadow-lg bg-[#FF6022]" : "bg-gray-50 text-[#D1D1D1] group-hover:bg-gray-100"
+                        }`}
+                        style={isSelected ? { boxShadow: `0 10px 15px -3px #FF60224d` } : {}}
+                      >
+                        <Check className="w-5 h-5 flex-shrink-0" />
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               );
@@ -647,7 +705,7 @@ export function Step2Quests() {
                     onClick={() => {
                       const isSelected = state.questType === selectedClassicQuest.id;
                       if (!isSelected) {
-                        selectClassic(selectedClassicQuest.id as ClassicId);
+                        handleClassicSelect(selectedClassicQuest.id as ClassicId);
                       }
                       setClassicQuestInfo(null);
                     }}
@@ -660,6 +718,55 @@ export function Step2Quests() {
                     {state.questType === selectedClassicQuest.id ? "Выбрано ✓" : "Выбрать этот квест"}
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Surcharge Confirmation Popup */}
+      <AnimatePresence>
+        {surchargePopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-6"
+          >
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={() => setSurchargePopup(null)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl"
+            >
+              <div className="text-center mb-5">
+                <div className="w-16 h-16 bg-[#FF6022]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🎭</span>
+                </div>
+                <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Доплата за квест</h3>
+                <p className="text-sm text-[#747474] leading-relaxed">
+                  За классический квест в вашем пакете нужно доплатить
+                </p>
+                <p className="text-2xl font-black text-[#FF6022] mt-2">
+                  +{surchargePopup.amount.toLocaleString("ru-RU")} ₽
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setSurchargePopup(null)}
+                  className="flex-1 py-3.5 rounded-xl font-medium text-center bg-[#F5F5F5] text-[#747474] transition-all active:scale-[0.98]"
+                >
+                  Отмена
+                </button>
+                <button
+                  onClick={confirmSurcharge}
+                  className="flex-1 py-3.5 rounded-xl font-medium text-center bg-[#FF6022] text-white shadow-md shadow-[#FF6022]/30 active:scale-[0.98]"
+                >
+                  Добавить
+                </button>
               </div>
             </motion.div>
           </motion.div>

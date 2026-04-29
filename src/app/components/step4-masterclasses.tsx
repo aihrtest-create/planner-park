@@ -26,6 +26,7 @@ export function Step4MasterClasses() {
   const { state, updateState } = useWizard();
   const isCustom = state.packageType === "custom";
   const [selectedInfo, setSelectedInfo] = useState<string | null>(null);
+  const [surchargeMC, setSurchargeMC] = useState<string | null>(null);
 
   const toggleMC = (id: string, e?: React.MouseEvent) => {
     if (e) {
@@ -35,13 +36,27 @@ export function Step4MasterClasses() {
     if (current.includes(id)) {
       updateState({ masterClasses: current.filter((m) => m !== id) });
     } else {
-      updateState({ masterClasses: [...current, id] });
+      // In premium/exclusive: first MC is free, second+ needs confirmation
+      const hasFreeSlot = (state.packageType === "premium" || state.packageType === "exclusive") && current.length >= 1;
+      if (hasFreeSlot) {
+        setSurchargeMC(id);
+      } else {
+        updateState({ masterClasses: [...current, id] });
+      }
+    }
+  };
+
+  const confirmMCSurcharge = () => {
+    if (surchargeMC) {
+      updateState({ masterClasses: [...state.masterClasses, surchargeMC] });
+      setSurchargeMC(null);
     }
   };
 
   const selectedClassDetails = MASTER_CLASSES.find(mc => mc.id === selectedInfo);
 
   return (
+    <>
     <motion.div
       initial={{ opacity: 0, x: 30 }}
       animate={{ opacity: 1, x: 0 }}
@@ -114,9 +129,7 @@ export function Step4MasterClasses() {
               {/* Bottom pill-like panel like location cards */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
                  <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{mc.name}</h4>
-                 {(isCustom || state.packageType === "basic") && (
-                    <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">7 500 ₽</p>
-                 )}
+                 <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">7 500 ₽</p>
               </div>
             </motion.div>
           );
@@ -227,5 +240,55 @@ export function Step4MasterClasses() {
       </AnimatePresence>
 
     </motion.div>
+
+      {/* Surcharge popup for additional MC */}
+      <AnimatePresence>
+        {surchargeMC && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-6"
+          >
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={() => setSurchargeMC(null)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl"
+            >
+              <div className="text-center mb-5">
+                <div className="w-16 h-16 bg-[#FF6022]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🎨</span>
+                </div>
+                <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Дополнительный мастер-класс</h3>
+                <p className="text-sm text-[#747474] leading-relaxed">
+                  Один мастер-класс уже входит в пакет. За дополнительный нужно доплатить
+                </p>
+                <p className="text-2xl font-black text-[#FF6022] mt-2">
+                  +7 500 ₽
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setSurchargeMC(null)}
+                  className="flex-1 py-3.5 rounded-xl font-medium text-center bg-[#F5F5F5] text-[#747474] transition-all active:scale-[0.98]"
+                >
+                  Отмена
+                </button>
+                <button
+                  onClick={confirmMCSurcharge}
+                  className="flex-1 py-3.5 rounded-xl font-medium text-center bg-[#FF6022] text-white shadow-md shadow-[#FF6022]/30 active:scale-[0.98]"
+                >
+                  Добавить
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

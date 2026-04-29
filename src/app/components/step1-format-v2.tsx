@@ -122,7 +122,7 @@ const PACKAGES: PackageDef[] = [
       [{ type: "text", value: "Выберите только то, что нужно" }],
       [{ type: "text", value: "Гибкое ценообразование" }],
       [{ type: "text", value: "Любые комбинации услуг" }],
-      [{ type: "text", value: "Индивидуальный подход" }],
+      [{ type: "text", value: "Собери сам" }],
     ],
   },
 ];

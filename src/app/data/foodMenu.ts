@@ -74,16 +74,16 @@ export const FOOD_MENU: FoodCategory[] = [
       { id: "d_tea", name: "Чай (Ассам / Эрл Грей / Сенча)", price: 450, weight: "600мл" },
     ]
   },
-  {
-    id: "desserts",
-    title: "Десерты",
-    icon: "🧁",
-    items: [
-      { id: "ds_potato", name: "Пирожное-эскимо «Картошка»", price: 190, weight: "80г" },
-      { id: "ds_brownie", name: "Пирожное «Брауни с соленой карамелью»", price: 290, weight: "80г" },
-      { id: "ds_panna", name: "Панна котта малиновая", price: 290, weight: "110г" },
-      { id: "ds_tart", name: "Тарталетка «Лимон-Лайм»", price: 350, weight: "100г" },
-      { id: "ds_icecream", name: "Мороженое (Ванильное / Шоколадное)", price: 150, weight: "50г" },
-    ]
-  }
+  // {
+  //   id: "desserts",
+  //   title: "Десерты",
+  //   icon: "🧁",
+  //   items: [
+  //     { id: "ds_potato", name: "Пирожное-эскимо «Картошка»", price: 190, weight: "80г" },
+  //     { id: "ds_brownie", name: "Пирожное «Брауни с соленой карамелью»", price: 290, weight: "80г" },
+  //     { id: "ds_panna", name: "Панна котта малиновая", price: 290, weight: "110г" },
+  //     { id: "ds_tart", name: "Тарталетка «Лимон-Лайм»", price: 350, weight: "100г" },
+  //     { id: "ds_icecream", name: "Мороженое (Ванильное / Шоколадное)", price: 150, weight: "50г" },
+  //   ]
+  // }
 ];
