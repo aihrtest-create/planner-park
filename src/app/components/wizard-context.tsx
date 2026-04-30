@@ -101,6 +101,7 @@ export interface WizardState {
   contactPhone: string;
   contactComment: string;
   isQuestPopupOpen: boolean;
+  hasReachedSummary: boolean;
 }
 
 interface WizardContextType {
@@ -118,6 +119,7 @@ interface WizardContextType {
   leadId: string | null;
   submitToAPI: (price?: number) => Promise<boolean>;
   clearCache: () => void;
+  resetWizard: () => void;
 }
 
 const initialState: WizardState = {
@@ -145,6 +147,7 @@ const initialState: WizardState = {
   contactPhone: "",
   contactComment: "",
   isQuestPopupOpen: false,
+  hasReachedSummary: false,
 };
 
 const WizardContext = createContext<WizardContextType | null>(null);
@@ -260,6 +263,13 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
   const isInitializing = useRef(true);
   useEffect(() => { isInitializing.current = false; }, []);
 
+  // Update hasReachedSummary
+  useEffect(() => {
+    if (step === 12 && !state.hasReachedSummary) {
+      setState(s => ({ ...s, hasReachedSummary: true }));
+    }
+  }, [step, state.hasReachedSummary]);
+
   // Persist state + step to localStorage on every change
   useEffect(() => {
     if (submitted) return; // Don't cache after submission
@@ -269,6 +279,14 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
   // Clear cache helper (call after successful submission)
   const clearCache = useCallback(() => {
     clearCacheByKey(cacheKey);
+  }, [cacheKey]);
+
+  // Reset entire wizard state
+  const resetWizard = useCallback(() => {
+    clearCacheByKey(cacheKey);
+    setState(initialState);
+    setStep(1);
+    setSubmitted(false);
   }, [cacheKey]);
 
   // On mount: if we have a leadId, notify server and pre-fill contact data
@@ -526,7 +544,7 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
       value={{
         step, totalSteps: TOTAL_STEPS, visibleSteps, state, setStep,
         nextStep, prevStep, updateState, totalPrice, submitted, setSubmitted,
-        leadId, submitToAPI, clearCache
+        leadId, submitToAPI, clearCache, resetWizard
       }}
     >
       {children}

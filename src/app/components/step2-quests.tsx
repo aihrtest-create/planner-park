@@ -353,7 +353,7 @@ function QuestPopup({
         </div>
 
         {/* Fixed Footer CTA */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 bg-white border-t border-[#E5E5E5] pb-8 sm:pb-5">
+        <div className="absolute bottom-0 left-0 right-0 p-5 bg-white border-t border-[#E5E5E5] pb-8 sm:pb-5 z-20">
           <button
             onClick={() => {
               onSelect();
@@ -475,7 +475,10 @@ export function Step2Quests() {
                       isSelected ? "ring-4 shadow-xl scale-[1.01]" : "ring-1 ring-[#E5E5E5] shadow-sm"
                     }`}
                     style={isSelected ? { boxShadow: `0 0 0 4px ${quest.color}, 0 0 24px ${quest.color}40, 0 12px 40px ${quest.color}20` } : {}}
-                    onClick={() => togglePhygital(quest.id)}
+                    onClick={() => {
+                      setOpenQuest(quest);
+                      updateState({ isQuestPopupOpen: true });
+                    }}
                   >
                     <img
                       src={quest.photos[0]}

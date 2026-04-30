@@ -12,13 +12,13 @@ const getPublicUrl = (path: string) => {
 
 const MASTER_CLASSES = [
   { id: "elsa_tiara", name: "Диадема Эльзы", emoji: "👑", desc: "Дети создают собственную сверкающую диадему, вдохновлённую принцессой Эльзой.", gradient: "from-[#a1c4fd] to-[#c2e9fb]", image: "/masterclasses/elsa_tiara.webp" },
+  { id: "slime", name: "Создание слайма", emoji: "🐾", desc: "Дети создают собственную игрушку-антистресс, используя безопасные материалы: клей-ПВА, пена, активатор. Также придают слайму индивидуальность - выбирают цвет, аромат, блёстки, разные украшения.", gradient: "from-[#84fab0] to-[#8fd3f4]", image: "/masterclasses/slime.webp" },
   { id: "felt_toy", name: "Игрушка из фетра", emoji: "🧸", desc: "Дети создают уникальные игрушки из мягкого фетра. Это могут быть животные, сказочные персонажи или любые предметы.", gradient: "from-[#ffecd2] to-[#fcb69f]", image: "/masterclasses/felt_toy.webp" },
   { id: "kapitoshka", name: "Капитошка", emoji: "🎈", desc: "Дети создают простую и приятную на ощупь игрушку-антистресс из воздушного шарика, который наполняется мукой/крахмалом и украшается разными деталями.", gradient: "from-[#a18cd1] to-[#fbc2eb]", image: "/masterclasses/kapitoshka.webp" },
   { id: "mc_weapon", name: "Оружие из Майнкрафта", emoji: "⛏️", desc: "Дети создают свои оригинальные версии алмазных мечей, в основе которых - деревянная заготовка и детали для создания меча - разноцветные квадраты.", gradient: "from-[#d4fc79] to-[#96e6a1]", image: "/masterclasses/mc_weapon.webp" },
   { id: "birthday_card", name: "Открытка имениннику", emoji: "💌", desc: "Дети создают уникальную открытку для именника, используя простые техники декора и оставляя трогательные воспоминания имениннику.", gradient: "from-[#ff9a9e] to-[#fecfef]", image: "/masterclasses/birthday_card.webp" },
   { id: "sand_picture", name: "Песочная картина", emoji: "⏳", desc: "Дети создают свои уникальные картины с помощью разноцветного декоративного песка. Можно воспользоваться уже придуманной заготовкой с картинкой или создать свой собственный шедевр.", gradient: "from-[#e6b980] to-[#eacda3]", image: "/masterclasses/sand_picture.webp" },
   { id: "gingerbread", name: "Роспись пряников", emoji: "🍪", desc: "Дети самостоятельно расписывают пряники глазурью и кондитерскими украшениями (бусинами, красителями, кокосовой стружкой и тд). Сами пряники изготавливают вручную наши мастера накануне праздника.", gradient: "from-[#f6d365] to-[#fda085]", image: "/masterclasses/gingerbread.webp" },
-  { id: "slime", name: "Создание слайма / Табо-лапки", emoji: "🐾", desc: "Дети создают собственную игрушку-антистресс, используя безопасные материалы: клей-ПВА, пена, активатор. Также придают слайму индивидуальность - выбирают цвет, аромат, блёстки, разные украшения.", gradient: "from-[#84fab0] to-[#8fd3f4]", image: "/masterclasses/slime.webp" },
   { id: "jewelry", name: "Трендовые украшения", emoji: "💎", desc: "Дети создают оригинальные украшения из бусин, подвесок и букв. Можно создать: кольца, серьги, ожерелье, браслеты.", gradient: "from-[#fccb90] to-[#d57eeb]", image: "/masterclasses/jewelry.webp" }
 ];
 
@@ -129,7 +129,9 @@ export function Step4MasterClasses() {
               {/* Bottom pill-like panel like location cards */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
                  <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{mc.name}</h4>
-                 <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">7 500 ₽</p>
+                 <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">
+                   {(state.packageType === "premium" || state.packageType === "exclusive") && (state.masterClasses.length === 0 || state.masterClasses[0] === mc.id) ? "Включено" : "7 500 ₽"}
+                 </p>
               </div>
             </motion.div>
           );

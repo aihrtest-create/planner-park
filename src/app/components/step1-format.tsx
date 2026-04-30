@@ -93,8 +93,27 @@ export function Step1Format() {
   const { state, updateState } = useWizard();
 
   const handleSelect = (id: typeof PACKAGES[number]["id"]) => {
+    if (state.packageType === id) return;
+
     const includeFood = id === "premium" || id === "exclusive";
-    updateState({ packageType: id, includeFood });
+    updateState({ 
+      packageType: id, 
+      includeFood,
+      questType: null,
+      patiroom: null,
+      patiroomDetails: null,
+      patiroomHours: 3,
+      cafeZones: [],
+      animators: [],
+      premiumCostume: null,
+      shows: [],
+      masterClasses: [],
+      customFood: {},
+      cakeChoice: null,
+      fillingChoice: null,
+      cakeCustomText: "",
+      hasReachedSummary: false
+    });
   };
 
 

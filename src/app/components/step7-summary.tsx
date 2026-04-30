@@ -1,5 +1,6 @@
 import { useWizard } from "./wizard-context";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
+import { useState } from "react";
 import {
   Package,
   MapPin,
@@ -16,6 +17,7 @@ import {
   Cake,
   Gamepad2,
   ChevronRight,
+  Trash2,
 } from "lucide-react";
 import { format, isWeekend } from "date-fns";
 import { ru } from "date-fns/locale";
@@ -81,7 +83,8 @@ const FILLING_NAMES: Record<string, string> = {
 };
 
 export function Step7Summary() {
-  const { state, updateState, totalPrice, submitted } = useWizard();
+  const { state, updateState, totalPrice, submitted, resetWizard } = useWizard();
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const effectiveWeekend = state.date ? isWeekend(state.date) : state.isWeekend;
 
@@ -414,6 +417,61 @@ export function Step7Summary() {
           </div>
         </div>
       </div>
+
+      {/* Reset Button */}
+      <button
+        onClick={() => setShowResetConfirm(true)}
+        className="w-full py-4 mb-8 rounded-2xl border-2 border-red-500/20 text-red-500 font-bold flex items-center justify-center gap-2 hover:bg-red-50 active:scale-95 transition-all"
+      >
+        <Trash2 className="w-5 h-5" />
+        Очистить корзину и начать заново
+      </button>
+
+      {/* ─── Custom Reset Confirm Modal ─── */}
+      <AnimatePresence>
+        {showResetConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setShowResetConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-[32px] p-6 max-w-sm w-full shadow-2xl"
+            >
+              <div className="w-12 h-12 rounded-full bg-red-100 text-red-500 flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-center text-[#1A1A1A] mb-2">Очистить корзину?</h3>
+              <p className="text-sm text-center text-[#747474] mb-6">
+                Вы уверены, что хотите удалить все выбранные услуги и начать заново?
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowResetConfirm(false)}
+                  className="flex-1 py-3 rounded-xl font-semibold bg-[#F5F5F5] text-[#1A1A1A] hover:bg-[#E5E5E5] transition-colors"
+                >
+                  Отмена
+                </button>
+                <button
+                  onClick={() => {
+                    setShowResetConfirm(false);
+                    resetWizard();
+                  }}
+                  className="flex-1 py-3 rounded-xl font-semibold bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all"
+                >
+                  Очистить
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </motion.div>
   );

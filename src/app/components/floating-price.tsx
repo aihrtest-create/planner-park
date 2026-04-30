@@ -1,14 +1,15 @@
 import { useWizard } from "./wizard-context";
 import { motion, AnimatePresence } from "motion/react";
-import { ShoppingBag, Send, ArrowLeft } from "lucide-react";
+import { ShoppingBag, Send, ArrowLeft, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export function FloatingPrice() {
-  const { totalPrice, step, totalSteps, visibleSteps, state, nextStep, prevStep, submitted, setSubmitted, submitToAPI, clearCache } = useWizard();
+  const { totalPrice, step, totalSteps, visibleSteps, state, nextStep, prevStep, submitted, setSubmitted, submitToAPI, clearCache, setStep, resetWizard } = useWizard();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [isShaking, setIsShaking] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   // Reset toast and shake when step changes
   useEffect(() => {
@@ -127,7 +128,11 @@ export function FloatingPrice() {
     }
 
     // Optional step or valid mandatory → proceed
-    nextStep();
+    if (state.hasReachedSummary && step !== 12) {
+      setStep(12);
+    } else {
+      nextStep();
+    }
   };
 
   const currentDisplayStep = (visibleSteps || []).indexOf(step) + 1 || 1;
@@ -225,12 +230,19 @@ export function FloatingPrice() {
                 <div className="w-8 h-8 rounded-full bg-[#FF6022] flex items-center justify-center flex-shrink-0">
                   <ShoppingBag className="w-3.5 h-3.5 text-white" />
                 </div>
-                <div className="flex flex-col justify-center min-w-0">
+                <div className="flex flex-col justify-center min-w-0 flex-1">
                   <span className="text-[9px] text-[#ABABAB] uppercase tracking-wider leading-none mb-0.5">Итого</span>
                   <span className="text-[14px] font-medium text-[#1A1A1A] leading-none truncate">
                     {totalPrice.toLocaleString("ru-RU")} ₽
                   </span>
                 </div>
+                <button
+                  onClick={() => setShowResetConfirm(true)}
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-[#ABABAB] hover:text-[#FF6022] hover:bg-[#FF6022]/10 transition-colors flex-shrink-0 mr-1"
+                  title="Очистить корзину"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -256,6 +268,8 @@ export function FloatingPrice() {
                 <span className="text-lg animate-bounce">🎁</span>
                 <span>Забрать подарки</span>
               </div>
+            ) : state.hasReachedSummary ? (
+              "Вернуться к итогам"
             ) : isOptionalStep && !hasOptionalSelection ? (
               "Пропустить"
             ) : (
@@ -264,6 +278,53 @@ export function FloatingPrice() {
           </motion.button>
         </div>
       </div>
+
+      {/* ─── Custom Reset Confirm Modal ─── */}
+      <AnimatePresence>
+        {showResetConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setShowResetConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-[32px] p-6 max-w-sm w-full shadow-2xl"
+            >
+              <div className="w-12 h-12 rounded-full bg-red-100 text-red-500 flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-center text-[#1A1A1A] mb-2">Очистить корзину?</h3>
+              <p className="text-sm text-center text-[#747474] mb-6">
+                Вы уверены, что хотите удалить все выбранные услуги и начать заново?
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowResetConfirm(false)}
+                  className="flex-1 py-3 rounded-xl font-semibold bg-[#F5F5F5] text-[#1A1A1A] hover:bg-[#E5E5E5] transition-colors"
+                >
+                  Отмена
+                </button>
+                <button
+                  onClick={() => {
+                    setShowResetConfirm(false);
+                    resetWizard();
+                  }}
+                  className="flex-1 py-3 rounded-xl font-semibold bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all"
+                >
+                  Очистить
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }

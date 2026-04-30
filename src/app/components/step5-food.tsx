@@ -77,12 +77,12 @@ export function Step5Food() {
              boxShadow: state.includeFood ? "0 10px 30px -10px rgba(255, 96, 34, 0.2)" : "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
              borderColor: state.includeFood ? "#FF6022" : "#E5E5E5"
           }}
-          className="w-full rounded-3xl overflow-hidden border-2 transition-all flex flex-col relative"
+          className="w-full rounded-3xl overflow-hidden border-2 transition-all flex flex-col relative cursor-pointer"
+          onClick={() => updateState({ includeFood: !state.includeFood })}
         >
            {/* Top Image Section */}
            <div 
-              className="relative h-56 bg-white cursor-pointer group m-1 rounded-[24px] overflow-hidden" 
-              onClick={() => updateState({ includeFood: !state.includeFood })}
+              className="relative h-56 bg-white group m-1 rounded-[24px] overflow-hidden" 
            >
               <ImageWithFallback
                 src={getPublicUrl("/images/food/kids_set.webp")}
@@ -119,7 +119,7 @@ export function Step5Food() {
                 <div>
                   <h4 className="text-white font-bold text-xl leading-tight mb-0.5">Набор детской еды</h4>
                   {isPaidSet && (
-                    <p className="text-[#FFD166] font-bold text-sm">12 070 ₽</p>
+                    <p className="text-[#FF6022] font-bold text-sm">12 070 ₽</p>
                   )}
                 </div>
                 <div

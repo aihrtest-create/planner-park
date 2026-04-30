@@ -19,7 +19,7 @@ const STEP_LABEL_MAP: Record<number, string> = {
 };
 
 export function StepIndicator() {
-  const { step, setStep, visibleSteps } = useWizard();
+  const { step, setStep, visibleSteps, state } = useWizard();
   const scrollRef = useRef<HTMLDivElement>(null);
   const currentRef = useRef<HTMLButtonElement>(null);
 
@@ -56,9 +56,9 @@ export function StepIndicator() {
           const displayNum = i + 1;
           const label = STEP_LABEL_MAP[stepNum] || `${stepNum}`;
           const thisStepIndex = i;
-          const isCompleted = currentIndex > thisStepIndex;
+          const isCompleted = state.hasReachedSummary || currentIndex > thisStepIndex;
           const isCurrent = step === stepNum;
-          const canNavigate = thisStepIndex <= currentIndex;
+          const canNavigate = state.hasReachedSummary || thisStepIndex <= currentIndex;
 
           return (
             <button

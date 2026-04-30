@@ -136,7 +136,9 @@ export function StepShows() {
               {/* Bottom pill-like panel like location cards */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
                  <h4 className="text-[13px] font-bold text-[#1A1A1A] leading-tight line-clamp-2">{show.name}</h4>
-                 <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">{show.price.toLocaleString("ru-RU")} ₽</p>
+                 <p className="text-[11px] text-[#FF6022] font-extrabold mt-0.5">
+                   {state.packageType === "exclusive" && (state.shows.length === 0 || state.shows[0] === show.id) ? "Включено" : `${show.price.toLocaleString("ru-RU")} ₽`}
+                 </p>
               </div>
             </motion.div>
           );
