@@ -112,7 +112,9 @@ export function Step1Format() {
       cakeChoice: null,
       fillingChoice: null,
       cakeCustomText: "",
-      hasReachedSummary: false
+      hasReachedSummary: false,
+      discoChoice: null,
+      balloonChoice: null
     });
   };
 

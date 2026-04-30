@@ -16,6 +16,8 @@ const STEP_LABEL_MAP: Record<number, string> = {
   10: "Торты",
   11: "Бонусы",
   12: "Заявка",
+  13: "Активность",
+  14: "Финал",
 };
 
 export function StepIndicator() {
@@ -23,7 +25,7 @@ export function StepIndicator() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const currentRef = useRef<HTMLButtonElement>(null);
 
-  const stepsToRender = visibleSteps || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  const stepsToRender = visibleSteps || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 11, 12];
   const currentIndex = stepsToRender.indexOf(step);
 
   // Auto-scroll current step into center

@@ -81,7 +81,7 @@ export function FloatingPrice() {
   // ─── Handle navigation ───
   const handleNext = async () => {
     // Final step — submit
-    if (step === totalSteps) {
+    if (step === 12) {
       if (state.contactName && state.contactPhone) {
         setIsSubmitting(true);
         try {
@@ -220,7 +220,7 @@ export function FloatingPrice() {
 
           {/* Price Pill */}
           <AnimatePresence>
-            {totalPrice > 0 && step < totalSteps && (
+            {totalPrice > 0 && step !== 12 && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -252,9 +252,9 @@ export function FloatingPrice() {
             onClick={handleNext}
             animate={isShaking ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }}
             transition={isShaking ? { duration: 0.4, ease: "easeInOut" } : { duration: 0 }}
-            className={getNextButtonClasses() + (totalPrice === 0 || step === totalSteps ? ' flex-1' : '')}
+            className={getNextButtonClasses() + (totalPrice === 0 || step === 12 ? ' flex-1' : '')}
           >
-            {step === totalSteps ? (
+            {step === 12 ? (
               isSubmitting ? (
                 <>Отправляем...</>
               ) : (

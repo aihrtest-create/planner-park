@@ -13,6 +13,13 @@ const PACKAGE_NAMES: Record<string, string> = {
 // All possible included extras
 const ALL_EXTRAS = [
   {
+    id: "photographer",
+    name: "Фотограф 2 часа",
+    gradient: "from-[#ffd194] to-[#70e1f5]",
+    emoji: "📸",
+    packages: ["exclusive"]
+  },
+  {
     id: "wow",
     name: "WOW поздравление",
     gradient: "from-[#a1c4fd] to-[#c2e9fb]",
@@ -139,7 +146,13 @@ export function Step11Included() {
               </div>
 
               <div className="absolute bottom-2.5 left-2.5 right-2.5 bg-white/95 backdrop-blur-xl rounded-[18px] p-2.5 shadow-lg flex flex-col justify-center border border-white/30 text-center min-h-[50px]">
-                 <h4 className="text-[12px] font-bold text-[#1A1A1A] leading-tight mb-1">{item.name}</h4>
+                 <h4 className="text-[12px] font-bold text-[#1A1A1A] leading-tight mb-1">
+                   {typeof item.name === "string" && item.name.includes("2 часа") ? (
+                     <>Фотограф <span className="text-[#FF6022]">2 часа</span></>
+                   ) : (
+                     item.name
+                   )}
+                 </h4>
               </div>
             </motion.div>
           );

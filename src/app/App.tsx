@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import { Presentation } from "./Presentation";
 import { WizardProvider, useWizard } from "./components/wizard-context";
 import { StepIndicator } from "./components/step-indicator";
 import { Step1Format } from "./components/step1-format";
@@ -14,7 +15,9 @@ import { Step7Summary } from "./components/step7-summary";
 import { Step11Included } from "./components/step11-included";
 import { StepShows } from "./components/step-shows";
 import { StepCakes } from "./components/step-cakes";
-import { Step0Welcome } from "./components/step0-welcome";
+
+import { StepDisco } from "./components/step-disco";
+import { StepBalloon } from "./components/step-balloon";
 import { FloatingPrice } from "./components/floating-price";
 import { AnimatePresence } from "motion/react";
 import HParkLogo from "../imports/HParkLogo";
@@ -30,7 +33,6 @@ function WizardContent() {
 
   const renderStep = () => {
     switch (step) {
-      case 0: return <Step0Welcome key="step0" />;
       case 1: return <Step6DateTime key="step1" />;
       case 2: return useV2 ? <Step1FormatV2 key="step2v2" /> : <Step1Format key="step2" />;
       case 3: return <Step2Quests key="step3" />;
@@ -43,6 +45,8 @@ function WizardContent() {
       case 10: return <StepCakes key="step10" />;
       case 11: return <Step11Included key="step11" />;
       case 12: return <Step7Summary key="step12" />;
+      case 13: return <StepDisco key="step13" />;
+      case 14: return <StepBalloon key="step14" />;
       default: return null;
     }
   };
@@ -72,6 +76,12 @@ function WizardContent() {
 }
 
 export default function App() {
+  const isPresentation = window.location.pathname === '/presentation' || window.location.pathname === '/planner-park/presentation';
+
+  if (isPresentation) {
+    return <Presentation />;
+  }
+
   return (
     <WizardProvider>
       <WizardContent />

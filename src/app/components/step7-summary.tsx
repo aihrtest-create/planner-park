@@ -307,6 +307,26 @@ export function Step7Summary() {
           />
         )}
 
+        {state.discoChoice && (
+          <SummaryRow
+            icon={<PartyPopper className="w-4 h-4" />}
+            label="Активность"
+            value={state.discoChoice === "disco" ? "Мини дискотека" : "Треш-коробка"}
+            priceText="Включено"
+            stepNumber={13}
+          />
+        )}
+
+        {state.balloonChoice && (
+          <SummaryRow
+            icon={<PartyPopper className="w-4 h-4" />}
+            label="Финал"
+            value={state.balloonChoice === "balloon" ? "Шар-сюрприз" : "Пиньята"}
+            priceText="Включено"
+            stepNumber={14}
+          />
+        )}
+
         {state.masterClasses.length > 0 && (
           <SummaryRow
             icon={<Palette className="w-4 h-4" />}

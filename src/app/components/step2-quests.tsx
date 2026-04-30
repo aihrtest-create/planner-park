@@ -11,6 +11,7 @@ import rockyImg4 from "../../assets/rocky-quest-4.webp";
 import rockyImg5 from "../../assets/rocky-quest-5.webp";
 import rockyImg6 from "../../assets/rocky-quest-6.webp";
 import spaceImg from "../../assets/space-quest.webp";
+import rockyMascotImg from "../../assets/rocky-mascot.png";
 
 const ROCKY_PHOTOS = [rockyImg1, rockyImg2, rockyImg3, rockyImg4, rockyImg5, rockyImg6];
 
@@ -31,14 +32,14 @@ const PHYGITAL_QUESTS = [
   {
     id: "phygital_voxels" as const,
     title: "Мир Майнкрафт",
-    subtitle: "Квест по спасению любимых игр!",
+    subtitle: "Квест по спасению любимой игры!",
     emoji: "🟩",
     color: "#4CAF50",
     gradientFrom: "#4CAF50",
     gradientTo: "#2E7D32",
     addonPrice: 2000,
     duration: 60,
-    maxKids: 20,
+    maxKids: 10,
     animators: 1,
     description: "Лис Рокки приглашает детей в цифровой мир вокселей! Квест объединяет физические активности в парке с интерактивными проекциями — дети «добывают» ресурсы, строят конструкции и сражаются с боссами.",
     highlights: ["Интерактивные проекции", "Цифровые аватары", "Битва с Глитчем", "Поиск багов", "Спасение игр"],
@@ -73,7 +74,7 @@ const PHYGITAL_QUESTS = [
     gradientTo: "#1a1a7e",
     addonPrice: 2000,
     duration: 60,
-    maxKids: 20,
+    maxKids: 10,
     animators: 1,
     description:
       "Лис Рокки — капитан космического корабля! Дети отправляются в межгалактическую миссию: проходят испытания на невесомость, расшифровывают сигналы с других планет и спасают Вселенную. Цифровые технологии делают каждое задание магически реальным.",
@@ -287,6 +288,22 @@ function QuestPopup({
               <div className="flex items-center gap-1.5 bg-[#F5F5F5] rounded-xl px-3 py-2">
                 <Zap className="w-4 h-4 text-[#747474]" />
                 <span className="text-sm font-medium text-[#1A1A1A]">{quest.animators} аниматор</span>
+              </div>
+            </div>
+
+            {/* Phygital Mascot Banner */}
+            <div className="bg-gradient-to-r from-[#5b21cc] to-[#7b3fe4] rounded-[24px] p-5 sm:p-6 relative overflow-hidden flex shadow-lg">
+              <div className="relative z-10 w-[65%] sm:w-[70%]">
+                <p className="text-white text-sm sm:text-base leading-relaxed">
+                  <strong className="font-extrabold">Фиджитал квест</strong> — это инновационный формат дня рождения с масштабными интерактивными инсталляциями! Дети отправятся в увлекательное цифровое приключение, а их главным проводником станет наш маскот <strong className="text-[#FFB74D] font-black">Лис Рокки</strong>.
+                </p>
+              </div>
+              <div className="absolute right-[-10px] bottom-[-5px] w-[40%] sm:w-[35%] h-[120%] pointer-events-none">
+                <img 
+                  src={rockyMascotImg} 
+                  alt="Лис Рокки" 
+                  className="w-full h-full object-contain object-bottom drop-shadow-2xl" 
+                />
               </div>
             </div>
 

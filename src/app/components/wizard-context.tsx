@@ -102,6 +102,8 @@ export interface WizardState {
   contactComment: string;
   isQuestPopupOpen: boolean;
   hasReachedSummary: boolean;
+  discoChoice: "disco" | "trash_box" | null;
+  balloonChoice: "balloon" | "pinata" | null;
 }
 
 interface WizardContextType {
@@ -148,6 +150,8 @@ const initialState: WizardState = {
   contactComment: "",
   isQuestPopupOpen: false,
   hasReachedSummary: false,
+  discoChoice: null,
+  balloonChoice: null,
 };
 
 const WizardContext = createContext<WizardContextType | null>(null);
@@ -158,7 +162,7 @@ export function useWizard() {
   return ctx;
 }
 
-const TOTAL_STEPS = 12;
+const TOTAL_STEPS = 14;
 
 const PACKAGE_PRICES: Record<string, [number, number]> = {
   custom:    [0, 0],
@@ -246,7 +250,7 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
   // Try to restore from cache on first render
   const [step, setStep] = useState(() => {
     const cached = loadFromCache(cacheKey);
-    return cached ? cached.step : 0;
+    return cached ? Math.max(cached.step, 1) : 1;
   });
   const [state, setState] = useState<WizardState>(() => {
     const cached = loadFromCache(cacheKey);
@@ -354,8 +358,26 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      // After Food (Step 9) → go to Adult Location (Step 6) "Доп. услуги"
+      // After Food (Step 9) → go to Disco (Step 13) if Premium/Exclusive, else Adult Location (Step 6)
       if (s === 9) {
+        if (state.packageType === "premium" || state.packageType === "exclusive") {
+          next = 13;
+        } else {
+          next = 6;
+        }
+      }
+
+      // After Disco (Step 13) → go to Balloon (Step 14) if Exclusive, else Adult Location (Step 6)
+      if (s === 13) {
+        if (state.packageType === "exclusive") {
+          next = 14;
+        } else {
+          next = 6;
+        }
+      }
+
+      // After Balloon (Step 14) → go to Adult Location (Step 6)
+      if (s === 14) {
         next = 6;
       }
 
@@ -377,8 +399,22 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
     setStep((s) => {
       let prev = s - 1;
       
-      // Going back from Adult Location (Step 6) → back to Food (Step 9)
+      // Going back from Adult Location (Step 6)
       if (s === 6) {
+        if (state.packageType === "exclusive") {
+          prev = 14;
+        } else if (state.packageType === "premium") {
+          prev = 13;
+        } else {
+          prev = 9;
+        }
+      }
+      // Going back from Balloon (Step 14)
+      else if (s === 14) {
+        prev = 13;
+      }
+      // Going back from Disco (Step 13)
+      else if (s === 13) {
         prev = 9;
       }
       // Going back from Cakes (Step 10) → back to Adult Location (Step 6)
@@ -524,8 +560,8 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
   })();
 
   const visibleSteps = React.useMemo(() => {
-    // Actual navigation order: 1→2→3→4?→5→7?→8?→9→6→10→11?→12
-    const list = [1, 2, 3, 4, 5, 7, 8, 9, 6, 10, 11, 12];
+    // Actual navigation order: 1→2→3→4?→5→7?→8?→9→13?→14?→6→10→11?→12
+    const list = [1, 2, 3, 4, 5, 7, 8, 9, 13, 14, 6, 10, 11, 12];
     return list.filter((s) => {
       // Skip Animators (Step 4) if not a phygital quest
       if (s === 4 && state.questType && !state.questType.startsWith("phygital_")) return false;
@@ -533,6 +569,10 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
       if (s === 7 && (state.packageType === "basic" || state.packageType === "premium")) return false;
       // Skip MC(8) if basic
       if (s === 8 && state.packageType === "basic") return false;
+      // Skip Disco (13) if basic or custom
+      if (s === 13 && (state.packageType === "basic" || state.packageType === "custom")) return false;
+      // Skip Balloon (14) if not exclusive
+      if (s === 14 && state.packageType !== "exclusive") return false;
       // Skip Included Bonuses (11) if custom AND no gifts earned
       if (s === 11 && state.packageType === "custom" && !hasCustomGifts(state)) return false;
       return true;
