@@ -293,16 +293,16 @@ function QuestPopup({
 
             {/* Phygital Mascot Banner */}
             <div className="bg-gradient-to-r from-[#5b21cc] to-[#7b3fe4] rounded-[24px] p-5 sm:p-6 relative overflow-hidden flex shadow-lg">
-              <div className="relative z-10 w-[65%] sm:w-[70%]">
+              <div className="relative z-10 w-[60%] sm:w-[65%]">
                 <p className="text-white text-sm sm:text-base leading-relaxed">
                   <strong className="font-extrabold">Фиджитал квест</strong> — это инновационный формат дня рождения с масштабными интерактивными инсталляциями! Дети отправятся в увлекательное цифровое приключение, а их главным проводником станет наш маскот <strong className="text-[#FFB74D] font-black">Лис Рокки</strong>.
                 </p>
               </div>
-              <div className="absolute right-[-10px] bottom-[-5px] w-[40%] sm:w-[35%] h-[120%] pointer-events-none">
+              <div className="absolute right-0 bottom-0 w-[40%] sm:w-[35%] h-full pointer-events-none">
                 <img 
                   src={rockyMascotImg} 
                   alt="Лис Рокки" 
-                  className="w-full h-full object-contain object-bottom drop-shadow-2xl" 
+                  className="w-full h-[105%] object-contain object-bottom drop-shadow-2xl translate-y-[5%]" 
                 />
               </div>
             </div>

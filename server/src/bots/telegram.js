@@ -26,8 +26,9 @@ export function initTelegramBot() {
     return null;
   }
 
-  const serverUrl = process.env.SERVER_URL;
-  const useWebhook = serverUrl && serverUrl.startsWith('https://');
+  // Telegram servers frequently fail to reach Russian VPS via Webhook (Connection timed out).
+  // So we explicitly force Long Polling for Telegram.
+  const useWebhook = false; 
 
   if (useWebhook) {
     bot = new TelegramBot(token);
@@ -38,8 +39,9 @@ export function initTelegramBot() {
       console.error('[TG BOT] ❌ Ошибка установки webhook:', err.message);
     });
   } else {
-    // Без HTTPS — используем polling (VPS без SSL или локальная разработка)
+    // Delete webhook if it was previously set, to avoid conflicts with polling
     bot = new TelegramBot(token, { polling: true });
+    bot.deleteWebHook().catch(() => {});
     console.log('[TG BOT] ✅ Запущен в режиме Long Polling');
   }
 
