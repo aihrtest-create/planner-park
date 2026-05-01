@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { Presentation } from "./Presentation";
 import { WizardProvider, useWizard } from "./components/wizard-context";
 import { StepIndicator } from "./components/step-indicator";
@@ -21,10 +21,15 @@ import { StepBalloon } from "./components/step-balloon";
 import { FloatingPrice } from "./components/floating-price";
 import { AnimatePresence } from "motion/react";
 import HParkLogo from "../imports/HParkLogo";
+import { useMiniAppBackButton } from "./hooks/useMiniAppBackButton";
 
 function WizardContent() {
-  const { step } = useWizard();
+  const { step, prevStep } = useWizard();
   const useV2 = useMemo(() => new URLSearchParams(window.location.search).has("v2"), []);
+
+  // Native Telegram BackButton integration
+  const goBack = useCallback(() => prevStep(), [prevStep]);
+  useMiniAppBackButton(step, goBack);
 
   useEffect(() => {
     // Scroll intentionally removed from here to prevent abrupt layout jumping

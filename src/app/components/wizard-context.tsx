@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
 import { isWeekend } from "date-fns";
 import { FOOD_MENU } from "../data/foodMenu";
+import { getLeadId as getMiniAppLeadId, detectPlatform, getInitData, isMiniApp } from "../../lib/miniapp";
 
 // Backend API URL — Timeweb VPS (HTTPS через nip.io)
 const API_BASE = import.meta.env.VITE_API_URL || 'https://194-87-118-33.nip.io';
@@ -238,11 +239,8 @@ function hasCustomGifts(state: WizardState): boolean {
 }
 
 export function WizardProvider({ children }: { children: React.ReactNode }) {
-  // Lead ID from URL parameter (?lead=abc123)
-  const [leadId] = useState<string | null>(() => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('lead');
-  });
+  // Lead ID from Mini App startParam or URL parameter (?lead=abc123)
+  const [leadId] = useState<string | null>(() => getMiniAppLeadId());
 
   // Derive cache key from leadId
   const cacheKey = getCacheKey(leadId);
