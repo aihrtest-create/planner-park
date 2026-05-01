@@ -116,9 +116,37 @@ export async function initMaxBot() {
       }
     });
 
-    // Start the bot
-    bot.start();
-    console.log('[MAX BOT] ✅ Бот Max запущен');
+    const serverUrl = process.env.SERVER_URL;
+    const useWebhook = serverUrl && serverUrl.startsWith('https://');
+
+    if (useWebhook) {
+      const webhookUrl = `${serverUrl}/webhook/max`;
+      // Register webhook with Max API
+      fetch('https://botapi.max.ru/subscriptions', {
+        method: 'POST',
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          url: webhookUrl,
+          events: ['bot_started', 'message_created']
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          console.log(`[MAX BOT] ✅ Webhook установлен: ${webhookUrl}`);
+        } else {
+          console.error(`[MAX BOT] ❌ Ошибка установки webhook:`, data);
+        }
+      })
+      .catch(err => console.error(`[MAX BOT] ❌ Ошибка при установке webhook:`, err.message));
+    } else {
+      // Start the bot with long polling if no HTTPS server URL is available
+      bot.start();
+      console.log('[MAX BOT] ✅ Запущен в режиме Long Polling');
+    }
 
     return bot;
   } catch (error) {

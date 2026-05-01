@@ -31,6 +31,16 @@ app.post('/webhook/telegram', (req, res) => {
   res.sendStatus(200);
 });
 
+// ---- Max Webhook ----
+app.post('/webhook/max', (req, res) => {
+  const bot = getMaxBot();
+  if (bot && bot.handleUpdate) {
+    // max-bot-api requires handleUpdate for incoming webhook payloads
+    bot.handleUpdate(req.body);
+  }
+  res.sendStatus(200);
+});
+
 // ---- Dashboard ----
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'dashboard.html'));
