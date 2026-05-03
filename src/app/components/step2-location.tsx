@@ -3,6 +3,7 @@ import { useWizard } from "./wizard-context";
 import { motion, AnimatePresence } from "motion/react";
 import { Users, Projector, Check, MapPin, Coffee, Info, PlayCircle, X, UtensilsCrossed, Armchair, Minus, Plus, Clock } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { VideoWithFallback } from "./figma/VideoWithFallback";
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription, DrawerClose } from "./ui/drawer";
 import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
 import { Button } from "./ui/button";
@@ -202,7 +203,7 @@ export function Step2Location() {
             <div className="flex-1 overflow-y-auto pb-safe">
               <div className="relative rounded-2xl overflow-hidden mb-4 bg-black w-full flex items-center justify-center">
                 {selectedDetails.video ? (
-                  <video
+                  <VideoWithFallback
                     src={getPublicUrl(selectedDetails.video)}
                     controls
                     autoPlay

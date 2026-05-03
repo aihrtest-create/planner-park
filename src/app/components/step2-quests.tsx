@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useWizard } from "./wizard-context";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Play, Check, ChevronLeft, ChevronRight, Users, Clock, Zap, Info } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { VideoWithFallback } from "./figma/VideoWithFallback";
 
 import rockyImg1 from "../../assets/rocky-quest-1.webp";
 import rockyImg2 from "../../assets/rocky-quest-2.webp";
@@ -11,7 +12,7 @@ import rockyImg4 from "../../assets/rocky-quest-4.webp";
 import rockyImg5 from "../../assets/rocky-quest-5.webp";
 import rockyImg6 from "../../assets/rocky-quest-6.webp";
 import spaceImg from "../../assets/space-quest.webp";
-import rockyMascotImg from "../../assets/rocky-mascot.png";
+import rockyMascotImg from "../../assets/rocky-mascot.webp";
 
 const ROCKY_PHOTOS = [rockyImg1, rockyImg2, rockyImg3, rockyImg4, rockyImg5, rockyImg6];
 
@@ -43,13 +44,13 @@ const PHYGITAL_QUESTS = [
     animators: 1,
     description: "Лис Рокки приглашает детей в цифровой мир вокселей! Квест объединяет физические активности в парке с интерактивными проекциями — дети «добывают» ресурсы, строят конструкции и сражаются с боссами.",
     highlights: ["Интерактивные проекции", "Цифровые аватары", "Битва с Глитчем", "Поиск багов", "Спасение игр"],
-    photos: ['/quests/voxels/03.png', ...ROCKY_PHOTOS],
+    photos: ['/quests/voxels/03.webp', ...ROCKY_PHOTOS],
     media: [
-      { type: 'image' as const, url: '/quests/voxels/01.png' },
+      { type: 'image' as const, url: '/quests/voxels/01.webp' },
       { type: 'video' as const, url: '/quests/voxels/v1.mp4' },
-      { type: 'image' as const, url: '/quests/voxels/02.png' },
+      { type: 'image' as const, url: '/quests/voxels/02.webp' },
       { type: 'video' as const, url: '/quests/voxels/v2.mp4' },
-      { type: 'image' as const, url: '/quests/voxels/03.png' },
+      { type: 'image' as const, url: '/quests/voxels/03.webp' },
       { type: 'video' as const, url: '/quests/voxels/v3.mp4' },
     ],
     story: {
@@ -79,15 +80,15 @@ const PHYGITAL_QUESTS = [
     description:
       "Лис Рокки — капитан космического корабля! Дети отправляются в межгалактическую миссию: проходят испытания на невесомость, расшифровывают сигналы с других планет и спасают Вселенную. Цифровые технологии делают каждое задание магически реальным.",
     highlights: ["Космические миссии", "Интерактивные проекции", "Цифровые аватары", "Битва с Глоргом", "Финальная дискотека"],
-    photos: ['/quests/space/02.png', ...ROCKY_PHOTOS.slice().reverse()],
+    photos: ['/quests/space/02.webp', ...ROCKY_PHOTOS.slice().reverse()],
     media: [
-      { type: 'image' as const, url: '/quests/space/04.png' },
+      { type: 'image' as const, url: '/quests/space/04.webp' },
       { type: 'video' as const, url: '/quests/space/v1.mp4' },
-      { type: 'image' as const, url: '/quests/space/01.png' },
+      { type: 'image' as const, url: '/quests/space/01.webp' },
       { type: 'video' as const, url: '/quests/space/v2.mp4' },
-      { type: 'image' as const, url: '/quests/space/02.png' },
-      { type: 'image' as const, url: '/quests/space/05.png' },
-      { type: 'image' as const, url: '/quests/space/03.jpg' },
+      { type: 'image' as const, url: '/quests/space/02.webp' },
+      { type: 'image' as const, url: '/quests/space/05.webp' },
+      { type: 'image' as const, url: '/quests/space/03.webp' },
     ],
     story: {
       legend: "Лис Рокки приглашает именинника и его друзей в цифровое приключение: они отправляются в солнечную систему. **Их ждёт квест по организации межгалактической вечеринки на Марсе**. Для этого нужно пройти цифровые испытания в играх и победить злодея Глорга, который украл кристалл бесконечной энергии и хочет сорвать вечеринку. В финале Рокки и дети устроят грандиозную вечеринку на всю солнечную систему.",
@@ -200,6 +201,19 @@ function QuestPopup({
   onSelect: () => void;
   isSelected: boolean;
 }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showSwipeHint, setShowSwipeHint] = useState(true);
+
+  // Auto-scroll down after popup settles, to hint there's content below
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollRef.current?.scrollTo({ top: 130, behavior: 'smooth' });
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleGalleryInteraction = () => setShowSwipeHint(false);
+
   const renderBold = (text: string) => {
     return text.split('**').map((part, i) => i % 2 === 1 ? <strong key={i} className="font-bold text-[#1A1A1A]">{part}</strong> : part);
   };
@@ -233,7 +247,7 @@ function QuestPopup({
         </button>
 
         {/* Content Scroll Area */}
-        <div className="overflow-y-auto flex-1 overscroll-contain pb-32 hide-scrollbar">
+        <div ref={scrollRef} className="overflow-y-auto flex-1 overscroll-contain pb-32 hide-scrollbar">
           
           {/* Header Area */}
           <div className="px-6 pt-8 pb-4">
@@ -247,12 +261,17 @@ function QuestPopup({
           </div>
 
           {/* Media Section */}
-          <div className="mb-8">
-            <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 px-6 pb-4">
+          <div className="mb-8 relative">
+            <div
+              className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 px-6 pb-4"
+              onTouchStart={handleGalleryInteraction}
+              onPointerDown={handleGalleryInteraction}
+              onScroll={handleGalleryInteraction}
+            >
               {quest.media?.map((item, i) => (
                 <div key={i} className="snap-center shrink-0 w-[85%] sm:w-[70%] aspect-[4/5] sm:aspect-video rounded-[24px] overflow-hidden shadow-lg relative bg-[#1A1A1A]">
                   {item.type === 'video' ? (
-                    <video 
+                    <VideoWithFallback 
                       src={getPublicUrl(item.url)} 
                       autoPlay 
                       loop 
@@ -271,6 +290,37 @@ function QuestPopup({
                 </div>
               ))}
             </div>
+
+            {/* Swipe hint — disappears on first gallery touch */}
+            <AnimatePresence>
+              {showSwipeHint && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  transition={{ delay: 0.4, duration: 0.3 }}
+                  className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none z-10"
+                >
+                  <div className="flex items-center gap-2.5 bg-black/65 backdrop-blur-md text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-xl whitespace-nowrap">
+                    <motion.span
+                      className="text-base leading-none select-none"
+                      animate={{ x: [-5, 5, -5] }}
+                      transition={{ repeat: Infinity, duration: 1.0, ease: 'easeInOut' }}
+                    >
+                      👈
+                    </motion.span>
+                    Листай фото и видео
+                    <motion.span
+                      className="text-base leading-none select-none"
+                      animate={{ x: [5, -5, 5] }}
+                      transition={{ repeat: Infinity, duration: 1.0, ease: 'easeInOut' }}
+                    >
+                      👉
+                    </motion.span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <div className="px-6 flex flex-col gap-8">

@@ -43,7 +43,7 @@ export function StepDisco() {
           }`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-[#a1c4fd] to-[#c2e9fb] flex items-center justify-center">
-            <ImageWithFallback src={getPublicUrl("/activities/mini_disco.png")} alt="Мини дискотека" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <ImageWithFallback src={getPublicUrl("/activities/mini_disco.webp")} alt="Мини дискотека" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
 
@@ -72,7 +72,7 @@ export function StepDisco() {
           }`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-[#ffecd2] to-[#fcb69f] flex items-center justify-center">
-            <ImageWithFallback src={getPublicUrl("/activities/trash_box.png")} alt="Треш-коробка" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <ImageWithFallback src={getPublicUrl("/activities/trash_box.webp")} alt="Треш-коробка" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
 

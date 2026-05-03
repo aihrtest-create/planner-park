@@ -43,7 +43,7 @@ export function StepBalloon() {
           }`}
         >
           <div className="absolute inset-0 flex items-center justify-center p-2">
-            <ImageWithFallback src={getPublicUrl("/activities/surprise_balloon_new.png")} alt="Шар-сюрприз" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
+            <ImageWithFallback src={getPublicUrl("/activities/surprise_balloon_new.webp")} alt="Шар-сюрприз" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
           </div>
 
           <div className="absolute top-2 left-2 right-2 flex justify-between items-start z-10">
@@ -71,7 +71,7 @@ export function StepBalloon() {
           }`}
         >
           <div className="absolute inset-0 flex items-center justify-center p-2">
-            <ImageWithFallback src={getPublicUrl("/activities/pinata_new.png")} alt="Пиньята" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
+            <ImageWithFallback src={getPublicUrl("/activities/pinata_new.webp")} alt="Пиньята" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
           </div>
 
           <div className="absolute top-2 left-2 right-2 flex justify-between items-start z-10">

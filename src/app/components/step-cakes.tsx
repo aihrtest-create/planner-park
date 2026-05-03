@@ -18,7 +18,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p2_4.jpeg",
+    "image": "/cakes/image_p2_4.webp",
     "price": "8 400 ₽"
   },
   {
@@ -27,7 +27,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p2_5.jpeg",
+    "image": "/cakes/image_p2_5.webp",
     "price": "8 400 ₽"
   },
   {
@@ -36,7 +36,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p2_6.jpeg",
+    "image": "/cakes/image_p2_6.webp",
     "price": "8 400 ₽"
   },
   {
@@ -45,7 +45,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p2_7.jpeg",
+    "image": "/cakes/image_p2_7.webp",
     "price": "8 400 ₽"
   },
   {
@@ -54,7 +54,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p2_8.jpeg",
+    "image": "/cakes/image_p2_8.webp",
     "price": "8 400 ₽"
   },
   {
@@ -63,7 +63,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p2_9.jpeg",
+    "image": "/cakes/image_p2_9.webp",
     "price": "8 400 ₽"
   },
   {
@@ -72,7 +72,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p2_10.jpeg",
+    "image": "/cakes/image_p2_10.webp",
     "price": "8 400 ₽"
   },
   {
@@ -81,7 +81,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p2_11.jpeg",
+    "image": "/cakes/image_p2_11.webp",
     "price": "8 400 ₽"
   },
   {
@@ -90,7 +90,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p2_12.jpeg",
+    "image": "/cakes/image_p2_12.webp",
     "price": "8 400 ₽"
   },
   {
@@ -99,7 +99,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p2_13.jpeg",
+    "image": "/cakes/image_p2_13.webp",
     "price": "8 400 ₽"
   },
   {
@@ -108,7 +108,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p2_14.jpeg",
+    "image": "/cakes/image_p2_14.webp",
     "price": "8 400 ₽"
   },
   
@@ -118,7 +118,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_16.jpeg",
+    "image": "/cakes/image_p3_16.webp",
     "price": "8 400 ₽"
   },
   {
@@ -127,7 +127,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_17.jpeg",
+    "image": "/cakes/image_p3_17.webp",
     "price": "8 400 ₽"
   },
   {
@@ -136,7 +136,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_18.jpeg",
+    "image": "/cakes/image_p3_18.webp",
     "price": "8 400 ₽"
   },
   {
@@ -145,7 +145,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_19.jpeg",
+    "image": "/cakes/image_p3_19.webp",
     "price": "8 400 ₽"
   },
   {
@@ -154,7 +154,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_20.jpeg",
+    "image": "/cakes/image_p3_20.webp",
     "price": "8 400 ₽"
   },
   {
@@ -163,7 +163,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_21.jpeg",
+    "image": "/cakes/image_p3_21.webp",
     "price": "8 400 ₽"
   },
   {
@@ -172,7 +172,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_22.jpeg",
+    "image": "/cakes/image_p3_22.webp",
     "price": "8 400 ₽"
   },
   {
@@ -181,7 +181,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_23.jpeg",
+    "image": "/cakes/image_p3_23.webp",
     "price": "8 400 ₽"
   },
   {
@@ -190,7 +190,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_24.jpeg",
+    "image": "/cakes/image_p3_24.webp",
     "price": "8 400 ₽"
   },
   {
@@ -199,7 +199,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_25.jpeg",
+    "image": "/cakes/image_p3_25.webp",
     "price": "8 400 ₽"
   },
   {
@@ -208,7 +208,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_26.jpeg",
+    "image": "/cakes/image_p3_26.webp",
     "price": "8 400 ₽"
   },
   {
@@ -217,7 +217,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_27.jpeg",
+    "image": "/cakes/image_p3_27.webp",
     "price": "8 400 ₽"
   },
   {
@@ -226,7 +226,7 @@ export const CAKES = [
     "emoji": "🎂",
     "desc": "Авторский торт 2 кг. Прекрасный вариант для вашего праздника!",
     "gradient": "from-white to-white",
-    "image": "/cakes/image_p3_28.jpeg",
+    "image": "/cakes/image_p3_28.webp",
     "price": "8 400 ₽"
   },
   {
