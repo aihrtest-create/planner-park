@@ -348,11 +348,11 @@ function QuestPopup({
                   <strong className="font-extrabold">Фиджитал квест</strong> — это инновационный формат дня рождения с масштабными интерактивными инсталляциями! Дети отправятся в увлекательное цифровое приключение, а их главным проводником станет наш маскот <strong className="text-[#FFB74D] font-black">Лис Рокки</strong>.
                 </p>
               </div>
-              <div className="absolute right-0 bottom-0 w-[40%] sm:w-[35%] h-full pointer-events-none">
+              <div className="absolute right-0 bottom-0 w-[42%] sm:w-[35%] h-[130%] pointer-events-none">
                 <img 
                   src={rockyMascotImg} 
                   alt="Лис Рокки" 
-                  className="w-full h-[105%] object-contain object-bottom drop-shadow-2xl translate-y-[5%]" 
+                  className="w-full h-full object-contain object-bottom drop-shadow-2xl" 
                 />
               </div>
             </div>
