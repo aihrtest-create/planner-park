@@ -8,8 +8,8 @@ const API_BASE = import.meta.env.VITE_API_URL || 'https://194-87-118-33.nip.io';
 // ──────────────────────────────────────────────
 // localStorage cache helpers
 // ──────────────────────────────────────────────
-const CACHE_VERSION = 1;
-const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+const CACHE_VERSION = 2;
+const CACHE_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
 
 function getCacheKey(leadId: string | null) {
   return leadId ? `wizard_cache_${leadId}` : 'wizard_cache_standalone';
@@ -20,9 +20,10 @@ interface CachedData {
   timestamp: number;
   step: number;
   state: WizardState;
+  submitted?: boolean;
 }
 
-function saveToCache(key: string, step: number, state: WizardState) {
+function saveToCache(key: string, step: number, state: WizardState, submitted = false) {
   try {
     const data: CachedData = {
       version: CACHE_VERSION,
@@ -33,6 +34,7 @@ function saveToCache(key: string, step: number, state: WizardState) {
         // Date needs special handling — store as ISO string
         date: state.date ? (state.date as unknown as string) : null,
       },
+      submitted,
     };
     localStorage.setItem(key, JSON.stringify(data));
   } catch {
@@ -40,7 +42,7 @@ function saveToCache(key: string, step: number, state: WizardState) {
   }
 }
 
-function loadFromCache(key: string): { step: number; state: WizardState } | null {
+function loadFromCache(key: string): { step: number; state: WizardState; submitted?: boolean } | null {
   try {
     const raw = localStorage.getItem(key);
     if (!raw) return null;
@@ -57,7 +59,7 @@ function loadFromCache(key: string): { step: number; state: WizardState } | null
       date: data.state.date ? new Date(data.state.date as unknown as string) : null,
     };
 
-    return { step: data.step, state: restored };
+    return { step: data.step, state: restored, submitted: data.submitted };
   } catch {
     return null;
   }
@@ -122,6 +124,9 @@ interface WizardContextType {
   submitToAPI: (price?: number) => Promise<boolean>;
   clearCache: () => void;
   resetWizard: () => void;
+  showResumeBanner: boolean;
+  confirmResume: () => void;
+  confirmRestart: () => void;
 }
 
 const initialState: WizardState = {
@@ -248,20 +253,44 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
   const cacheKey = getCacheKey(leadId);
 
   // Try to restore from cache on first render
+  // If cache exists with step > 1 and not submitted, show resume banner
+  const cachedOnMount = useRef(loadFromCache(cacheKey));
+  const hasPendingSession = cachedOnMount.current && (cachedOnMount.current.step > 1) && !cachedOnMount.current.submitted;
+
+  const [showResumeBanner, setShowResumeBanner] = useState(!!hasPendingSession);
+
   const [step, setStep] = useState(() => {
-    const cached = loadFromCache(cacheKey);
-    return cached ? Math.max(cached.step, 1) : 1;
+    const cached = cachedOnMount.current;
+    if (!cached) return 1;
+    // If submitted, restore to step 12 to show submitted screen
+    if (cached.submitted) return cached.step;
+    // If pending session, start at 1 until user confirms resume
+    if (hasPendingSession) return 1;
+    return Math.max(cached.step, 1);
   });
   const [state, setState] = useState<WizardState>(() => {
-    const cached = loadFromCache(cacheKey);
+    const cached = cachedOnMount.current;
     if (!cached) return initialState;
+    // If submitted, restore full state
+    if (cached.submitted) {
+      return {
+        ...initialState,
+        ...cached.state,
+        patiroomHours: cached.state.patiroomHours ?? 3,
+      };
+    }
+    // If pending session, start with initial state until user confirms
+    if (hasPendingSession) return initialState;
     return {
       ...initialState,
       ...cached.state,
       patiroomHours: cached.state.patiroomHours ?? 3,
     };
   });
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(() => {
+    const cached = cachedOnMount.current;
+    return cached?.submitted ?? false;
+  });
 
   // Flag to prevent overwriting cache during initial lead data fetch
   const isInitializing = useRef(true);
@@ -276,9 +305,9 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
 
   // Persist state + step to localStorage on every change
   useEffect(() => {
-    if (submitted) return; // Don't cache after submission
-    saveToCache(cacheKey, step, state);
-  }, [step, state, cacheKey, submitted]);
+    if (showResumeBanner) return; // Don't overwrite cache while banner is shown
+    saveToCache(cacheKey, step, state, submitted);
+  }, [step, state, cacheKey, submitted, showResumeBanner]);
 
   // Clear cache helper (call after successful submission)
   const clearCache = useCallback(() => {
@@ -291,6 +320,29 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
     setState(initialState);
     setStep(1);
     setSubmitted(false);
+    setShowResumeBanner(false);
+  }, [cacheKey]);
+
+  // Resume banner actions
+  const confirmResume = useCallback(() => {
+    const cached = cachedOnMount.current;
+    if (cached) {
+      setState({
+        ...initialState,
+        ...cached.state,
+        patiroomHours: cached.state.patiroomHours ?? 3,
+      });
+      setStep(Math.max(cached.step, 1));
+    }
+    setShowResumeBanner(false);
+  }, []);
+
+  const confirmRestart = useCallback(() => {
+    clearCacheByKey(cacheKey);
+    setState(initialState);
+    setStep(1);
+    setSubmitted(false);
+    setShowResumeBanner(false);
   }, [cacheKey]);
 
   // On mount: if we have a leadId, notify server and pre-fill contact data
@@ -584,7 +636,8 @@ export function WizardProvider({ children }: { children: React.ReactNode }) {
       value={{
         step, totalSteps: TOTAL_STEPS, visibleSteps, state, setStep,
         nextStep, prevStep, updateState, totalPrice, submitted, setSubmitted,
-        leadId, submitToAPI, clearCache, resetWizard
+        leadId, submitToAPI, clearCache, resetWizard,
+        showResumeBanner, confirmResume, confirmRestart
       }}
     >
       {children}

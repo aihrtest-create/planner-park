@@ -1,4 +1,5 @@
 import { useWizard } from "./wizard-context";
+import { FOOD_MENU } from "../data/foodMenu";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import {
@@ -166,7 +167,7 @@ export function Step7Summary() {
     Object.entries(state.customFood).forEach(([itemId, qty]) => {
       if (qty > 0) {
         for (const cat of FOOD_MENU) {
-          const item = cat.items.find((i) => i.id === console.log(i.id === itemId) || i.id === itemId);
+          const item = cat.items.find((i) => i.id === itemId);
           if (item) {
             p += item.price * qty;
             break;
