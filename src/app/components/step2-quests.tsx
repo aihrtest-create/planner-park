@@ -43,7 +43,7 @@ const PHYGITAL_QUESTS = [
     animators: 1,
     description: "Лис Рокки приглашает детей в цифровой мир вокселей! Квест объединяет физические активности в парке с интерактивными проекциями — дети «добывают» ресурсы, строят конструкции и сражаются с боссами.",
     highlights: ["Интерактивные проекции", "Цифровые аватары", "Битва с Глитчем", "Поиск багов", "Спасение игр"],
-    photos: ROCKY_PHOTOS,
+    photos: ['/quests/voxels/03.png', ...ROCKY_PHOTOS],
     media: [
       { type: 'image' as const, url: '/quests/voxels/01.png' },
       { type: 'video' as const, url: '/quests/voxels/v1.mp4' },
@@ -79,7 +79,7 @@ const PHYGITAL_QUESTS = [
     description:
       "Лис Рокки — капитан космического корабля! Дети отправляются в межгалактическую миссию: проходят испытания на невесомость, расшифровывают сигналы с других планет и спасают Вселенную. Цифровые технологии делают каждое задание магически реальным.",
     highlights: ["Космические миссии", "Интерактивные проекции", "Цифровые аватары", "Битва с Глоргом", "Финальная дискотека"],
-    photos: [spaceImg, ...ROCKY_PHOTOS.slice().reverse()],
+    photos: ['/quests/space/02.png', ...ROCKY_PHOTOS.slice().reverse()],
     media: [
       { type: 'image' as const, url: '/quests/space/04.png' },
       { type: 'video' as const, url: '/quests/space/v1.mp4' },
@@ -497,11 +497,11 @@ export function Step2Quests() {
                       updateState({ isQuestPopupOpen: true });
                     }}
                   >
-                    <img
-                      src={quest.photos[0]}
-                      alt={quest.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
+                      <img
+                        src={getPublicUrl(quest.photos[0])}
+                        alt={quest.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
 
                     <button 
