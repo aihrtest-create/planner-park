@@ -37,7 +37,10 @@ export function FloatingPrice() {
       case 5: return state.packageType === "custom" ? true : !!state.patiroom;
       case 7: return (state.shows || []).length > 0;
       case 8: return (state.masterClasses || []).length > 0;
-      case 12: return !!state.contactName && !!state.contactPhone;
+      case 12: {
+        const phoneDigits = state.contactPhone ? state.contactPhone.replace(/\D/g, "") : "";
+        return !!state.contactName && phoneDigits.length === 11;
+      }
       default: return true;
     }
   })();
@@ -72,6 +75,8 @@ export function FloatingPrice() {
       case 8: return "Выберите мастер-класс — 1 МК уже включён в пакет 🎨";
       case 12: {
         if (!state.contactName) return "Укажите ваше имя";
+        const phoneDigits = state.contactPhone ? state.contactPhone.replace(/\D/g, "") : "";
+        if (phoneDigits.length < 11) return "Введите номер телефона полностью";
         return "Укажите номер телефона";
       }
       default: return "Сделайте выбор для продолжения";
@@ -82,7 +87,8 @@ export function FloatingPrice() {
   const handleNext = async () => {
     // Final step — submit
     if (step === 12) {
-      if (state.contactName && state.contactPhone) {
+      const phoneDigits = state.contactPhone ? state.contactPhone.replace(/\D/g, "") : "";
+      if (state.contactName && phoneDigits.length === 11) {
         setIsSubmitting(true);
         try {
           await submitToAPI(totalPrice);

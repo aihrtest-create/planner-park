@@ -87,6 +87,41 @@ export function Step7Summary() {
   const { state, updateState, totalPrice, submitted, resetWizard } = useWizard();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (!val) {
+      updateState({ contactPhone: "" });
+      return;
+    }
+    let numbers = val.replace(/\D/g, "");
+    if (numbers.length === 0) {
+      updateState({ contactPhone: "" });
+      return;
+    }
+    if (numbers[0] === "8") {
+      numbers = "7" + numbers.slice(1);
+    } else if (numbers[0] === "9") {
+      numbers = "79" + numbers.slice(1);
+    } else if (numbers[0] !== "7") {
+      numbers = "7" + numbers;
+    }
+    numbers = numbers.substring(0, 11);
+    let formatted = "+7";
+    if (numbers.length > 1) {
+      formatted += " (" + numbers.substring(1, 4);
+    }
+    if (numbers.length >= 5) {
+      formatted += ") " + numbers.substring(4, 7);
+    }
+    if (numbers.length >= 8) {
+      formatted += "-" + numbers.substring(7, 9);
+    }
+    if (numbers.length >= 10) {
+      formatted += "-" + numbers.substring(9, 11);
+    }
+    updateState({ contactPhone: formatted });
+  };
+
   const effectiveWeekend = state.date ? isWeekend(state.date) : state.isWeekend;
 
   const getPackagePrice = () => {
@@ -422,7 +457,8 @@ export function Step7Summary() {
               type="tel"
               placeholder="+7 (___) ___-__-__"
               value={state.contactPhone}
-              onChange={(e) => updateState({ contactPhone: e.target.value })}
+              onChange={handlePhoneChange}
+              maxLength={18}
               className="w-full bg-[#F5F5F5] rounded-xl py-3 pl-10 pr-4 text-sm border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-[#FF6022]"
             />
           </div>

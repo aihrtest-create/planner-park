@@ -5,7 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import leadsRouter from './routes/leads.js';
 import { initTelegramBot, getTelegramBot } from './bots/telegram.js';
-import { initMaxBot } from './bots/max.js';
+import { initMaxBot, getMaxBot } from './bots/max.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
