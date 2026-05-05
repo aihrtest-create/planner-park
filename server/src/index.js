@@ -4,6 +4,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import leadsRouter from './routes/leads.js';
+import amoRouter from './routes/amo.js';
 import { initTelegramBot, getTelegramBot } from './bots/telegram.js';
 import { initMaxBot, getMaxBot } from './bots/max.js';
 
@@ -21,6 +22,7 @@ app.use(express.json());
 
 // ---- API Routes ----
 app.use('/api/leads', leadsRouter);
+app.use('/api/amo', amoRouter);
 
 // ---- Telegram Webhook ----
 app.post('/webhook/telegram', (req, res) => {

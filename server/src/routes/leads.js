@@ -7,6 +7,9 @@ import { fileURLToPath } from 'url';
 import { statements } from '../database.js';
 import { sendMessage as sendTelegramMessage, sendAttachment as sendTelegramAttachment } from '../bots/telegram.js';
 import { sendMessage as sendMaxMessage, sendAttachment as sendMaxAttachment } from '../bots/max.js';
+import { amo } from '../services/amo.js';
+import { isAmoLeadId, AMO_FIELDS } from '../config/amo-config.js';
+import { buildAmoNoteText, buildAmoFieldUpdates } from '../services/amo-format.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadsDir = path.join(__dirname, '..', 'data', 'uploads');
@@ -129,40 +132,71 @@ router.post('/', (req, res) => {
 
 /**
  * GET /api/leads/:id — Получить информацию о лиде
+ * Если id числовой и в локальной БД не найден — пробуем достать из AmoCRM.
  */
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const lead = statements.getLead.get(req.params.id);
-    if (!lead) {
-      return res.status(404).json({ error: 'Лид не найден' });
+    if (lead) return res.json({ success: true, lead });
+
+    if (isAmoLeadId(req.params.id)) {
+      const amoLead = await amo.getLead(req.params.id);
+      const contactId = amoLead?._embedded?.contacts?.[0]?.id;
+      let phone = '';
+      let contactName = '';
+      if (contactId) {
+        const contact = await amo.getContact(contactId);
+        contactName = contact?.name || '';
+        const phoneField = contact?.custom_fields_values?.find((f) => f.field_code === 'PHONE');
+        phone = phoneField?.values?.[0]?.value || '';
+      }
+      return res.json({
+        success: true,
+        lead: {
+          id: req.params.id,
+          name: contactName || amoLead?.name || '',
+          phone,
+          source: 'amo',
+        },
+      });
     }
-    res.json({ success: true, lead });
+
+    return res.status(404).json({ error: 'Лид не найден' });
   } catch (error) {
-    console.error('[LEAD ERROR]', error);
+    console.error('[LEAD GET ERROR]', error);
     res.status(500).json({ error: 'Внутренняя ошибка сервера' });
   }
 });
 
 /**
  * POST /api/leads/:id/opened — Отметить что клиент открыл конфигуратор
+ * Для Amo-лидов добавляем примечание в карточку, чтобы менеджер видел факт открытия.
  */
-router.post('/:id/opened', (req, res) => {
+router.post('/:id/opened', async (req, res) => {
   try {
     const lead = statements.getLead.get(req.params.id);
-    if (!lead) {
-      return res.status(404).json({ error: 'Лид не найден' });
+    if (lead) {
+      if (['link_sent', 'bot_connected'].includes(lead.status)) {
+        statements.markConfigOpened.run(req.params.id);
+        statements.addEvent.run(req.params.id, 'config_opened', null);
+        console.log(`[LEAD] Конфигуратор открыт: ${lead.name} [${lead.id}]`);
+      }
+      return res.json({ success: true, lead: statements.getLead.get(req.params.id) });
     }
 
-    // Only update if status allows it
-    if (['link_sent', 'bot_connected'].includes(lead.status)) {
-      statements.markConfigOpened.run(req.params.id);
-      statements.addEvent.run(req.params.id, 'config_opened', null);
-      console.log(`[LEAD] Конфигуратор открыт: ${lead.name} [${lead.id}]`);
+    if (isAmoLeadId(req.params.id)) {
+      try {
+        await amo.addNoteToLead(req.params.id, '👀 Клиент открыл конфигуратор');
+        console.log(`[AMO] Лид ${req.params.id}: открыл конфигуратор → примечание добавлено`);
+      } catch (e) {
+        console.warn(`[AMO] Не удалось добавить примечание об открытии: ${e.message}`);
+      }
+      return res.json({ success: true });
     }
 
-    res.json({ success: true, lead: statements.getLead.get(req.params.id) });
+    return res.status(404).json({ error: 'Лид не найден' });
   } catch (error) {
-    console.error('[LEAD ERROR]', error);
+    console.error('[LEAD OPENED ERROR]', error);
     res.status(500).json({ error: 'Внутренняя ошибка сервера' });
   }
 });
@@ -170,28 +204,53 @@ router.post('/:id/opened', (req, res) => {
 /**
  * POST /api/leads/:id/configure — Отправить конфигурацию праздника
  * Body: { конфигурация из визарда }
+ *
+ * Для Amo-лидов (числовой id) пишем примечание + обновляем кастомные поля и цену.
+ * Для локальных лидов сохраняем в SQLite как раньше.
  */
-router.post('/:id/configure', (req, res) => {
+router.post('/:id/configure', async (req, res) => {
   try {
     const lead = statements.getLead.get(req.params.id);
-    if (!lead) {
-      return res.status(404).json({ error: 'Лид не найден' });
+    if (lead) {
+      const configData = JSON.stringify(req.body);
+      statements.saveConfiguration.run(configData, req.params.id);
+      statements.addEvent.run(req.params.id, 'config_submitted', configData);
+      console.log(`[LEAD] Конфигурация получена: ${lead.name} [${lead.id}]`);
+      return res.json({
+        success: true,
+        message: 'Конфигурация сохранена',
+        lead: statements.getLead.get(req.params.id),
+      });
     }
 
-    const configData = JSON.stringify(req.body);
-    statements.saveConfiguration.run(configData, req.params.id);
-    statements.addEvent.run(req.params.id, 'config_submitted', configData);
+    if (isAmoLeadId(req.params.id)) {
+      const amoLeadId = req.params.id;
+      const noteText = buildAmoNoteText(req.body);
+      const fieldUpdates = buildAmoFieldUpdates(req.body, amoLeadId);
 
-    console.log(`[LEAD] Конфигурация получена: ${lead.name} [${lead.id}]`);
+      // Add note (всегда — это самое важное)
+      try {
+        await amo.addNoteToLead(amoLeadId, noteText);
+        console.log(`[AMO] Лид ${amoLeadId}: примечание добавлено`);
+      } catch (e) {
+        console.error(`[AMO] Не удалось добавить примечание: ${e.message}`);
+      }
 
-    // Notify via bot that config was received
-    res.json({
-      success: true,
-      message: 'Конфигурация сохранена',
-      lead: statements.getLead.get(req.params.id),
-    });
+      // Update fields + price (best-effort, не падаем если что-то пошло не так)
+      try {
+        await amo.updateLead(amoLeadId, fieldUpdates);
+        console.log(`[AMO] Лид ${amoLeadId}: поля обновлены`);
+      } catch (e) {
+        console.error(`[AMO] Не удалось обновить поля: ${e.message}`);
+        if (e.body) console.error('   ответ:', JSON.stringify(e.body, null, 2));
+      }
+
+      return res.json({ success: true, message: 'Конфигурация отправлена в AmoCRM' });
+    }
+
+    return res.status(404).json({ error: 'Лид не найден' });
   } catch (error) {
-    console.error('[LEAD ERROR]', error);
+    console.error('[LEAD CONFIGURE ERROR]', error);
     res.status(500).json({ error: 'Внутренняя ошибка сервера' });
   }
 });
